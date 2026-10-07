@@ -1,5 +1,5 @@
+import asyncio
 import logging
-import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -13,9 +13,12 @@ from sqlalchemy import func, or_, select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from .data_api import install_data_routes
 from .database import create_database
+from .import_formats import DataIssue
 from .models import Project, timestamp
 from .schemas import ProjectInput, ProjectList, ProjectRead, ProjectUpdate, name_key
+from .settings import configured_path, project_path
 
 ROOT = Path(__file__).resolve().parents[2]
 logger = logging.getLogger(__name__)
@@ -28,10 +31,15 @@ def error(status: int, code: str, message: str, fields=None):
     )
 
 
-def create_app(database_path: Path | None = None, static_dir: Path | None = None) -> FastAPI:
-    state_dir = Path(os.environ.get("AIC_STATE_DIR", ROOT / "storage" / "state"))
-    db_path = database_path or state_dir / "retailevidence.sqlite3"
-    frontend = static_dir or ROOT / "frontend" / "dist"
+def create_app(
+    database_path: Path | None = None,
+    static_dir: Path | None = None,
+    storage_root: Path | None = None,
+    public_data: Path | None = None,
+) -> FastAPI:
+    state_dir = configured_path("AIC_STATE_DIR", "storage/state")
+    db_path = project_path(database_path) if database_path else state_dir / "retailevidence.sqlite3"
+    frontend = project_path(static_dir) if static_dir else ROOT / "frontend" / "dist"
 
     @asynccontextmanager
     async def lifespan(app):
@@ -42,7 +50,21 @@ def create_app(database_path: Path | None = None, static_dir: Path | None = None
         finally:
             engine.dispose()
 
-    app = FastAPI(title="RetailEvidence Studio", version="0.1.0", lifespan=lifespan)
+    app = FastAPI(title="RetailEvidence Studio", version="0.2.0", lifespan=lifespan)
+    app.state.storage = (
+        project_path(storage_root)
+        if storage_root
+        else (
+            db_path.parent / "storage"
+            if database_path
+            else configured_path("AIC_STORAGE_DIR", "storage")
+        )
+    )
+    app.state.public_data = (
+        project_path(public_data) if public_data else
+        configured_path("AIC_PUBLIC_DATA_DIR", "storage/datasets/public")
+    )
+    app.state.import_lock = asyncio.Lock()
     app.add_middleware(
         TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"]
     )
@@ -87,6 +109,10 @@ def create_app(database_path: Path | None = None, static_dir: Path | None = None
         logger.error("Database operation failed", exc_info=exc)
         return error(503, "storage_unavailable", "暂时无法保存或读取项目，请稍后重试。")
 
+    @app.exception_handler(DataIssue)
+    async def data_error(_, exc):
+        return error(exc.status, exc.code, exc.message)
+
     @app.get("/api/health")
     def health():
         return {"status": "ok"}
@@ -104,8 +130,11 @@ def create_app(database_path: Path | None = None, static_dir: Path | None = None
         with app.state.sessions() as session:
             total = session.scalar(select(func.count()).select_from(Project).where(condition))
             items = session.scalars(
-                select(Project).where(condition)
-                .order_by(Project.updated_at.desc(), Project.id).offset(offset).limit(limit)
+                select(Project)
+                .where(condition)
+                .order_by(Project.updated_at.desc(), Project.id)
+                .offset(offset)
+                .limit(limit)
             ).all()
             return {"items": items, "total": total, "limit": limit, "offset": offset}
 
@@ -119,7 +148,9 @@ def create_app(database_path: Path | None = None, static_dir: Path | None = None
             except IntegrityError:
                 session.rollback()
                 return error(
-                    409, "name_exists", "已存在同名项目，请使用一个不同的名称。",
+                    409,
+                    "name_exists",
+                    "已存在同名项目，请使用一个不同的名称。",
                     {"name": "项目名称已被使用。"},
                 )
             return project
@@ -154,10 +185,14 @@ def create_app(database_path: Path | None = None, static_dir: Path | None = None
             except IntegrityError:
                 session.rollback()
                 return error(
-                    409, "name_exists", "已存在同名项目，请使用一个不同的名称。",
+                    409,
+                    "name_exists",
+                    "已存在同名项目，请使用一个不同的名称。",
                     {"name": "项目名称已被使用。"},
                 )
             return session.get(Project, str(project_id))
+
+    install_data_routes(app)
 
     if (frontend / "assets").is_dir():
         app.mount("/assets", StaticFiles(directory=frontend / "assets"), name="assets")

@@ -1,0 +1,218 @@
+[
+  {
+    "dataset": "groceries",
+    "source": {
+      "title": "arules Groceries",
+      "url": "https://raw.githubusercontent.com/mhahsler/arules/1eccd3800209b4ec62c7f41abd2ff5f584a20ec7/data/Groceries.rda",
+      "page": "https://raw.githubusercontent.com/mhahsler/arules/1eccd3800209b4ec62c7f41abd2ff5f584a20ec7/man/Groceries.Rd",
+      "revision": "1eccd3800209b4ec62c7f41abd2ff5f584a20ec7",
+      "attribution": "Michael Hahsler, Kurt Hornik, Thomas Reutterer (2006)",
+      "expected_baskets": 9835,
+      "expected_items": 169,
+      "license": "arules package GPL-3; Groceries requires citation; separate data license not specified"
+    },
+    "retrieved_at": "2026-10-07T06:57:18.332393+00:00",
+    "preparation_script_sha256": "1c374f0029a9244888c7268a18bb6c809e7fc64f03f0b088915e21338fe26a00",
+    "assets": [
+      {
+        "file": "Groceries.rda",
+        "bytes": 78449,
+        "sha256": "7a0e3408c631b5e3fe69af035a1209ffaf22b43b4af16218c5d5d23e761e6164",
+        "url": "https://raw.githubusercontent.com/mhahsler/arules/1eccd3800209b4ec62c7f41abd2ff5f584a20ec7/data/Groceries.rda"
+      },
+      {
+        "file": "DESCRIPTION",
+        "bytes": 2967,
+        "sha256": "d9f05c2a6018cac68124b4ba36d8328f3b4c159a47b2328d32444118c758328a",
+        "url": "https://raw.githubusercontent.com/mhahsler/arules/1eccd3800209b4ec62c7f41abd2ff5f584a20ec7/DESCRIPTION"
+      },
+      {
+        "file": "Groceries.Rd",
+        "bytes": 1143,
+        "sha256": "a78424bfa1b6da8697b59982d4c276bb5757667f292d9c1eb652c1d28c4162a9",
+        "url": "https://raw.githubusercontent.com/mhahsler/arules/1eccd3800209b4ec62c7f41abd2ff5f584a20ec7/man/Groceries.Rd"
+      }
+    ],
+    "profile_status": "complete",
+    "distribution": "Original/converted data excluded from code repository",
+    "profile": {
+      "rows": 43367,
+      "baskets": 9835,
+      "items": 169,
+      "empty_baskets": 0,
+      "duplicate_item_occurrences": 0,
+      "columns": [
+        "basket_id",
+        "item_id"
+      ],
+      "boundary": "Original sparse matrix column index + 1; no fabricated customer/time/money",
+      "label_source": "itemInfo.labels indexed by original ngCMatrix.i",
+      "csv_sha256": "056e57b710895c4e2fa236f2893deec9c543555c014a32429f82f3c9abbd7477",
+      "package_license": "GPL-3",
+      "data_notice": "Groceries.Rd requests citation of Hahsler, Hornik, Reutterer (2006); no separate data license specified"
+    },
+    "profiling_script_sha256": "b097a4b2affb60bc3415f12f72da07b8f8f00739abf66f3a1b28043f8f3c7ce1"
+  },
+  {
+    "dataset": "online_retail",
+    "source": {
+      "title": "UCI Online Retail",
+      "id": 352,
+      "url": "https://archive.ics.uci.edu/static/public/352/online%2Bretail.zip",
+      "page": "https://archive.ics.uci.edu/dataset/352/online+retail",
+      "doi": "10.24432/C5BW33",
+      "license": "CC BY 4.0",
+      "attribution": "Daqing Chen (2015), UCI Machine Learning Repository",
+      "expected_rows": 541909,
+      "original_filename": "Online Retail.xlsx"
+    },
+    "retrieved_at": "2026-10-07T06:57:13.190612+00:00",
+    "preparation_script_sha256": "1c374f0029a9244888c7268a18bb6c809e7fc64f03f0b088915e21338fe26a00",
+    "assets": [
+      {
+        "file": "download.zip",
+        "bytes": 23715478,
+        "sha256": "f5385cbb54bbebf7196389109c6b0621faab0c304e3702548165e71c84aede8b",
+        "url": "https://archive.ics.uci.edu/static/public/352/online%2Bretail.zip"
+      },
+      {
+        "file": "source.xlsx",
+        "bytes": 23715344,
+        "sha256": "43465a06f2ccf7c8b5bd2892bc7defb52f97487934fe93b16ae4c3936424676d",
+        "url": "https://archive.ics.uci.edu/static/public/352/online%2Bretail.zip"
+      }
+    ],
+    "profile_status": "complete",
+    "distribution": "Original/converted data excluded from code repository",
+    "profile": {
+      "rows": 541909,
+      "columns": [
+        "InvoiceNo",
+        "StockCode",
+        "Description",
+        "Quantity",
+        "InvoiceDate",
+        "UnitPrice",
+        "CustomerID",
+        "Country"
+      ],
+      "missing": {
+        "InvoiceNo": 0,
+        "StockCode": 0,
+        "Description": 1454,
+        "Quantity": 0,
+        "InvoiceDate": 0,
+        "UnitPrice": 0,
+        "CustomerID": 135080,
+        "Country": 0
+      },
+      "sheets": {
+        "Online Retail": 541909
+      },
+      "date_min": "2010-12-01T08:26:00",
+      "date_max": "2011-12-09T12:50:00",
+      "unique_order_ids": 25900,
+      "unique_customer_ids": 4372,
+      "cancellation_rows": 9288,
+      "nonpositive_quantity": 10624,
+      "nonpositive_unit_price": 2517,
+      "currency": "GBP",
+      "cancellation_meaning": "Invoice starts with C",
+      "parquet_sha256": "c0a6b6d27defeae17ba087e2a9e986f9cb2124682cb32534823f89ebf748d293",
+      "options": {
+        "encoding": "utf-8-sig",
+        "delimiter": ",",
+        "sheets": [
+          "Online Retail"
+        ],
+        "shape": "transactions",
+        "basket_column": null,
+        "item_separator": "|"
+      },
+      "overlap_notice": "Online Retail is within Retail II's 2010-2011 period; never combine as independent samples"
+    },
+    "profiling_script_sha256": "b097a4b2affb60bc3415f12f72da07b8f8f00739abf66f3a1b28043f8f3c7ce1"
+  },
+  {
+    "dataset": "online_retail_ii",
+    "source": {
+      "title": "UCI Online Retail II",
+      "id": 502,
+      "url": "https://archive.ics.uci.edu/static/public/502/online%2Bretail%2Bii.zip",
+      "page": "https://archive.ics.uci.edu/dataset/502/online+retail+ii",
+      "doi": "10.24432/C5CG6D",
+      "license": "CC BY 4.0",
+      "attribution": "Daqing Chen (2012), UCI Machine Learning Repository",
+      "expected_rows": 1067371,
+      "original_filename": "online_retail_II.xlsx"
+    },
+    "retrieved_at": "2026-10-07T06:57:17.737542+00:00",
+    "preparation_script_sha256": "1c374f0029a9244888c7268a18bb6c809e7fc64f03f0b088915e21338fe26a00",
+    "assets": [
+      {
+        "file": "download.zip",
+        "bytes": 45622418,
+        "sha256": "572e36277c2390fbfde10664750731e0a86f55e33470d91919085f0408e67bfb",
+        "url": "https://archive.ics.uci.edu/static/public/502/online%2Bretail%2Bii.zip"
+      },
+      {
+        "file": "source.xlsx",
+        "bytes": 45622278,
+        "sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+        "url": "https://archive.ics.uci.edu/static/public/502/online%2Bretail%2Bii.zip"
+      }
+    ],
+    "profile_status": "complete",
+    "distribution": "Original/converted data excluded from code repository",
+    "profile": {
+      "rows": 1067371,
+      "columns": [
+        "Invoice",
+        "StockCode",
+        "Description",
+        "Quantity",
+        "InvoiceDate",
+        "Price",
+        "Customer ID",
+        "Country"
+      ],
+      "missing": {
+        "Invoice": 0,
+        "StockCode": 0,
+        "Description": 4382,
+        "Quantity": 0,
+        "InvoiceDate": 0,
+        "Price": 0,
+        "Customer ID": 243007,
+        "Country": 0
+      },
+      "sheets": {
+        "Year 2009-2010": 525461,
+        "Year 2010-2011": 541910
+      },
+      "date_min": "2009-12-01T07:45:00",
+      "date_max": "2011-12-09T12:50:00",
+      "unique_order_ids": 53628,
+      "unique_customer_ids": 5942,
+      "cancellation_rows": 19494,
+      "nonpositive_quantity": 22950,
+      "nonpositive_unit_price": 6207,
+      "currency": "GBP",
+      "cancellation_meaning": "Invoice starts with C",
+      "parquet_sha256": "bb6bc595245526403c3ff14378c10b24a692f9a2c911c7c9c90cca89571b227c",
+      "options": {
+        "encoding": "utf-8-sig",
+        "delimiter": ",",
+        "sheets": [
+          "Year 2009-2010",
+          "Year 2010-2011"
+        ],
+        "shape": "transactions",
+        "basket_column": null,
+        "item_separator": "|"
+      },
+      "overlap_notice": "Online Retail is within Retail II's 2010-2011 period; never combine as independent samples"
+    },
+    "profiling_script_sha256": "b097a4b2affb60bc3415f12f72da07b8f8f00739abf66f3a1b28043f8f3c7ce1"
+  }
+]

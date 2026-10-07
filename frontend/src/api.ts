@@ -10,12 +10,12 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function request<T>(path: string, options: RequestInit = {}, timeout = 15000): Promise<T> {
   let response: Response
   try {
     response = await fetch(`/api${path}`, {
       ...options,
-      signal: options.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(15000)]) : AbortSignal.timeout(15000),
+      signal: options.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(timeout)]) : AbortSignal.timeout(timeout),
       headers: { 'Content-Type': 'application/json', ...options.headers },
     })
   } catch (error) {
