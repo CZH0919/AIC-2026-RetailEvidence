@@ -70,3 +70,52 @@ class MappingVersion(Base):
     config: Mapped[str] = mapped_column(Text)
     validation: Mapped[str] = mapped_column(Text)
     created_at: Mapped[str] = mapped_column(String(40), default=timestamp)
+
+
+class CleaningPolicy(Base):
+    __tablename__ = "cleaning_policies"
+    __table_args__ = (
+        UniqueConstraint("dataset_version_id", "number"),
+        UniqueConstraint("mapping_version_id", "config_sha256"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    dataset_version_id: Mapped[str] = mapped_column(ForeignKey("dataset_versions.id"), index=True)
+    mapping_version_id: Mapped[str] = mapped_column(ForeignKey("mapping_versions.id"))
+    number: Mapped[int] = mapped_column(Integer)
+    config: Mapped[str] = mapped_column(Text)
+    config_sha256: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[str] = mapped_column(String(40), default=timestamp)
+
+
+class AnalysisRun(Base):
+    __tablename__ = "analysis_runs"
+    __table_args__ = (UniqueConstraint("project_id", "idempotency_key"),)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    project_id: Mapped[str] = mapped_column(ForeignKey("projects.id"), index=True)
+    dataset_version_id: Mapped[str] = mapped_column(ForeignKey("dataset_versions.id"))
+    mapping_version_id: Mapped[str] = mapped_column(ForeignKey("mapping_versions.id"))
+    policy_id: Mapped[str] = mapped_column(ForeignKey("cleaning_policies.id"))
+    kind: Mapped[str] = mapped_column(String(32), default="quality")
+    idempotency_key: Mapped[str] = mapped_column(String(80))
+    request_sha256: Mapped[str] = mapped_column(String(64))
+    parameters: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(40), default="queued", index=True)
+    phase: Mapped[str] = mapped_column(String(40), default="queued")
+    progress: Mapped[int] = mapped_column(Integer, default=0)
+    message: Mapped[str] = mapped_column(Text, default="已加入处理队列。")
+    cancel_requested: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[str] = mapped_column(String(40), default=timestamp)
+    started_at: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    finished_at: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    result: Mapped[str | None] = mapped_column(Text, nullable=True)
+    error_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    peak_rss_bytes: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class RunEvent(Base):
+    __tablename__ = "run_events"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("analysis_runs.id"), index=True)
+    status: Mapped[str] = mapped_column(String(40))
+    message: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[str] = mapped_column(String(40), default=timestamp)

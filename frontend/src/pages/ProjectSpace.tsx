@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { App, Button } from 'antd'
 import { ArrowLeftOutlined, ArrowRightOutlined, CheckOutlined, EditOutlined, FileTextOutlined, FolderOutlined } from '@ant-design/icons'
 import { Link, NavLink, useLocation, useParams } from 'react-router-dom'
@@ -11,6 +11,8 @@ import type { Project } from '../types'
 import { formatDate } from './ProjectLibrary'
 import { DataWorkspace } from '../components/DataWorkspace'
 import { dataApi } from '../data'
+
+const QualityWorkspace = lazy(() => import('../components/QualityWorkspace'))
 
 export function ProjectRoute() {
   const { projectId } = useParams()
@@ -28,6 +30,7 @@ function ProjectSpace({ projectId }: { projectId: string }) {
   const { remember } = useWorkspace()
   const { message } = App.useApp()
   const isData = useLocation().pathname.endsWith('/data')
+  const isQuality = useLocation().pathname.endsWith('/quality')
   useEffect(() => {
     let active = true
     dataApi.versions(projectId).then(r => { if (active) setVersionCount(r.items.length) }).catch(() => { if (active) setVersionCount(null) })
@@ -52,8 +55,8 @@ function ProjectSpace({ projectId }: { projectId: string }) {
     <div className="page-heading project-heading"><div className="project-title"><span className={`project-icon large ${project.color}`}><FolderOutlined /></span><div><h1>{project.name}</h1><p>{project.description || '一个新的分析空间，等待你的业务问题。'}</p></div></div>
       <Button icon={<EditOutlined />} onClick={() => setEditing(true)}>编辑项目</Button>
     </div>
-    <nav className="project-tabs" aria-label="项目导航"><NavLink to={`/projects/${project.id}`} end>项目概览</NavLink><NavLink to={`/projects/${project.id}/data`}>数据与版本</NavLink></nav>
-    {isData ? <DataWorkspace projectId={project.id} /> : <div className="project-content-grid">
+    <nav className="project-tabs" aria-label="项目导航"><NavLink to={`/projects/${project.id}`} end>项目概览</NavLink><NavLink to={`/projects/${project.id}/data`}>数据与版本</NavLink><NavLink to={`/projects/${project.id}/quality`}>质量与任务</NavLink></nav>
+    {isQuality ? <Suspense fallback={<LoadingState />}><QualityWorkspace projectId={project.id} /></Suspense> : isData ? <DataWorkspace projectId={project.id} /> : <div className="project-content-grid">
       <section className="workspace-panel">
         <div className="section-title"><h2>{isData ? '准备第一份交易数据' : '数据与分析'}</h2><span>{isData ? '从清晰的明细开始' : '当前项目'}</span></div>
         <EmptyState compact title={versionCount ? `已保存 ${versionCount} 个数据版本` : '从数据开始你的分析'}

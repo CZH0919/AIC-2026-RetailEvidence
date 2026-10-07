@@ -17,8 +17,10 @@ from .data_api import install_data_routes
 from .database import create_database
 from .import_formats import DataIssue
 from .models import Project, timestamp
+from .quality_api import install_quality_routes
 from .schemas import ProjectInput, ProjectList, ProjectRead, ProjectUpdate, name_key
 from .settings import configured_path, project_path
+from .task_runner import TaskRunner
 
 ROOT = Path(__file__).resolve().parents[2]
 logger = logging.getLogger(__name__)
@@ -36,21 +38,30 @@ def create_app(
     static_dir: Path | None = None,
     storage_root: Path | None = None,
     public_data: Path | None = None,
+    runner_options: dict | None = None,
 ) -> FastAPI:
     state_dir = configured_path("AIC_STATE_DIR", "storage/state")
     db_path = project_path(database_path) if database_path else state_dir / "retailevidence.sqlite3"
-    frontend = project_path(static_dir) if static_dir else ROOT / "frontend" / "dist"
+    frontend = (
+        project_path(static_dir)
+        if static_dir
+        else configured_path("AIC_STATIC_DIR", "frontend/dist")
+    )
 
     @asynccontextmanager
     async def lifespan(app):
         engine, sessions = create_database(db_path)
         app.state.sessions = sessions
+        runner = TaskRunner(app, db_path, **(runner_options or {}))
+        app.state.task_runner = runner
+        runner.start()
         try:
             yield
         finally:
+            await runner.stop()
             engine.dispose()
 
-    app = FastAPI(title="RetailEvidence Studio", version="0.2.0", lifespan=lifespan)
+    app = FastAPI(title="RetailEvidence Studio", version="0.3.0", lifespan=lifespan)
     app.state.storage = (
         project_path(storage_root)
         if storage_root
@@ -61,8 +72,9 @@ def create_app(
         )
     )
     app.state.public_data = (
-        project_path(public_data) if public_data else
-        configured_path("AIC_PUBLIC_DATA_DIR", "storage/datasets/public")
+        project_path(public_data)
+        if public_data
+        else configured_path("AIC_PUBLIC_DATA_DIR", "storage/datasets/public")
     )
     app.state.import_lock = asyncio.Lock()
     app.add_middleware(
@@ -193,6 +205,7 @@ def create_app(
             return session.get(Project, str(project_id))
 
     install_data_routes(app)
+    install_quality_routes(app)
 
     if (frontend / "assets").is_dir():
         app.mount("/assets", StaticFiles(directory=frontend / "assets"), name="assets")

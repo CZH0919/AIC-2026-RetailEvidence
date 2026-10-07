@@ -57,7 +57,8 @@ class OrderAmounts:
             quantity, price = money(row.get("quantity")), money(row.get("unit_price"))
             line = (
                 AMOUNT_CONTEXT.multiply(quantity, price)
-                if quantity is not None and price is not None else None
+                if quantity is not None and price is not None
+                else None
             )
         if line is None:
             state["line_complete"] = False

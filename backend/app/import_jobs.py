@@ -8,6 +8,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from .import_formats import DataIssue
+from .locks import FileLease
 from .settings import PROJECT_ROOT
 
 
@@ -21,19 +22,13 @@ async def exclusive(app):
         root.mkdir(parents=True, exist_ok=True)
         if shutil.disk_usage(root).free < 20 * 1024**3:
             raise DataIssue("可用存储空间不足，请联系维护者后重试。", "disk_limit", 507)
-        with (root / ".import.lock").open("ab") as handle:
-            if sys.platform != "win32":
-                import fcntl
-
-                try:
-                    fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                except BlockingIOError as exc:
-                    raise DataIssue("另一份文件正在处理，请稍后重试。", "import_busy", 409) from exc
-            try:
-                yield
-            finally:
-                if sys.platform != "win32":
-                    fcntl.flock(handle, fcntl.LOCK_UN)
+        lease = FileLease(root / ".import.lock")
+        if not lease.acquire():
+            raise DataIssue("另一项数据任务正在处理，请稍后重试。", "import_busy", 409)
+        try:
+            yield
+        finally:
+            lease.release()
 
 
 async def run_job(folder: Path, action: str, **kwargs):

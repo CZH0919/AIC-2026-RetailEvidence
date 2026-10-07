@@ -21,6 +21,7 @@ export function Application() {
     <Route path="/projects" element={<ProjectLibrary />} />
     <Route path="/projects/:projectId" element={<ProjectRoute />} />
     <Route path="/projects/:projectId/data" element={<ProjectRoute />} />
+    <Route path="/projects/:projectId/quality" element={<ProjectRoute />} />
     <Route path="*" element={<EmptyState title="这个页面不存在" description="返回项目库，继续你的分析。" action={<Link className="button-link" to="/projects">返回项目库</Link>} />} />
   </Route></Routes></BrowserRouter></ErrorBoundary>
 }

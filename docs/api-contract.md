@@ -20,7 +20,7 @@
 
 ## 持久化
 
-SQLite 存储项目、导入草稿、数据版本和映射版本，启用 WAL、外键约束及 5 秒 busy timeout。v1 是项目初始结构；v2 以新增表方式迁移，不删除项目。未知 schema 版本拒绝启动，不尝试覆盖数据库。项目名称与各级版本号有唯一约束。
+SQLite 存储项目、导入草稿、数据版本、映射版本、清洗策略、运行及状态事件，启用 WAL、外键约束及 5 秒 busy timeout。v1 是项目初始结构，v2 增加数据/映射，v3 增加策略/运行；均以新增表方式迁移，不删除项目。未知 schema 版本拒绝启动，不尝试覆盖数据库。项目名称与各级版本号有唯一约束。
 
 生产默认状态目录为项目内 `storage/state`。测试把数据库放在独立临时目录，验证跨应用重启读取和并发写入；不依赖浏览器缓存保存项目内容。
 
@@ -29,6 +29,7 @@ SQLite 存储项目、导入草稿、数据版本和映射版本，启用 WAL、
 - `/projects`：项目库、搜索、分页、新建。
 - `/projects/:projectId`：项目概览、资料编辑。
 - `/projects/:projectId/data`：文件上传、公开数据选择、预览、字段草稿、确认、版本切换和映射历史。
+- `/projects/:projectId/quality`：清洗策略、业务范围、质量与能力、有效视图预览、任务取消及历史。
 - URL 中的项目 UUID 决定内容。切换时取消旧读取并重新挂载项目视图，避免迟到响应串入其他项目。
 - localStorage 仅缓存最多四个最近访问入口；禁用缓存时项目功能仍可用。刷新及直接打开详情链接从 API 恢复真实数据。
 
@@ -55,15 +56,21 @@ SQLite 存储项目、导入草稿、数据版本和映射版本，启用 WAL、
 
 相同 preview_token 与相同映射的确认是幂等的；已保存文件带不同映射重试会返回冲突，需通过映射修订接口追加。故障清理只针对本次新建产物，不覆盖既有数据版本。完整结构见 [输入与版本合同](data-contract.md)。
 
+## 质量与运行
+
+`/api/projects/{id}/runs` 已实现质量任务的提交、历史、详情、取消、分析准入校验和有效视图预览。清洗策略挂在数据版本下。完整路径、schema、状态与不可变资产见 [质量与任务合同](quality-and-runs.md)。分析入口校验不执行算法；聚类、关联和报告接口尚未实现。
+
+`AnalysisRun` 固定 project_id、dataset_version_id、mapping_version_id、policy_id、kind、parameters、idempotency_key；结果引用同一个 run_id 和输入上下文。质量证据 ID 与指标已随报告保存，单独 evidence 路由暂未实现。
+
 ## 后续模块接口边界
 
-以下是后续模块的合同，不是已实现的 API：
+算法与独立证据接口接入时继续遵循：
 
 | 对象 | 必须携带的上下文 | 接入原则 |
 | --- | --- | --- |
 | AnalysisRun | project_id、data_version_id、run_id | 固定映射、清洗及参数版本；状态与产物属于同一运行 |
 | Evidence | project_id、data_version_id、run_id、evidence_id | 引用必须属于同一项目及运行，不跨版本拼接 |
 
-后续运行路由归属为 `/api/projects/{id}/runs` 及运行下的 evidence。服务端必须逐层校验资源归属，不能仅依靠前端传入 ID。当前未实现的 API 返回 404，不伪造空分析结果或成功状态。
+后续算法任务可扩展运行机制，证据归属运行下的 evidence。服务端必须逐层校验资源归属，不能仅依靠前端传入 ID。当前未实现的 API 返回 404，不伪造空分析结果或成功状态。见 [分析模块接入](analysis-extension.md)。
 
-组件接入点：`DataWorkspace` 的版本视图、`ImportEditor` 的导入流程、`MappingEditor` 的字段与业务口径、`DataPreview` 原始预览和 `States` 的加载/错误/空状态。AI 网关、清洗质量、任务队列、挖掘和报告不由导入接口代替。
+组件接入点：`DataWorkspace` 的版本视图、`ImportEditor` 的导入流程、`MappingEditor` 的字段与业务口径、`DataPreview` 原始预览、`QualityWorkspace` 的策略/任务、`QualityReport` 的能力/有效视图，以及 `States` 的加载/错误/空状态。AI 网关、挖掘和报告应有独立模块，不由导入或质量接口代替。
