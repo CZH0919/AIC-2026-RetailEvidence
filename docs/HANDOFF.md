@@ -18,7 +18,7 @@ bash scripts/run.sh
 llama-server -m "$MODEL_FILE" --host 127.0.0.1 --port 18082 -t 4 -c 2048 -np 1 -ngl 0
 ```
 
-本轮实际二进制版本b11429/d81235049；模型文件SHA见THIRD_PARTY。通用命令中的MODEL_FILE和PATH须由接手者指定；机器实际命令与环境记录在个人evidence/service_commands_candidate_02.json。不需要远端Codex CLI或GitHub凭据。
+本轮实际二进制版本b11429/d81235049；模型文件SHA见THIRD_PARTY。通用命令中的MODEL_FILE和PATH须由接手者指定；机器实际命令与环境记录在个人evidence/service_commands_release.json（最终发布后实际记录）；较早候选服务见对应candidate文件。不需要远端Codex CLI或GitHub凭据。
 
 Windows使用现有SSH私钥正常认证，不读取或复制其内容。显式 `UserKnownHostsFile` 指向D盘已有记录，`StrictHostKeyChecking=yes`、`UpdateHostKeys=no`；首次变化立即停止。C盘SSH/Git配置、认证、环境变量和日常浏览器均未修改。D盘Invoke-InWorkspace.ps1仅进程级重定向临时/cache/pycache/npm/Playwright/Git配置；禁止全局安装、系统清理和默认C盘浏览器profile。私有仓库Deploy Key只有D盘限制ACL；Git配置仅仓库级或GIT_SSH_COMMAND，GitHub官方指纹固定。
 
@@ -43,3 +43,5 @@ Windows使用现有SSH私钥正常认证，不读取或复制其内容。显式 
 - SQLite忙/备注409：保持expected_revision检查，刷新读取后再决定，不覆盖他人备注。
 
 正式整合前重新检查队友文件哈希和修改时间；正式无.git，使用清单核对，不能只读取自己的Git状态。旧公开仓库只为历史来源，upstream保留。新origin必须LSTongXXN/RetailEvidence-Studio，初始Private；任何公开、强推、危险schema迁移或正式部署均需单独批准。
+
+最终发布候选的源码/文档一致性以GitHub main为准；服务器个人发布检出计划位置 /home/ubuntu/retailevidence_personal_20261009_01/release/source，自己的state/storage继续沿用，不部署共享AIC_Project。最终实际启动命令/端口/环境见个人evidence/service_commands_release.json；若该文件尚未生成，发布运行尚未完成。字段助手只解释列名建议，原始样例不送模型，应用后confirmed仍false；保存版本必须现有确认流程，无schema迁移。

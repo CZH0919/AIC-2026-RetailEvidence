@@ -1,0 +1,113 @@
+{
+  "sha": "4349758eb79407c96d26c23e85b9be98bc22b40d",
+  "checks": [
+    {
+      "id": "clone",
+      "status": "PASS",
+      "command": [
+        "git",
+        "clone",
+        "--branch",
+        "dev/final-delivery",
+        "/home/ubuntu/retailevidence_personal_20261009_01/baseline/final_candidate.bundle",
+        "/home/ubuntu/retailevidence_personal_20261009_01/verification/final_candidate/source"
+      ],
+      "seconds": 0.050850868225097656
+    },
+    {
+      "id": "venv",
+      "status": "PASS",
+      "command": [
+        "/home/ubuntu/AIC_Shared/tools/bin/uv",
+        "venv",
+        "--python",
+        "/usr/bin/python3",
+        "/home/ubuntu/retailevidence_personal_20261009_01/verification/final_candidate/source/.venv"
+      ],
+      "seconds": 0.007774829864501953
+    },
+    {
+      "id": "dependencies",
+      "status": "PASS",
+      "command": [
+        "/home/ubuntu/AIC_Shared/tools/bin/uv",
+        "pip",
+        "install",
+        "--python",
+        "/home/ubuntu/retailevidence_personal_20261009_01/verification/final_candidate/source/.venv/bin/python",
+        "-r",
+        "requirements-dev.txt"
+      ],
+      "seconds": 0.1592109203338623
+    },
+    {
+      "id": "npm",
+      "status": "PASS",
+      "command": [
+        "npm",
+        "ci",
+        "--no-audit",
+        "--no-fund",
+        "--ignore-scripts"
+      ],
+      "seconds": 2.8884854316711426
+    },
+    {
+      "id": "build",
+      "status": "PASS",
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--",
+        "--configLoader",
+        "runner"
+      ],
+      "seconds": 1.1212458610534668
+    },
+    {
+      "id": "ruff",
+      "status": "PASS",
+      "command": [
+        "/home/ubuntu/retailevidence_personal_20261009_01/verification/final_candidate/source/.venv/bin/ruff",
+        "check",
+        "--no-cache",
+        "backend",
+        "scripts/test_record_classification.py",
+        "scripts/test_task_safety.py",
+        "scripts/test_ai_contract.py",
+        "scripts/accept_classified_public.py",
+        "scripts/backup_sales_release.py",
+        "scripts/test_backup_safety.py"
+      ],
+      "seconds": 0.010283708572387695
+    },
+    {
+      "id": "pytest",
+      "status": "PASS",
+      "command": [
+        "/home/ubuntu/retailevidence_personal_20261009_01/verification/final_candidate/source/.venv/bin/python",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "scripts/test_record_classification.py",
+        "scripts/test_task_safety.py",
+        "scripts/test_ai_contract.py",
+        "-q"
+      ],
+      "seconds": 11.036562442779541
+    },
+    {
+      "id": "backup",
+      "status": "PASS",
+      "command": [
+        "/home/ubuntu/retailevidence_personal_20261009_01/verification/final_candidate/source/.venv/bin/python",
+        "-B",
+        "scripts/test_backup_safety.py"
+      ],
+      "seconds": 0.08608174324035645
+    }
+  ]
+}

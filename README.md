@@ -6,6 +6,8 @@
 
 分类支持实物、运费/服务、人工调整、其他、待确认。规则按数据版本与字段版本冻结，来源行规则优先，其次商品编号、已映射分类、默认口径；类型与金额是否计入分别确认。待确认项能核对明细，关键类型未知时暂停不可靠预测与建议。不会按名称包含 POST 等字符串全局删行。旧报告保留原口径，修改分类产生新运行。
 
+预览阶段可请本地CPU AI解释字段，列名建议由程序提出；点击应用后仍需人工确认类型、金额等业务口径。字段解释不保存数据版本、不自动确认。
+
 AI 只解释冻结证据，数字由程序填写。没有库存不能算进货量，没有成本不算利润；七天销量参考不等于整月采购量。公开批发数据验收不代表小店真实经营收益。
 
 ## 运行（Ubuntu，Python 3.12、Node 24）
@@ -44,11 +46,11 @@ bash scripts/run.sh
 ```bash
 export PYTHONPATH="$PWD/backend"
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2
-.venv/bin/python -B -m pytest -p no:cacheprovider scripts/test_record_classification.py scripts/test_task_safety.py scripts/test_ai_contract.py -q
-.venv/bin/ruff check --no-cache backend scripts/test_record_classification.py scripts/test_task_safety.py scripts/test_ai_contract.py scripts/accept_classified_public.py
+.venv/bin/python -B -m pytest -p no:cacheprovider scripts/test_record_classification.py scripts/test_task_safety.py scripts/test_ai_contract.py scripts/test_field_assistant.py -q
+.venv/bin/ruff check --no-cache backend scripts/test_record_classification.py scripts/test_task_safety.py scripts/test_ai_contract.py scripts/test_field_assistant.py scripts/accept_classified_public.py
 ```
 
-38 个唯一测试在干净环境通过，后续增加2项边界已单独通过；最终全套复验见报告，另有真实原始 XLSX、日/月派生、CPU AI、旧分析及桌面/390px 浏览器执行记录。最终提交的复验状态见 [验收报告](docs/ACCEPTANCE_REPORT.md)、[矩阵](docs/FEATURE_ACCEPTANCE_MATRIX.md)、[机器可读矩阵](docs/acceptance_matrix.csv)。截图与运行证据只表示标注的实际提交，不替代最终复验。
+47 个唯一测试在隔离Git检出通过（另6个子测试不重复计数），7项在线备份机制、20项HTTP回归也有独立执行记录。最新候选bb8b645d19abd6422f47f6682a21a9f55b3124a6已通过真实字段CPU AI、完整上传/类型确认/月报/备注/AI/全部导出/中文PDF、桌面390px和取消状态验收。最终远端main的fetch/SHA与复验收据记录在个人工作区evidence/release_verification.json；Git中的候选证据不冒充最终远端复验。详见 [报告](docs/ACCEPTANCE_REPORT.md)、[矩阵](docs/FEATURE_ACCEPTANCE_MATRIX.md) 和 [机器矩阵](docs/acceptance_matrix.csv)。
 
 预测实测选择四周平均：独立测试 MAE 63.6291、WAPE 65.3999%；复杂模型未超过简单基线。测试商品 1000/eligible 1321，发布382；异常2106/93341，只是无标签报警，没有检测准确率。
 
@@ -62,4 +64,4 @@ export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_TH
 
 ![真实公开数据月报](docs/verification/monthly_desktop.png)
 
-截图来自9fe8c11的真实浏览器月汇总上传流程，待确认/费用展示与数字对应上述run，不是设计Mock。
+截图来自bb8b645的真实浏览器月汇总上传流程，待确认/费用展示对应docs/verification/final_candidate/browser_import.json中的run，不是设计Mock。

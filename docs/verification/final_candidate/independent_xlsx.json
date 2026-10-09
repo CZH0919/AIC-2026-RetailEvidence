@@ -1,0 +1,32 @@
+{
+  "source_sha256": "43465a06f2ccf7c8b5bd2892bc7defb52f97487934fe93b16ae4c3936424676d",
+  "xlsx_rows": 541909,
+  "legacy_all_record_quantity": 628438.0,
+  "legacy_all_record_amount": 1154194.23,
+  "physical_quantity": 626765.0,
+  "selected_amount": 1105884.75,
+  "excluded_conflict_quantity": 307.0,
+  "excluded_conflict_amount": 785.07,
+  "breakdown": {
+    "physical_product": {
+      "quantity": 626765.0,
+      "amount": 1105884.75,
+      "rows": 59145
+    },
+    "shipping_service": {
+      "quantity": 406.0,
+      "amount": 26681.09,
+      "rows": 183
+    },
+    "manual_adjustment": {
+      "quantity": 1263.0,
+      "amount": 21548.67,
+      "rows": 50
+    },
+    "other": {
+      "quantity": 4.0,
+      "amount": 79.72,
+      "rows": 4
+    }
+  }
+}
