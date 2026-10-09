@@ -4,7 +4,7 @@ import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
 import { Shell } from './components/Shell'
 import { EmptyState } from './components/States'
 import { ProjectLibrary } from './pages/ProjectLibrary'
-import { ProjectRoute } from './pages/ProjectSpace'
+import { ProjectRoute } from './pages/RetailProjectSpace'
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false }
@@ -21,6 +21,7 @@ export function Application() {
     <Route path="/projects" element={<ProjectLibrary />} />
     <Route path="/projects/:projectId" element={<ProjectRoute />} />
     <Route path="/projects/:projectId/data" element={<ProjectRoute />} />
+    <Route path="/projects/:projectId/products" element={<ProjectRoute />} />
     <Route path="/projects/:projectId/quality" element={<ProjectRoute />} />
     <Route path="*" element={<EmptyState title="这个页面不存在" description="返回项目库，继续你的分析。" action={<Link className="button-link" to="/projects">返回项目库</Link>} />} />
   </Route></Routes></BrowserRouter></ErrorBoundary>

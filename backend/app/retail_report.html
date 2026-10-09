@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>$title</title>
+<style>
+body { font:14px/1.6 system-ui,sans-serif;color:#252b2b;margin:32px auto;max-width:900px;padding:0 20px; }
+h1 { font-size:26px; } h2 { font-size:18px;border-bottom:1px solid #ddd;padding-bottom:8px; }
+.stats { display:flex;gap:36px;flex-wrap:wrap; } .stats strong { display:block;font-size:22px; }
+table { border-collapse:collapse;width:100%;font-size:12px; }
+th,td { padding:9px;text-align:left;border-bottom:1px solid #ddd;overflow-wrap:anywhere; }
+th:first-child { width:26%; } th:nth-child(2) { width:12%; }
+td:nth-child(2) { white-space:nowrap; }
+small,footer { color:#596565;font-size:11px; } li { margin:12px 0; } p { margin:4px 0; }
+.appendix { break-before:page; }
+.chart { display:flex;align-items:flex-end;gap:3px;height:100px;margin:14px 0 4px;border-bottom:1px solid #ddd; }
+.chart span { flex:1;min-height:1px; }
+@media print { @page { size:A4;margin:14mm; } body { margin:0;padding:0;font-size:13px; }
+  h1 { font-size:22px;margin:0 0 14px; } h2 { margin:14px 0 6px;padding-bottom:4px; }
+  th,td { padding:5px; } .chart { height:60px; } li { margin:8px 0; }
+  li,tr { break-inside:avoid; } }
+</style>
+<h1>$title</h1>
+<div class="stats"><div>销售额<strong>$amount</strong></div>
+<div>销量<strong>$quantity</strong></div><div>商品数<strong>$products</strong></div></div>
+$chart
+<h2>本月值得留意的商品</h2>
+<table><thead><tr><th>商品</th><th>销量</th><th>原因</th></tr></thead>
+<tbody>$product_rows</tbody></table>
+<small>共 $attention 件待关注商品，本页展示 $shown 件。</small>
+<h2>下个月先做这些</h2><ol>$actions</ol>
+<footer><p>$notice</p><p>来源：$sources · 分析记录：$context</p></footer>
+$appendix
+</html>

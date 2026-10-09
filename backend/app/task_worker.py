@@ -33,8 +33,14 @@ def main():
     except MemoryError:
         (output / ".error.json").write_text(json.dumps({"code": "memory_limit"}))
         raise SystemExit(3) from None
-    except Exception:
-        # Detailed diagnostics stay in the private task log, never the UI.
+    except Exception as exc:
+        from .import_formats import DataIssue
+
+        if isinstance(exc, DataIssue):
+            (output / ".error.json").write_text(
+                json.dumps({"code": exc.code, "message": exc.message})
+            )
+            raise SystemExit(2) from None
         traceback.print_exc()
         (output / ".error.json").write_text(json.dumps({"code": "worker_error"}))
         raise SystemExit(2) from None

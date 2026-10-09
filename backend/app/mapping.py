@@ -11,10 +11,19 @@ ALIASES = {
     "item_id": ["itemid", "productid", "stockcode", "商品编号", "商品编码"],
     "item_name": ["itemname", "productname", "description", "商品名称"],
     "customer_id": ["customerid", "客户编号", "客户id"],
-    "event_time": ["eventtime", "invoicedate", "orderdate", "交易时间", "订单时间"],
-    "quantity": ["quantity", "qty", "数量"],
+    "event_time": [
+        "eventtime",
+        "invoicedate",
+        "orderdate",
+        "date",
+        "日期",
+        "销售日期",
+        "交易时间",
+        "订单时间",
+    ],
+    "quantity": ["quantity", "qty", "数量", "销量", "销售数量"],
     "unit_price": ["unitprice", "单价"],
-    "line_amount": ["lineamount", "linetotal", "行金额", "明细金额"],
+    "line_amount": ["lineamount", "linetotal", "行金额", "明细金额", "销售额", "实收金额"],
     "order_amount": ["orderamount", "ordertotal", "订单总额"],
     "currency": ["currency", "币种"],
     "record_status": ["recordstatus", "orderstatus", "交易状态"],
@@ -50,6 +59,16 @@ def validate_mapping(mapping: MappingInput, preview: dict, options: dict, confir
         raise DataIssue("请确认字段和业务含义后再保存。", "confirmation_required")
     if not chosen:
         raise DataIssue("请至少对应一个字段。", "mapping_empty")
+    if mapping.record_kind == "monthly_summary" and not mapping.summary_month:
+        raise DataIssue("月汇总需要确认所属月份。", "summary_month_required")
+    if mapping.record_kind != "transactions" and (
+        mapping.order_boundary != "unavailable"
+        or chosen.get("order_id")
+        or mapping.amount_mode == "order_amount"
+    ):
+        raise DataIssue(
+            "销售汇总没有逐笔订单，请取消订单字段并使用行金额或不使用金额。", "summary_boundary"
+        )
     if mapping.order_boundary != "unavailable" and not chosen.get("order_id"):
         raise DataIssue("请指定订单或购物篮标识列；无法确定时选择边界未知。")
     if mapping.order_boundary == "unavailable" and chosen.get("order_id"):

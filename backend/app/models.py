@@ -95,6 +95,7 @@ class AnalysisRun(Base):
     dataset_version_id: Mapped[str] = mapped_column(ForeignKey("dataset_versions.id"))
     mapping_version_id: Mapped[str] = mapped_column(ForeignKey("mapping_versions.id"))
     policy_id: Mapped[str] = mapped_column(ForeignKey("cleaning_policies.id"))
+    quality_run_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     kind: Mapped[str] = mapped_column(String(32), default="quality")
     idempotency_key: Mapped[str] = mapped_column(String(80))
     request_sha256: Mapped[str] = mapped_column(String(64))
@@ -119,3 +120,14 @@ class RunEvent(Base):
     status: Mapped[str] = mapped_column(String(40))
     message: Mapped[str] = mapped_column(Text)
     created_at: Mapped[str] = mapped_column(String(40), default=timestamp)
+
+
+class SalesRecord(Base):
+    __tablename__ = "sales_records"
+    __table_args__ = (UniqueConstraint("run_id", "entry_key"),)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("analysis_runs.id"), index=True)
+    entry_key: Mapped[str] = mapped_column(String(250))
+    value: Mapped[str] = mapped_column(Text)
+    revision: Mapped[int] = mapped_column(Integer, default=1)
+    updated_at: Mapped[str] = mapped_column(String(40), default=timestamp)

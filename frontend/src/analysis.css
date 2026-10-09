@@ -1,0 +1,43 @@
+.analysis-panel {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.analysis-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.quality-run-strip.compact {
+  margin-top: 12px;
+}
+
+.cluster-result {
+  margin-top: 14px;
+  display: grid;
+  gap: 14px;
+}
+
+.cluster-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.candidate-table {
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .analysis-actions {
+    width: 100%;
+  }
+
+  .analysis-actions .ant-btn {
+    flex: 1;
+  }
+
+  .cluster-metrics {
+    grid-template-columns: 1fr;
+  }
+}

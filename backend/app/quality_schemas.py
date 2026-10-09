@@ -70,3 +70,11 @@ class AnalysisParameters(BaseModel):
         if self.k_min > self.k_max:
             raise ValueError("最小分群数不能大于最大分群数")
         return self
+
+
+class ClusteringRunInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    parameters: AnalysisParameters
+    idempotency_key: str = Field(min_length=1, max_length=80, pattern=r"^[A-Za-z0-9_.:-]+$")
+    timeout_seconds: Literal[600, 1200] = 600
+    memory_mb: int = Field(default=8192, ge=64, le=8192)

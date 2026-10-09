@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Alert, App, Button, Drawer, Select, Tag } from 'antd'
 import { DatabaseOutlined, EditOutlined, HistoryOutlined, PlusOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../api'
 import { dataApi } from '../data'
 import type { Draft, Mapping, MappingVersion, Version, VersionDetail } from '../data'
@@ -20,6 +21,7 @@ function Semantics({ mapping }: { mapping: Mapping }) {
 }
 
 export function DataWorkspace({ projectId }: { projectId: string }) {
+  const navigate = useNavigate()
   const [versions, setVersions] = useState<Version[]>([])
   const [drafts, setDrafts] = useState<Draft[]>([])
   const [selected, setSelected] = useState('')
@@ -49,7 +51,7 @@ export function DataWorkspace({ projectId }: { projectId: string }) {
   }, [projectId, selected, reload])
   const failure = (e: unknown) => e instanceof ApiError ? e.message : '操作未能完成，请重试。'
   return <div className="data-workspace">
-    <div className="data-heading"><div><span className="eyebrow">DATA COLLECTION</span><h2>每个结论，从一份可信来源开始</h2><p>保留原始数据，确认字段含义，让不同版本各自清晰可查。</p></div><Button type="primary" icon={<PlusOutlined />} onClick={() => setImporting({ draft: null })}>导入新版本</Button></div>
+    <div className="data-heading"><h2>营业数据记录</h2><div><Button onClick={() => navigate(`/projects/${projectId}?compose=1`)}>生成月报</Button><Button type="primary" icon={<PlusOutlined />} onClick={() => setImporting({ draft: null })}>上传新数据</Button></div></div>
     {drafts.length > 0 && <div className="drafts-strip"><strong>继续未完成的导入</strong>{drafts.map(d => <div key={d.id}><span title={d.filename}>{d.filename}</span><Button size="small" onClick={() => setImporting({ draft: d })}>继续</Button><Button size="small" type="text" onClick={() => modal.confirm({ title: '放弃这份导入草稿？', content: '已保存的数据版本不受影响。', okText: '放弃草稿', cancelText: '保留', onOk: async () => { try { await dataApi.discard(projectId, d.id); setReload(x => x + 1) } catch (e) { void message.error(failure(e)); throw e } } })}>放弃</Button></div>)}</div>}
     {loading ? <LoadingState /> : error ? <ErrorState message={error} onRetry={() => setReload(x => x + 1)} /> : versions.length === 0 ? <div className="workspace-panel data-empty"><div className="data-empty-mark"><DatabaseOutlined /></div><EmptyState compact title="为这个项目添加第一份数据" description="支持交易明细、购物篮和公开数据集。先查看内容，再确认字段，无需提前调整列名。" action={<Button type="primary" onClick={() => setImporting({ draft: null })}>选择数据来源</Button>} /><div className="data-principles"><span>01 保留原始文件</span><span>02 确认业务含义</span><span>03 独立保存版本</span></div></div>
       : <section className="workspace-panel version-panel"><div className="version-toolbar"><label><span>数据版本</span><Select aria-label="切换数据版本" value={selected} options={versions.map(v => ({ value: v.id, label: `V${v.number} · ${v.filename}` }))} onChange={setSelected} /></label><Tag color="cyan">{versions.length} 个版本</Tag></div>

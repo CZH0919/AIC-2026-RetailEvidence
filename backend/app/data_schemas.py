@@ -54,6 +54,8 @@ class MappingInput(BaseModel):
         default_factory=dict, max_length=20
     )
     confirmed: bool = False
+    record_kind: Literal["transactions", "daily_summary", "monthly_summary"] = "transactions"
+    summary_month: str | None = Field(default=None, pattern=r"^\d{4}-(0[1-9]|1[0-2])$")
 
     @field_validator("columns")
     @classmethod

@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import func, or_, select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from .data_api import install_data_routes
@@ -18,6 +19,7 @@ from .database import create_database
 from .import_formats import DataIssue
 from .models import Project, timestamp
 from .quality_api import install_quality_routes
+from .retail_api import install_retail_routes
 from .schemas import ProjectInput, ProjectList, ProjectRead, ProjectUpdate, name_key
 from .settings import configured_path, project_path
 from .task_runner import TaskRunner
@@ -61,7 +63,7 @@ def create_app(
             await runner.stop()
             engine.dispose()
 
-    app = FastAPI(title="RetailEvidence Studio", version="0.3.0", lifespan=lifespan)
+    app = FastAPI(title="RetailEvidence Studio", version="0.5.0", lifespan=lifespan)
     app.state.storage = (
         project_path(storage_root)
         if storage_root
@@ -80,6 +82,7 @@ def create_app(
     app.add_middleware(
         TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"]
     )
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
 
     @app.middleware("http")
     async def protect_browser_requests(request: Request, call_next):
@@ -206,6 +209,7 @@ def create_app(
 
     install_data_routes(app)
     install_quality_routes(app)
+    install_retail_routes(app)
 
     if (frontend / "assets").is_dir():
         app.mount("/assets", StaticFiles(directory=frontend / "assets"), name="assets")
