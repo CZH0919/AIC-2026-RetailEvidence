@@ -125,7 +125,11 @@ class AIContractTests(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_cause_and_unknown_placeholder_rejected(self):
-        for answer in ["这说明缺货，所以应该调整经营。", "销售为{{不存在}}，进货前核对记录。"]:
+        for answer in [
+            "这说明缺货，所以应该调整经营。",
+            "核对记录，以确保进货数量准确。",
+            "销售为{{不存在}}，进货前核对记录。",
+        ]:
             with patch(
                 "app.retail_api.urllib.request.urlopen",
                 return_value=self.response(answer, ["summary"]),

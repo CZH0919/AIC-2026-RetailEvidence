@@ -223,6 +223,33 @@ class ClassificationTests(fixture.SalesTests):
         ]
         self.assertEqual(set(restored), {"'=POST", "=POST"})
 
+    def test_unit_mismatch_rejected_and_bad_date_audited(self):
+        a = self.source([self.sample(event_time="2026-09-02")])
+        b = self.source(
+            [self.sample(event_time="2026-09-03")],
+            {**self.mapping, "quantity_unit": "箱"},
+            number=2,
+        )
+        with self.assertRaises(DataIssue):
+            self.run_report([a, b])
+        invalid = self.source([self.sample(event_time="not-a-date"), self.sample()])
+        report, out = self.run_report([invalid])
+        self.assertEqual(report["summary"]["quantity"], 3)
+        self.assertEqual(report["quality"]["excluded_rows"], 1)
+        with (out / "sales_row_audit.csv").open(encoding="utf-8-sig") as stream:
+            self.assertEqual(len(list(csv.DictReader(stream))), 2)
+
+    def test_export_html_escapes_original_product_text(self):
+        from app.retail_export import render_report
+
+        source = self.source([self.sample(item_name="<script>alert('x')</script>")])
+        report, _ = self.run_report([source])
+        report["highlights"] = [report["products"][0]["id"]]
+        report["attention_ids"] = report["highlights"]
+        exported = render_report(report, {}, True)
+        self.assertNotIn("<script>alert", exported)
+        self.assertIn("&lt;script&gt;", exported)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
