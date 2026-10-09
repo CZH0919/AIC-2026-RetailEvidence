@@ -603,11 +603,12 @@ def install_retail_routes(app):
             "references 只能是 summary、quality、forecast、anomaly、classification、"
             "item、items、actions。"
             "核对建议写到核对事项就结束，不添加目的、结果或效果。"
-            "核对记录不能推出采购数量的确定结论。合规示例："
+            "核对记录不能推出采购数量的确定结论。合规格式示例："
             "{\"answer\":\"本月销量为{{销量}}，销售额为{{销售额}}。"
-            "进货前先核对销售记录、大单或漏记；七天销量仅供短期参考。\","
-            "\"references\":[\"summary\",\"actions\",\"forecast\"]}。"
-            "示例只说明格式，实际核对事项以本次actions为准。"
+            "进货前先核对记录；记录类型和金额口径以用户确认为准。\","
+            "\"references\":[\"summary\",\"classification\"]}。"
+            "实际核对事项以本次actions为准；actions为空时不添加特定行动。"
+            "没有可用预测时说明数据限制，不暗示已有预测。"
         )
         # Classification metadata is frozen in the same report; numbers remain program bound.
         # Give the model named references, not raw numbers it could recompute or round.
@@ -742,7 +743,7 @@ def install_retail_routes(app):
                 "evidence": evidence,
                 "run_id": str(run_id),
                 "model": "qwen2.5-1.5b-instruct-q4_k_m",
-                "prompt_version": "sales-explain-v4",
+                "prompt_version": "sales-explain-v5",
                 "evidence_id": str(run_id)
                 + ":"
                 + report.get("classification", {}).get("sha256", "legacy"),
