@@ -1,0 +1,9 @@
+{
+  "pages": 2,
+  "sha256": "eb14d9f98e2586b5cfce09f7c35a5d1f8d836413fcf2f94708c156438643017d",
+  "chinese_text_present": true,
+  "summary_on_first_page": true,
+  "status": "PASS",
+  "visual_review": "PASS: Codex inspected both rendered pages; Chinese legible, one-page summary plus classification appendix; not human-user acceptance",
+  "source_runtime_commit": "9fe8c11c0e7ac02cdc66e99e6457c2403ce50a3a"
+}

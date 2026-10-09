@@ -1,0 +1,27 @@
+[
+  {
+    "id": "npm_clean_ci",
+    "command": [
+      "npm",
+      "ci",
+      "--no-audit",
+      "--no-fund",
+      "--ignore-scripts"
+    ],
+    "status": "PASS",
+    "seconds": 3.53006911277771
+  },
+  {
+    "id": "clean_frontend_build",
+    "command": [
+      "npm",
+      "run",
+      "build",
+      "--",
+      "--configLoader",
+      "runner"
+    ],
+    "status": "PASS",
+    "seconds": 1.1597661972045898
+  }
+]

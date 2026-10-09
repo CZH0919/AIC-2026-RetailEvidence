@@ -1,0 +1,10 @@
+{
+  "rows": 18,
+  "period": "2011-10",
+  "original_sha256": "43465a06f2ccf7c8b5bd2892bc7defb52f97487934fe93b16ae4c3936424676d",
+  "parent_derived_sha256": "143e9ce22b1e3e885b9467efcb7cd12c72cec6b0ec8b40ca907c93bc2b3e9168",
+  "licence": "UCI Online Retail CC BY 4.0, Daqing Chen",
+  "selection": "10 first physical groups + nonphysical groups + real POST-named product if present",
+  "purpose": "small demo only; not the frozen evaluation set",
+  "sample_sha256": "cbd3ae2db70c170f44d33f8e1f6a07659fffce01dfa399b45641b2d734f1a291"
+}
