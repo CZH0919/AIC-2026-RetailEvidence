@@ -9,6 +9,7 @@ TASK_SPECS = {
             "sales_row_audit.csv",
             "sales_backtests.csv",
             "sales_classification.csv",
+            "sales_business_records.csv",
         ],
     },
     "quality": {

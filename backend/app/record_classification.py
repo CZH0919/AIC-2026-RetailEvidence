@@ -98,9 +98,11 @@ def csv_text(value):
     return "'" + text if text.lstrip().startswith(("=", "+", "-", "@", "\t", "\r")) else text
 
 
-def csv_untext(value):
+def csv_untext(value, escaped=False):
     return (
         value[1:]
-        if value.startswith("'") and value[1:].lstrip().startswith(("=", "+", "-", "@", "\t", "\r"))
+        if escaped
+        and value.startswith("'")
+        and value[1:].lstrip().startswith(("=", "+", "-", "@", "\t", "\r"))
         else value
     )

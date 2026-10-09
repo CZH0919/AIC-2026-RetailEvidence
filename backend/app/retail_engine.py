@@ -182,6 +182,7 @@ def process_retail(job, progress):
     finance = defaultdict(lambda: {"amount": Decimal(0), "missing": 0, "rows": 0})
     finance_days = defaultdict(lambda: Decimal(0))
     classification_counts = Counter()
+    business_records = {}
     pending_product_rows = 0
     excluded = Counter()
     currencies, seen, order_state = set(), set(), {}
@@ -206,6 +207,7 @@ def process_retail(job, progress):
                 "product_included",
                 "financial_included",
                 "classification_sha256",
+                "csv_escaped_fields",
             ],
         )
         writer.writeheader()
@@ -261,6 +263,18 @@ def process_retail(job, progress):
                         "financial_included": reason == "included"
                         and decision["amount_treatment"] == "include",
                         "classification_sha256": classification_sha,
+                        "csv_escaped_fields": json.dumps(
+                            [
+                                field
+                                for field, value in {
+                                    "source_row_id": row["source_row_id"],
+                                    "item_id": row.get("item_id"),
+                                    "classification_basis": decision["basis"],
+                                    "classification_scope": decision["scope"],
+                                }.items()
+                                if csv_text(value) != ("" if value is None else str(value))
+                            ]
+                        ),
                         "date": row["day"],
                         "reason": reason,
                     }
@@ -315,6 +329,39 @@ def process_retail(job, progress):
                         finance_days[row["day"]] += value
                 else:
                     financial["missing"] += 1
+                if row["day"].startswith(month):
+                    record_key = (
+                        source["version_id"],
+                        row["item_id"],
+                        decision["kind"],
+                        decision["amount_treatment"],
+                        decision["scope"],
+                    )
+                    record = business_records.setdefault(
+                        record_key,
+                        {
+                            "version_id": source["version_id"],
+                            "item_id": row["item_id"],
+                            "name": row.get("item_name") or row["item_id"],
+                            "record_kind": decision["kind"],
+                            "amount_treatment": decision["amount_treatment"],
+                            "basis": decision["basis"],
+                            "scope": decision["scope"],
+                            "rows": 0,
+                            "quantity": Decimal(0),
+                            "amount": Decimal(0),
+                            "missing_amount_rows": 0,
+                        },
+                    )
+                    record["rows"] += 1
+                    record["quantity"] += money(row["quantity"])
+                    if (
+                        mapping["amount_mode"] in {"line_amount", "quantity_unit_price"}
+                        and usable_amount
+                    ):
+                        record["amount"] += value
+                    else:
+                        record["missing_amount_rows"] += 1
                 key = row["item_id"]
                 if decision["kind"] == "physical_product":
                     names.setdefault(key, row.get("item_name") or key)
@@ -670,6 +717,16 @@ def process_retail(job, progress):
             "version": "record-classification-v1",
             "sha256": classification_sha,
             "policies": params.get("classifications", []),
+            "records": [
+                {
+                    **record,
+                    "quantity": float(record["quantity"]),
+                    "amount": float(record["amount"])
+                    if not record["missing_amount_rows"]
+                    else None,
+                }
+                for _, record in sorted(business_records.items())
+            ],
             "counts": dict(classification_counts),
             "pending_product_rows": pending_product_rows,
             "financial_breakdown": [
@@ -757,5 +814,30 @@ def process_retail(job, progress):
         )
         writer.writeheader()
         writer.writerows(rows)
+    with (output / "sales_business_records.csv").open(
+        "w", encoding="utf-8-sig", newline=""
+    ) as stream:
+        fields = [
+            "version_id",
+            "item_id",
+            "name",
+            "record_kind",
+            "amount_treatment",
+            "basis",
+            "scope",
+            "rows",
+            "quantity",
+            "amount",
+            "missing_amount_rows",
+        ]
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer.writeheader()
+        for record in report["classification"]["records"]:
+            writer.writerow(
+                {
+                    k: csv_text(v) if k in {"item_id", "name", "basis", "scope"} else v
+                    for k, v in record.items()
+                }
+            )
     write_json(output / "sales_report.json", report)
     return report

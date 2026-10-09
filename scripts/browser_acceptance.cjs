@@ -48,7 +48,7 @@ async function portOpen() {
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${base}/projects/${project}?run=${run.id}`, { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: /本月卖得怎么样/ }).waitFor();
-  assert.equal(await page.locator('.sales-scroll .ant-table-tbody > tr:not(.ant-table-measure-row)').count(), report.highlights.length);
+  assert.equal(await page.locator('section').filter({has:page.getByRole('heading',{name:'这几件商品值得留意',exact:true})}).locator('.ant-table-tbody > tr:not(.ant-table-measure-row)').count(), report.highlights.length);
   assert.equal(await page.locator('.sales-action').count(), report.actions.length);
   const canvasPixels = async () => page.locator('canvas').first().evaluate(c => {
     const pixels = c.getContext('2d').getImageData(0,0,c.width,c.height).data;

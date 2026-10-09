@@ -7,8 +7,9 @@ export type SalesAction = { id: string; item_id: string; title: string; text: st
 export type ClassificationRule = {match_by:'item_id'|'source_row_id'|'category'; value:string; kind:string; amount_treatment:string; basis:string}
 export type ClassificationPolicy = {version_id:string; mapping_revision:number; default_kind:string; default_amount_treatment:string; confirmed:boolean; rules:ClassificationRule[]}
 export type SalesParameters = { classifications?: ClassificationPolicy[]; sources: { version_id: string; mapping_revision: number }[]; month: string; merge_mode: string; duplicates: string; complete_coverage: boolean; coverage_start: string | null; coverage_end: string | null; closed_dates: string[]; check_only?: boolean }
+export type BusinessRecord = {version_id:string; item_id:string; name:string; record_kind:string; amount_treatment:string; basis:string; scope:string; rows:number; quantity:number; amount:number|null}
 export type SalesReport = {
-  classification?: {sha256:string; pending_product_rows:number; financial_breakdown:{month:string; label:string; amount_treatment:string; rows:number; amount:number|null}[]};
+  classification?: {records?: BusinessRecord[]; sha256:string; pending_product_rows:number; financial_breakdown:{month:string; label:string; amount_treatment:string; rows:number; amount:number|null}[]};
   context: { run_id: string }; month: string; available_months: string[]; parameters: SalesParameters;
   summary: { quantity: number; amount: number | null; orders: number | null; products: number; attention_total: number; unit: string; currency: string | null; amount_label: string; complete_month: boolean; average_order: number | null; previous: { quantity: number; amount: number | null } | null };
   chart: { date: string; quantity: number | null; amount: number | null }[]; previous_chart?: { date: string; quantity: number | null; amount: number | null }[]; products: SalesProduct[];
@@ -34,7 +35,7 @@ export const salesApi = {
   action: (p: string, id: string, action: string, status: string, note: string, revision: number) => request<SavedRecord>(`${root(p)}/sales/runs/${id}/actions/${encodeURIComponent(action)}`, { method: 'PUT', body: JSON.stringify({ status, note, expected_revision: revision }) }),
   itemNote: (p: string, id: string, data: {item_id: string; day: string | null; reason: string; note: string; expected_revision: number}) => request<SavedRecord>(`${root(p)}/sales/runs/${id}/item-notes`, {method:'PUT', body:JSON.stringify(data)}),
   inventory: (p: string, id: string, data: unknown) => request<SavedRecord>(`${root(p)}/sales/runs/${id}/inventory`, { method: 'POST', body: JSON.stringify(data) }),
-  ask: (p: string, id: string, question: string, item_id: string | null) => request<{ answer: string; ai_used: boolean; references?: string[]; run_id: string }>(`${root(p)}/sales/runs/${id}/ask`, { method: 'POST', body: JSON.stringify({ question, item_id }) }, 60000),
+  ask: (p: string, id: string, question: string, item_id: string | null) => request<{ answer: string; ai_used: boolean; mode?:string; evidence_id?:string; references?: string[]; run_id: string }>(`${root(p)}/sales/runs/${id}/ask`, { method: 'POST', body: JSON.stringify({ question, item_id }) }, 60000),
   download: (p: string, id: string, file: string) => `/api${root(p)}/sales/runs/${id}/files/${file}`,
   report: (p: string, id: string, all: boolean) => `/api${root(p)}/sales/runs/${id}/report?all_attention=${all}`,
 }

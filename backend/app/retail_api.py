@@ -335,10 +335,17 @@ def install_retail_routes(app):
             wanted, count = {}, 0
             with path.open(encoding="utf-8-sig", newline="") as stream:
                 for row in csv.DictReader(stream):
-                    if csv_untext(row["item_id"]) == item_id and row["date"] == day.isoformat():
+                    escaped = json.loads(row.get("csv_escaped_fields", "[]"))
+                    if (
+                        csv_untext(row["item_id"], "item_id" in escaped) == item_id
+                        and row["date"] == day.isoformat()
+                    ):
                         count += 1
                         if count <= 100:
-                            wanted[row["version_id"], csv_untext(row["source_row_id"])] = row
+                            wanted[
+                                row["version_id"],
+                                csv_untext(row["source_row_id"], "source_row_id" in escaped),
+                            ] = row
             result = []
             for source in sources:
                 expected = next(
@@ -369,7 +376,9 @@ def install_retail_routes(app):
                                         "amount_treatment", "legacy_unconfirmed"
                                     ),
                                     "classification_basis": csv_untext(
-                                        wanted[key].get("classification_basis", "")
+                                        wanted[key].get("classification_basis", ""),
+                                        "classification_basis"
+                                        in json.loads(wanted[key].get("csv_escaped_fields", "[]")),
                                     ),
                                 }
                             )
@@ -468,6 +477,7 @@ def install_retail_routes(app):
             "sales_row_audit.csv",
             "sales_backtests.csv",
             "sales_classification.csv",
+            "sales_business_records.csv",
             "sales_report.json",
             "manifest.json",
         }
@@ -509,6 +519,10 @@ def install_retail_routes(app):
         fallback = {
             "answer": "AI 暂时无法回答。可以查看商品详情和对应依据，月报计算结果不受影响。",
             "ai_used": False,
+            "mode": "template_fallback",
+            "evidence_id": str(run_id)
+            + ":"
+            + report.get("classification", {}).get("sha256", "legacy"),
             "evidence": evidence,
             "run_id": str(run_id),
         }
@@ -521,6 +535,17 @@ def install_retail_routes(app):
                 ),
                 "mode": "data_limit",
                 "references": ["classification"],
+            }
+        if not payload.item_id and any(
+            word in payload.question for word in ["这件商品", "这款商品", "这个商品"]
+        ):
+            return {
+                **fallback,
+                "answer": (
+                    "请先在商品详情中选择你要核对的商品，再提问；当前月报的统计可以继续查看。"
+                ),
+                "mode": "clarification",
+                "references": ["summary"],
             }
         if "缺货" in payload.question or "库存" in payload.question:
             return {
@@ -695,6 +720,7 @@ def install_retail_routes(app):
             return {
                 "answer": answer,
                 "ai_used": True,
+                "mode": "model_inference",
                 "references": refs,
                 "evidence": evidence,
                 "run_id": str(run_id),
@@ -710,6 +736,13 @@ def install_retail_routes(app):
                 return await asyncio.to_thread(infer)
             except (OSError, ValueError, KeyError, TypeError) as exc:
                 logging.getLogger(__name__).warning("Sales AI response rejected: %s", exc)
+                fallback["mode"] = (
+                    "inference_timeout"
+                    if isinstance(exc, TimeoutError)
+                    else "inference_unavailable"
+                    if isinstance(exc, OSError)
+                    else "rejected_model_output"
+                )
                 return fallback
 
     app.include_router(router)

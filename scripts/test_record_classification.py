@@ -195,6 +195,34 @@ class ClassificationTests(fixture.SalesTests):
                 idempotency_key="boundary-test",
             )
 
+    def test_review_contains_nonproduct_and_pending_records(self):
+        s = self.source([self.sample(), self.sample(item_id="POST", quantity="2", line_amount="5")])
+        r, out = self.run_report(
+            [s],
+            classifications=[self.policy(s, [self.rule("POST", "shipping_service", "pending")])],
+        )
+        self.assertEqual({x["item_id"] for x in r["classification"]["records"]}, {"POSTER", "POST"})
+        self.assertIsNone(r["summary"]["amount"])
+        with (out / "sales_business_records.csv").open(encoding="utf-8-sig") as stream:
+            self.assertEqual(len(list(csv.DictReader(stream))), 2)
+
+    def test_csv_escape_flags_preserve_literal_apostrophe(self):
+        from app.record_classification import csv_text, csv_untext
+
+        for raw in ["=SUM(1)", "'=SUM(1)", "@formula", "'-normal", "normal"]:
+            encoded = csv_text(raw)
+            self.assertEqual(csv_untext(encoded, encoded != raw), raw)
+        s = self.source([self.sample(item_id="'=POST"), self.sample(item_id="=POST")])
+        _, out = self.run_report([s])
+        with (out / "sales_row_audit.csv").open(encoding="utf-8-sig") as stream:
+            rows = list(csv.DictReader(stream))
+        import json
+
+        restored = [
+            csv_untext(x["item_id"], "item_id" in json.loads(x["csv_escaped_fields"])) for x in rows
+        ]
+        self.assertEqual(set(restored), {"'=POST", "=POST"})
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

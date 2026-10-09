@@ -240,6 +240,7 @@ for file in [
     "sales_products.csv",
     "sales_row_audit.csv",
     "sales_classification.csv",
+    "sales_business_records.csv",
     "sales_backtests.csv",
     "manifest.json",
 ]:
