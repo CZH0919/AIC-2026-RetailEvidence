@@ -13,3 +13,23 @@ __pycache__/
 *.log
 .DS_Store
 Thumbs.db
+
+# Private runtime, models, credentials, backups and generated evidence.
+*.sqlite*
+*.db
+*.gguf
+*.pem
+*.key
+id_ed25519*
+known_hosts*
+.git-credentials
+cache/
+tmp/
+logs/
+evidence/
+backups/
+*.tgz
+*.zip
+frontend/.vite-cache/
+frontend/node_modules/.vite-temp/
+browser-profile*/

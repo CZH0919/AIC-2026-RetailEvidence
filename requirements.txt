@@ -7,3 +7,10 @@ openpyxl==3.1.5
 pyarrow==25.0.1
 defusedxml==0.7.1
 psutil==7.2.2
+
+# Required by sales, customer clustering and FP-growth runtime.
+numpy==2.5.3
+pandas==3.0.6
+scikit-learn==1.9.1
+scipy==1.18.1
+mlxtend==0.25.0
