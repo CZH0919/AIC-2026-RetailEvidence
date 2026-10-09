@@ -602,6 +602,12 @@ def install_retail_routes(app):
             "只输出符合结构的 JSON，answer 必须写对问题有帮助的实际说明，不能只写“解释”。"
             "references 只能是 summary、quality、forecast、anomaly、classification、"
             "item、items、actions。"
+            "核对建议写到核对事项就结束，不添加目的、结果或效果。"
+            "核对记录不能推出采购数量的确定结论。合规示例："
+            "{\"answer\":\"本月销量为{{销量}}，销售额为{{销售额}}。"
+            "进货前先核对销售记录、大单或漏记；七天销量仅供短期参考。\","
+            "\"references\":[\"summary\",\"actions\",\"forecast\"]}。"
+            "示例只说明格式，实际核对事项以本次actions为准。"
         )
         # Classification metadata is frozen in the same report; numbers remain program bound.
         # Give the model named references, not raw numbers it could recompute or round.
@@ -736,7 +742,7 @@ def install_retail_routes(app):
                 "evidence": evidence,
                 "run_id": str(run_id),
                 "model": "qwen2.5-1.5b-instruct-q4_k_m",
-                "prompt_version": "sales-explain-v3",
+                "prompt_version": "sales-explain-v4",
                 "evidence_id": str(run_id)
                 + ":"
                 + report.get("classification", {}).get("sha256", "legacy"),
