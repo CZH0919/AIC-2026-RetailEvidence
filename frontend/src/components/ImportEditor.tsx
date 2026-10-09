@@ -6,6 +6,7 @@ import { dataApi, initialMapping, parseDefaults } from '../data'
 import type { Draft, Mapping, ParseOptions, PublicDataset, VersionDetail } from '../data'
 import { DataPreview } from './DataPreview'
 import { MappingEditor } from './MappingEditor'
+import { FieldAssistant } from './FieldAssistant'
 
 export function ImportEditor({ projectId, initial, onClose, onSaved }: { projectId: string; initial: Draft | null; onClose: () => void; onSaved: (v: VersionDetail) => void }) {
   const [draft, setDraft] = useState(initial)
@@ -49,7 +50,7 @@ export function ImportEditor({ projectId, initial, onClose, onSaved }: { project
       <label className="data-field full"><span>每行表示什么</span><Select aria-label="每行表示什么" value={options.shape} options={[{ value: 'transactions', label: '一行一条商品交易明细' }, { value: 'basket_long', label: '购物篮长表：篮子标识 + 商品' }, { value: 'basket_list', label: '每行一个购物篮，某列存放商品列表' }]} onChange={v => update({ shape: v })} /></label>
       {options.shape === 'basket_list' && <><label className="data-field"><span>商品列表所在列的表头</span><Input aria-label="商品列表表头" value={options.basket_column ?? ''} onChange={e => update({ basket_column: e.target.value })} /></label><label className="data-field"><span>商品分隔符</span><Select aria-label="商品分隔符" value={options.item_separator} options={['|', ';', ','].map(value => ({ value, label: value }))} onChange={v => update({ item_separator: v })} /></label><Alert className="full" type="info" showIcon title="以原始行建立购物篮" description="仅把选定列拆成购物篮与商品，不生成客户、时间或金额。原始文件中的其他列仍保留在来源文件中。" /></>}
     </div></div>}
-    {step === 2 && draft?.preview && mapping && <><div className="import-file-label"><FileTextOutlined />{draft.filename}<span>{draft.preview.row_count.toLocaleString()} 行</span></div><DataPreview preview={draft.preview} /><MappingEditor preview={draft.preview} value={mapping} onChange={setMapping} /></>}
+    {step === 2 && draft?.preview && mapping && <><div className="import-file-label"><FileTextOutlined />{draft.filename}<span>{draft.preview.row_count.toLocaleString()} 行</span></div><DataPreview preview={draft.preview} /><FieldAssistant key={draft.preview_token} projectId={projectId} draft={draft} value={mapping} onChange={setMapping} /><MappingEditor preview={draft.preview} value={mapping} onChange={setMapping} /></>}
     </fieldset>
   </Drawer>
 }

@@ -79,6 +79,7 @@ def create_app(
         else configured_path("AIC_PUBLIC_DATA_DIR", "storage/datasets/public")
     )
     app.state.import_lock = asyncio.Lock()
+    app.state.ai_lock = asyncio.Lock()
     app.add_middleware(
         TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"]
     )

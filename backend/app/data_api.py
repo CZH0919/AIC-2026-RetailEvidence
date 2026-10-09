@@ -12,6 +12,7 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from sqlalchemy import func, select
 
 from .data_schemas import ConfirmImport, ParseOptions, ReviseMapping, SaveDraft
+from .field_assistant import FieldQuestion, explain_fields
 from .import_formats import DataIssue
 from .import_jobs import exclusive, run_job
 from .mapping import validate_mapping
@@ -322,6 +323,27 @@ def install_data_routes(app):
                 except BaseException:
                     target.unlink(missing_ok=True)
                     raise
+
+    @router.post("/projects/{project_id}/imports/{draft_id}/explain-fields")
+    async def field_help(project_id: UUID, draft_id: UUID, payload: FieldQuestion):
+        async with exclusive(app):
+            with app.state.sessions() as session:
+                draft = scoped(session, ImportDraft, draft_id, project_id)
+                check_token(draft, payload.preview_token)
+                if draft.finalized_version_id:
+                    raise DataIssue("这份文件已保存为版本。", "already_finalized", 409)
+                snapshot = json.loads(draft.preview)
+            if app.state.ai_lock.locked():
+                raise DataIssue("AI 正在回答其他问题，请稍后重试。", "ai_busy", 409)
+            async with app.state.ai_lock:
+                result = await asyncio.to_thread(explain_fields, snapshot, payload.question)
+            return {
+                **result,
+                "draft_id": str(draft_id),
+                "preview_token": payload.preview_token,
+                "evidence_id": str(draft_id) + ":" + payload.preview_token,
+                "notice": "列名建议由程序提出；AI只解释，应用后仍需核对并确认业务口径。",
+            }
 
     @router.put("/projects/{project_id}/imports/{draft_id}/mapping-draft")
     async def save_draft(project_id: UUID, draft_id: UUID, payload: SaveDraft):

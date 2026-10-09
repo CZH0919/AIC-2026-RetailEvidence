@@ -12,7 +12,9 @@ export type PublicDataset = { id: string; title: string; bytes: number; source_u
 
 const base = (p: string) => `/projects/${encodeURIComponent(p)}`
 const post = (body: unknown) => ({ method: 'POST', body: JSON.stringify(body) })
+export type FieldExplanation = { answer: string; ai_used: boolean; mode: string; proposal: { columns: Record<string, string> }; preview_token: string; evidence_id: string; notice: string }
 export const dataApi = {
+  explainFields: (p: string, d: Draft, question: string) => request<FieldExplanation>(`${base(p)}/imports/${d.id}/explain-fields`, post({ preview_token: d.preview_token, question }), 45000),
   versions: (p: string) => request<{ items: Version[] }>(`${base(p)}/versions`),
   version: (p: string, v: string) => request<VersionDetail>(`${base(p)}/versions/${v}`),
   drafts: (p: string) => request<{ items: Draft[] }>(`${base(p)}/imports`),

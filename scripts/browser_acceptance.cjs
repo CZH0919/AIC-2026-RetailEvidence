@@ -2,30 +2,16 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const net = require('node:net');
-const { spawn } = require('node:child_process');
-let browser, page, tunnel;
+let browser, page;
 const evidenceDirectory = path.resolve(process.env.SALES_EVIDENCE_DIR || 'evidence_v2');
 
-async function portOpen() {
-  return new Promise(resolve => {
-    const socket = net.connect(18080,'127.0.0.1');
-    socket.on('connect',()=>{socket.destroy();resolve(true)});
-    socket.on('error',()=>resolve(false));
-  });
-}
-
 (async () => {
-  const base = process.env.SALES_BASE || 'http://127.0.0.1:18080';
+  const base = process.env.SALES_BASE;
+  assert(base && /^http:\/\/127\.0\.0\.1:\d+$/.test(base), 'Explicit isolated loopback SALES_BASE required');
+  assert(process.env.SALES_BROWSER_PROFILE && process.env.SALES_EVIDENCE_DIR, 'Explicit isolated browser paths required');
   const project = process.env.SALES_PROJECT_ID || 'e1711757-601a-4e9a-a05f-037d7e6909e6';
   const directory = evidenceDirectory;
   fs.mkdirSync(directory, { recursive: true });
-  if (!process.env.SALES_BASE && !await portOpen()) {
-    tunnel = spawn(process.env.SSH_BINARY || 'ssh', ['-o','BatchMode=yes','-o','ConnectTimeout=15','-o','ExitOnForwardFailure=yes','-o','ServerAliveInterval=30','-N','-L','18080:127.0.0.1:8000','aic-server'], {windowsHide:true});
-    tunnel.stderr.on('data', data=>console.error(data.toString().trim()));
-    for (let i=0;i<20 && !await portOpen();i++) await new Promise(resolve=>setTimeout(resolve,1000));
-    assert(await portOpen(),'SSH tunnel unavailable');
-  }
   const context = await chromium.launchPersistentContext(process.env.SALES_BROWSER_PROFILE || path.join(directory,'browser-profile'), { executablePath: process.env.CHROME_PATH || undefined, headless: true, downloadsPath:path.join(directory,'downloads'), viewport:{width:1440,height:1000}, acceptDownloads:true });
   browser = context.browser();
   const api = context.request;
@@ -111,6 +97,8 @@ async function portOpen() {
   await page.getByRole('button',{name:/提问$/}).click();
   const aiResult = await (await aiResponse).json();
   assert.equal(aiResult.run_id,run.id);
+  assert.equal(aiResult.ai_used,true,'Real CPU inference required; fallback is not PASS');
+  assert.equal(aiResult.evidence_id,run.id+':'+report.classification.sha256);
   await page.locator('.sales-ai-answer').waitFor();
   await page.screenshot({path:path.join(directory,'desktop_ai.png')});
   console.log(`AI panel answered; ai_used=${aiResult.ai_used}`);
@@ -149,11 +137,9 @@ async function portOpen() {
   fs.writeFileSync(path.join(directory,'browser_acceptance.json'),JSON.stringify(result,null,2));
   console.log(JSON.stringify(result));
   await browser.close();
-  if (tunnel) tunnel.kill();
 })().catch(async error => {
   console.error(error);
   if (page) { await page.screenshot({ path:path.join(evidenceDirectory,'browser_failure.png'),fullPage:true }).catch(()=>{}); console.error((await page.locator('body').innerText()).slice(0,1500)); }
   if (browser) await browser.close();
-  if (tunnel) tunnel.kill();
   process.exitCode = 1;
 });

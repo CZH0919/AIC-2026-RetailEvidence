@@ -107,7 +107,7 @@ def save_record(session, run_id, key, value, expected=None):
 
 def install_retail_routes(app):
     router = APIRouter(prefix="/api/projects/{project_id}/sales")
-    ai_lock = asyncio.Lock()
+    ai_lock = app.state.ai_lock
 
     @router.get("/sources/{version_id}")
     async def source_info(project_id: UUID, version_id: UUID):
@@ -604,9 +604,9 @@ def install_retail_routes(app):
             "item、items、actions。"
             "核对建议写到核对事项就结束，不添加目的、结果或效果。"
             "核对记录不能推出采购数量的确定结论。合规格式示例："
-            "{\"answer\":\"本月销量为{{销量}}，销售额为{{销售额}}。"
-            "进货前先核对记录；记录类型和金额口径以用户确认为准。\","
-            "\"references\":[\"summary\",\"classification\"]}。"
+            '{"answer":"本月销量为{{销量}}，销售额为{{销售额}}。'
+            '进货前先核对记录；记录类型和金额口径以用户确认为准。",'
+            '"references":["summary","classification"]}。'
             "实际核对事项以本次actions为准；actions为空时不添加特定行动。"
             "没有可用预测时说明数据限制，不暗示已有预测。"
         )
