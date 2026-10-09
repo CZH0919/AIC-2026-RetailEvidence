@@ -16,18 +16,18 @@ async function portOpen() {
 }
 
 (async () => {
-  const base = 'http://127.0.0.1:18080';
-  const project = 'e1711757-601a-4e9a-a05f-037d7e6909e6';
+  const base = process.env.SALES_BASE || 'http://127.0.0.1:18080';
+  const project = process.env.SALES_PROJECT_ID || 'e1711757-601a-4e9a-a05f-037d7e6909e6';
   const directory = evidenceDirectory;
   fs.mkdirSync(directory, { recursive: true });
-  if (!await portOpen()) {
+  if (!process.env.SALES_BASE && !await portOpen()) {
     tunnel = spawn(process.env.SSH_BINARY || 'ssh', ['-o','BatchMode=yes','-o','ConnectTimeout=15','-o','ExitOnForwardFailure=yes','-o','ServerAliveInterval=30','-N','-L','18080:127.0.0.1:8000','aic-server'], {windowsHide:true});
     tunnel.stderr.on('data', data=>console.error(data.toString().trim()));
     for (let i=0;i<20 && !await portOpen();i++) await new Promise(resolve=>setTimeout(resolve,1000));
     assert(await portOpen(),'SSH tunnel unavailable');
   }
-  browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || (process.platform === 'win32' ? 'C:/Program Files/Google/Chrome/Application/chrome.exe' : undefined), headless: true });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
+  const context = await chromium.launchPersistentContext(process.env.SALES_BROWSER_PROFILE || path.join(directory,'browser-profile'), { executablePath: process.env.CHROME_PATH || undefined, headless: true, downloadsPath:path.join(directory,'downloads'), viewport:{width:1440,height:1000}, acceptDownloads:true });
+  browser = context.browser();
   const api = context.request;
   context.setDefaultTimeout(90000);
   const listing = await (await api.get(`${base}/api/projects/${project}/runs?kind=sales&limit=100`)).json();
