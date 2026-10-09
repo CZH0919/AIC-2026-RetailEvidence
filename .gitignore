@@ -33,3 +33,5 @@ backups/
 frontend/.vite-cache/
 frontend/node_modules/.vite-temp/
 browser-profile*/
+
+.runtime/

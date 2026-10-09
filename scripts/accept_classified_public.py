@@ -18,11 +18,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--base", required=True)
 parser.add_argument("--storage", type=Path, required=True)
 parser.add_argument("--output", type=Path, required=True)
+parser.add_argument("--project", default="e1711757-601a-4e9a-a05f-037d7e6909e6")
+parser.add_argument("--version", default="48b9d571-3d7f-43d4-b4f0-19ea931123be")
+parser.add_argument("--workbook", type=Path)
 args = parser.parse_args()
-assert args.base == "http://127.0.0.1:18081", "This evidence script refuses production ports"
+assert args.base in {
+    "http://127.0.0.1:18081", "http://127.0.0.1:18083"
+}, "Isolated loopback ports only"
 args.output.mkdir(parents=True, exist_ok=True)
-project = "e1711757-601a-4e9a-a05f-037d7e6909e6"
-version = "48b9d571-3d7f-43d4-b4f0-19ea931123be"
+project = args.project
+version = args.version
 base = f"/projects/{project}"
 
 
@@ -96,7 +101,7 @@ save(
         ),
     },
 )
-workbook = args.storage / "datasets/public/online_retail/source.xlsx"
+workbook = args.workbook or args.storage / "datasets/public/online_retail/source.xlsx"
 source_sha = hashlib.sha256(workbook.read_bytes()).hexdigest()
 wb = openpyxl.load_workbook(workbook, read_only=True, data_only=True)
 ws = wb.worksheets[0]
@@ -261,6 +266,8 @@ answer = request(
     base + f"/sales/runs/{run['id']}/ask",
     {"question": "请解释本月销量，并告诉我下次进货前先看什么。"},
 )
+assert answer["ai_used"], "Real CPU inference required; fallback is not PASS"
+assert answer["evidence_id"] == run["id"] + ":" + run["result"]["classification"]["sha256"]
 save("ai_answer.json", answer)
 save(
     "acceptance.json",
