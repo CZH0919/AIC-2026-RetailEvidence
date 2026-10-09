@@ -4,6 +4,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from .record_classification import SourceClassification
+
 
 class SourceInput(BaseModel):
     version_id: UUID
@@ -23,6 +25,7 @@ class RetailInput(BaseModel):
     idempotency_key: str = Field(min_length=8, max_length=80)
     budget_seconds: Literal[600, 1200] = 1200
     check_only: bool = False
+    classifications: list[SourceClassification] = Field(default_factory=list, max_length=36)
 
     @model_validator(mode="after")
     def coverage(self):
@@ -35,6 +38,10 @@ class RetailInput(BaseModel):
                 raise ValueError("日期范围无效")
             if (self.coverage_end - self.coverage_start).days > 1095:
                 raise ValueError("最多处理三年日记录")
+        selected = {(s.version_id, s.mapping_revision) for s in self.sources}
+        classified = [(c.version_id, c.mapping_revision) for c in self.classifications]
+        if len(set(classified)) != len(classified) or any(k not in selected for k in classified):
+            raise ValueError("分类配置必须唯一且属于选中的数据和字段版本")
         date.fromisoformat(self.month + "-01")
         return self
 

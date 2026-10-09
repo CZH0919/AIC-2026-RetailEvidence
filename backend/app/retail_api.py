@@ -26,6 +26,7 @@ from .models import (
 )
 from .quality_api import run_read
 from .quality_schemas import CleaningConfig
+from .record_classification import classification_hash, csv_untext
 from .retail_export import render_report
 from .retail_schemas import ActionInput, InventoryInput, ItemNoteInput, QuestionInput, RetailInput
 from .task_runner import PUBLISHED
@@ -126,7 +127,10 @@ def install_retail_routes(app):
                     .where(MappingVersion.dataset_version_id == version.id)
                     .order_by(MappingVersion.revision.desc())
                 )
+                if not mapping:
+                    raise DataIssue("请先确认字段映射。", "mapping_missing")
                 config = json.loads(mapping.config)
+                source_dataset = version.source_dataset
                 path = (
                     app.state.storage
                     / "datasets"
@@ -154,6 +158,41 @@ def install_retail_routes(app):
                                 .date()
                                 .isoformat()
                             )
+            candidates = {}
+            category_values = set()
+            suggestions = {
+                "M": ("Manual", "manual_adjustment"),
+                "POST": ("POSTAGE", "shipping_service"),
+                "DOT": ("DOTCOM POSTAGE", "shipping_service"),
+                "BANK CHARGES": ("Bank Charges", "other"),
+                "D": ("Discount", "manual_adjustment"),
+                "C2": ("CARRIAGE", "shipping_service"),
+                "AMAZONFEE": ("AMAZON FEE", "shipping_service"),
+                "CRUK": ("CRUK Commission", "other"),
+                "B": ("Adjust bad debt", "manual_adjustment"),
+                "S": ("SAMPLES", "other"),
+            }
+            for batch in pq.ParquetFile(path).iter_batches(
+                batch_size=2000, columns=["item_id", "item_name", "category"]
+            ):
+                for row in batch.to_pylist():
+                    if row.get("category"):
+                        category_values.add(row["category"])
+                    item = row.get("item_id")
+                    if source_dataset == "online_retail" and item in suggestions:
+                        expected_name, suggested_kind = suggestions[item]
+                        if (row.get("item_name") or "").casefold() == expected_name.casefold():
+                            candidates.setdefault(
+                                item,
+                                {
+                                    "match_by": "item_id",
+                                    "value": item,
+                                    "kind": suggested_kind,
+                                    "amount_treatment": "pending",
+                                    "basis": "UCI Online Retail 已知特殊编码，需用户确认",
+                                    "name": row["item_name"],
+                                },
+                            )
             first, last = (min(days), max(days)) if days else (None, None)
             if last and config.get("record_kind") == "monthly_summary":
                 end = date.fromisoformat(last)
@@ -171,6 +210,8 @@ def install_retail_routes(app):
                 "months": sorted({d[:7] for d in days}),
                 "suggested_month": suggested,
                 "mapping": config,
+                "classification_suggestions": list(candidates.values()),
+                "category_values": sorted(category_values),
             }
 
         return await asyncio.to_thread(inspect)
@@ -197,6 +238,7 @@ def install_retail_routes(app):
                     return run_read(old, True)
                 sources = resolve_sources(session, app.state.storage, project_id, params["sources"])
                 params["source_hashes"] = {s["version_id"]: s["canonical_sha256"] for s in sources}
+                params["classification_sha256"] = classification_hash(params["classifications"])
                 primary = sources[-1]
                 policy_config = dump(CleaningConfig(duplicates=payload.duplicates).model_dump())
                 policy_sha = hashlib.sha256(policy_config.encode()).hexdigest()
@@ -293,10 +335,10 @@ def install_retail_routes(app):
             wanted, count = {}, 0
             with path.open(encoding="utf-8-sig", newline="") as stream:
                 for row in csv.DictReader(stream):
-                    if row["item_id"] == item_id and row["date"] == day.isoformat():
+                    if csv_untext(row["item_id"]) == item_id and row["date"] == day.isoformat():
                         count += 1
                         if count <= 100:
-                            wanted[row["version_id"], row["source_row_id"]] = row["reason"]
+                            wanted[row["version_id"], csv_untext(row["source_row_id"])] = row
             result = []
             for source in sources:
                 expected = next(
@@ -319,7 +361,16 @@ def install_retail_routes(app):
                                     "line_amount": raw.get("line_amount"),
                                     "unit_price": raw.get("unit_price"),
                                     "event_time": raw.get("event_time"),
-                                    "reason": wanted[key],
+                                    "reason": wanted[key]["reason"],
+                                    "record_kind": wanted[key].get(
+                                        "record_kind", "legacy_unconfirmed"
+                                    ),
+                                    "amount_treatment": wanted[key].get(
+                                        "amount_treatment", "legacy_unconfirmed"
+                                    ),
+                                    "classification_basis": csv_untext(
+                                        wanted[key].get("classification_basis", "")
+                                    ),
                                 }
                             )
             return {
@@ -366,7 +417,12 @@ def install_retail_routes(app):
         with app.state.sessions() as session:
             _, report = report_row(session, run_id, project_id)
             product = next((p for p in report["products"] if p["id"] == payload.item_id), None)
-            if not product or not product["forecast"]:
+            if (
+                not product
+                or not product["forecast"]
+                or not product.get("classification_confirmed")
+                or product.get("record_kind") != "physical_product"
+            ):
                 raise DataIssue(
                     "这款商品没有可发布的预测，暂不能计算备货量。", "forecast_unavailable"
                 )
@@ -411,6 +467,7 @@ def install_retail_routes(app):
             "sales_products.csv",
             "sales_row_audit.csv",
             "sales_backtests.csv",
+            "sales_classification.csv",
             "sales_report.json",
             "manifest.json",
         }
@@ -419,6 +476,8 @@ def install_retail_routes(app):
         with app.state.sessions() as session:
             report_row(session, run_id, project_id)
         path = app.state.storage / "runs" / str(project_id) / str(run_id) / artifact
+        if not path.is_file():
+            raise HTTPException(404, "本次运行没有这份文件。")
         return FileResponse(path, filename=artifact)
 
     @router.post("/runs/{run_id}/ask")
@@ -433,6 +492,7 @@ def install_retail_routes(app):
             "quality": report["quality"],
             "forecast": report["forecast"],
             "anomaly": report["anomaly"],
+            "classification": report.get("classification", {"status": "legacy_unconfirmed"}),
         }
         if payload.item_id:
             selected = items[payload.item_id]
@@ -452,6 +512,16 @@ def install_retail_routes(app):
             "evidence": evidence,
             "run_id": str(run_id),
         }
+        if not report.get("classification"):
+            return {
+                **fallback,
+                "answer": (
+                    "这份历史报告尚未确认业务记录类型。可核对原统计；"
+                    "如需备货建议，请确认类型与金额口径并生成新月报。"
+                ),
+                "mode": "data_limit",
+                "references": ["classification"],
+            }
         if "缺货" in payload.question or "库存" in payload.question:
             return {
                 **fallback,
@@ -494,8 +564,10 @@ def install_retail_routes(app):
             "回答不超过两百字，使用普通中文。所有具体数值和商品名称只能用占位符 "
             "{{销售额}}、{{销量}}、{{商品数}}、{{商品名称}}、{{商品销量}}，不能自行输出数字。"
             "只输出符合结构的 JSON，answer 必须写对问题有帮助的实际说明，不能只写“解释”。"
-            "references 只能是 summary、quality、forecast、anomaly、item、items、actions。"
+            "references 只能是 summary、quality、forecast、anomaly、classification、"
+            "item、items、actions。"
         )
+        # Classification metadata is frozen in the same report; numbers remain program bound.
         # Give the model named references, not raw numbers it could recompute or round.
         model_evidence = {
             "summary": {
@@ -506,6 +578,11 @@ def install_retail_routes(app):
                 "amount_available": report["summary"]["amount"] is not None,
             },
             "quality": {"has_excluded_records": bool(report["quality"]["excluded_rows"])},
+            "classification": {
+                "physical_only": bool(report.get("classification")),
+                "pending_types": bool(report.get("classification", {}).get("pending_product_rows")),
+                "notice": "销量和备货只对应已确认实物，金额按用户确认分类口径；旧报告类型未确认。",
+            },
             "forecast": {
                 "has_usable_forecasts": bool(report["forecast"].get("published_items")),
                 "notice": "仅作短期销售参考，不能直接决定整月进货。",
@@ -622,7 +699,10 @@ def install_retail_routes(app):
                 "evidence": evidence,
                 "run_id": str(run_id),
                 "model": "qwen2.5-1.5b-instruct-q4_k_m",
-                "prompt_version": "sales-explain-v2",
+                "prompt_version": "sales-explain-v3",
+                "evidence_id": str(run_id)
+                + ":"
+                + report.get("classification", {}).get("sha256", "legacy"),
             }
 
         async with ai_lock:

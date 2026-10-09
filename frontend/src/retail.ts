@@ -4,8 +4,11 @@ import type { Mapping } from './data'
 export type Prediction = { quantity: number; method: string; validation_mae: number; start: string; end: string; notice: string }
 export type SalesProduct = { id: string; name: string; category: string | null; quantity: number; amount: number | null; change: number | null; flags: string[]; reason: string; daily: { date: string; quantity: number | null }[]; forecast: Prediction | null; anomalies: { date: string; actual: number; reference: number }[] }
 export type SalesAction = { id: string; item_id: string; title: string; text: string; reason: string; review: string }
-export type SalesParameters = { sources: { version_id: string; mapping_revision: number }[]; month: string; merge_mode: string; duplicates: string; complete_coverage: boolean; coverage_start: string | null; coverage_end: string | null; closed_dates: string[]; check_only?: boolean }
+export type ClassificationRule = {match_by:'item_id'|'source_row_id'|'category'; value:string; kind:string; amount_treatment:string; basis:string}
+export type ClassificationPolicy = {version_id:string; mapping_revision:number; default_kind:string; default_amount_treatment:string; confirmed:boolean; rules:ClassificationRule[]}
+export type SalesParameters = { classifications?: ClassificationPolicy[]; sources: { version_id: string; mapping_revision: number }[]; month: string; merge_mode: string; duplicates: string; complete_coverage: boolean; coverage_start: string | null; coverage_end: string | null; closed_dates: string[]; check_only?: boolean }
 export type SalesReport = {
+  classification?: {sha256:string; pending_product_rows:number; financial_breakdown:{month:string; label:string; amount_treatment:string; rows:number; amount:number|null}[]};
   context: { run_id: string }; month: string; available_months: string[]; parameters: SalesParameters;
   summary: { quantity: number; amount: number | null; orders: number | null; products: number; attention_total: number; unit: string; currency: string | null; amount_label: string; complete_month: boolean; average_order: number | null; previous: { quantity: number; amount: number | null } | null };
   chart: { date: string; quantity: number | null; amount: number | null }[]; previous_chart?: { date: string; quantity: number | null; amount: number | null }[]; products: SalesProduct[];
@@ -16,7 +19,7 @@ export type SalesReport = {
   anomaly: { status: string; reason: string; flagged_samples?: number; tested_samples?: number; warning?: string };
 }
 export type SalesRun = { id: string; status: string; message: string; created_at: string; finished_at: string | null; result: SalesReport | null; parameters?: { sales: SalesParameters } }
-export type SourceInfo = { version_id: string; mapping_revision: number; start: string | null; end: string | null; months: string[]; suggested_month: string | null; mapping: Mapping }
+export type SourceInfo = { version_id: string; mapping_revision: number; start: string | null; end: string | null; months: string[]; suggested_month: string | null; mapping: Mapping; classification_suggestions?: ClassificationRule[]; category_values?: string[] }
 export type SavedRecord = { value: { status?: string; note?: string; suggested_quantity?: number; notice?: string; item_id?: string; day?: string | null; reason?: string; source?: string }; revision: number; updated_at: string }
 export type SourceRecords = { date: string; count: number; shown: number; items: { source_row_id: string; version_id: string; filename: string; quantity: string | null; line_amount: string | null; unit_price: string | null; event_time: string | null; reason: string }[] }
 const root = (p: string) => `/projects/${encodeURIComponent(p)}`

@@ -63,7 +63,7 @@ def create_app(
             await runner.stop()
             engine.dispose()
 
-    app = FastAPI(title="RetailEvidence Studio", version="0.5.0", lifespan=lifespan)
+    app = FastAPI(title="RetailEvidence Studio", version="0.6.0", lifespan=lifespan)
     app.state.storage = (
         project_path(storage_root)
         if storage_root

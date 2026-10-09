@@ -89,6 +89,17 @@ class SalesTests(unittest.TestCase):
         output.mkdir()
         params = {
             "sources": [],
+            "classifications": [
+                {
+                    "version_id": s["version_id"],
+                    "mapping_revision": s["mapping_revision"],
+                    "default_kind": "physical_product",
+                    "default_amount_treatment": "include",
+                    "confirmed": True,
+                    "rules": [],
+                }
+                for s in sources
+            ],
             "month": "2026-09",
             "merge_mode": "append",
             "duplicates": "keep",

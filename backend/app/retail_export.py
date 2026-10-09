@@ -33,6 +33,32 @@ def render_report(report, project_name, all_attention=False):
             "<thead><tr><th>商品</th><th>销量</th><th>原因</th></tr></thead>"
             f"<tbody>{rows}</tbody></table></section>"
         )
+    classification = report.get("classification")
+    if classification:
+        rows = "".join(
+            "<tr>"
+            + "".join(
+                f"<td>{esc(v)}</td>"
+                for v in [
+                    r["label"],
+                    {"include": "计入", "exclude": "排除", "pending": "待确认"}[
+                        r["amount_treatment"]
+                    ],
+                    r["rows"],
+                    r["amount"] if r["amount"] is not None else "未知",
+                ]
+            )
+            + "</tr>"
+            for r in classification["financial_breakdown"]
+            if r["month"] == report["month"]
+        )
+        extra += (
+            "<section class='appendix'><h2>业务分类与金额对账</h2>"
+            "<p>实物数量与按确认口径计入的金额分别统计；退款另列，不自动净额化。</p>"
+            "<table><thead><tr><th>类型</th><th>金额口径</th><th>记录数</th><th>金额</th></tr></thead>"
+            f"<tbody>{rows}</tbody></table><small>分类配置 SHA-256: "
+            f"{esc(classification['sha256'])}</small></section>"
+        )
     amount = (
         f"{summary['amount']:,.2f} {esc(summary['currency'])}"
         if summary["amount"] is not None

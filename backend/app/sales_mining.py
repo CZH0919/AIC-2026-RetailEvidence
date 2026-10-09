@@ -6,7 +6,7 @@ from datetime import date, timedelta
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingRegressor, IsolationForest
 
-MODEL_VERSION = "sales-v2.1.1"
+MODEL_VERSION = "sales-v2.2.0"
 FORECAST_DAYS = 90
 ANOMALY_DAYS = 56
 MAX_MODEL_ITEMS = 1000

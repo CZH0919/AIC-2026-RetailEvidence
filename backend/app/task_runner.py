@@ -286,7 +286,8 @@ class TaskRunner:
                         "policy_sha256": policy.config_sha256,
                         "parameters": parameters,
                         "code_sha256": self.code_hash,
-                        "application_version": "0.5.0",
+                        "application_version": "0.6.0",
+                        "source_commit": os.environ.get("AIC_SOURCE_COMMIT"),
                         "python": platform.python_version(),
                         "dependencies": {
                             name: importlib.metadata.version(name)

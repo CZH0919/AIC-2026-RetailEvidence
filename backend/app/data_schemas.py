@@ -16,7 +16,7 @@ FIELDS = {
     "currency": "币种",
     "record_status": "交易状态",
     "country": "国家 / 地区",
-    "category": "商品分类",
+    "category": "商品分类 / 业务记录类型",
 }
 TIME_FORMATS = {
     "iso8601": "ISO 日期 / Excel 日期",

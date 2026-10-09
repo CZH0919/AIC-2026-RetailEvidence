@@ -15,6 +15,7 @@ from .amounts import AMOUNT_CONTEXT, money
 from .data_api import digest, write_json
 from .import_formats import DataIssue
 from .quality import normalize
+from .record_classification import LABELS, classification_hash, classify, compile_policies, csv_text
 from .sales_mining import MODEL_VERSION, anomaly_series, calendar, forecast_series
 
 REASONS = {
@@ -130,6 +131,10 @@ def process_retail(job, progress):
     if len(semantic) != 1:
         raise DataIssue("合并文件的数量单位、金额口径或时区不同，请先统一。", "mixed_semantics")
     mapping = sources[-1]["mapping"]
+    classification = compile_policies(sources, params)
+    classification_sha = classification_hash(params.get("classifications", []))
+    if params.get("classification_sha256", classification_sha) != classification_sha:
+        raise DataIssue("分类口径哈希不一致。", "classification_mismatch")
     progress("sales_quality", 5)
     ranges, conflicts = [], set()
     for source in sources:
@@ -174,6 +179,10 @@ def process_retail(job, progress):
                 )
     daily = defaultdict(lambda: {"quantity": Decimal(0), "amount": Decimal(0), "amount_missing": 0})
     names, categories, units = {}, {}, mapping["quantity_unit"]
+    finance = defaultdict(lambda: {"amount": Decimal(0), "missing": 0, "rows": 0})
+    finance_days = defaultdict(lambda: Decimal(0))
+    classification_counts = Counter()
+    pending_product_rows = 0
     excluded = Counter()
     currencies, seen, order_state = set(), set(), {}
     observed = set()
@@ -183,7 +192,21 @@ def process_retail(job, progress):
     audit_path = output / "sales_row_audit.csv"
     with audit_path.open("w", encoding="utf-8-sig", newline="") as audit:
         writer = csv.DictWriter(
-            audit, fieldnames=["version_id", "source_row_id", "item_id", "date", "reason"]
+            audit,
+            fieldnames=[
+                "version_id",
+                "source_row_id",
+                "item_id",
+                "date",
+                "reason",
+                "record_kind",
+                "amount_treatment",
+                "classification_basis",
+                "classification_scope",
+                "product_included",
+                "financial_included",
+                "classification_sha256",
+            ],
         )
         writer.writeheader()
         for index, source in enumerate(sources):
@@ -223,11 +246,21 @@ def process_retail(job, progress):
                     if params["duplicates"] == "drop_exact":
                         reason = "duplicate_removed"
                 seen.add(signature)
+                decision = classify(row, source, classification)
                 writer.writerow(
                     {
                         "version_id": source["version_id"],
-                        "source_row_id": row["source_row_id"],
-                        "item_id": row.get("item_id"),
+                        "source_row_id": csv_text(row["source_row_id"]),
+                        "item_id": csv_text(row.get("item_id")),
+                        "record_kind": decision["kind"],
+                        "amount_treatment": decision["amount_treatment"],
+                        "classification_basis": csv_text(decision["basis"]),
+                        "classification_scope": csv_text(decision["scope"]),
+                        "product_included": reason == "included"
+                        and decision["kind"] == "physical_product",
+                        "financial_included": reason == "included"
+                        and decision["amount_treatment"] == "include",
+                        "classification_sha256": classification_sha,
                         "date": row["day"],
                         "reason": reason,
                     }
@@ -260,16 +293,45 @@ def process_retail(job, progress):
                 ):
                     missing_order_months.add(row["day"][:7])
                 observed.add(row["day"])
+                classification_counts[decision["kind"]] += 1
+                if decision["kind"] == "pending" and row["day"].startswith(month):
+                    pending_product_rows += 1
+                financial = finance[row["day"][:7], decision["kind"], decision["amount_treatment"]]
+                financial["rows"] += 1
+                value = money(row.get("line_amount"))
+                usable_amount = (
+                    value is not None
+                    and value >= 0
+                    and row.get("currency")
+                    and "amount_source_conflict" not in row["issues"]
+                )
+                if (
+                    mapping["amount_mode"] in {"line_amount", "quantity_unit_price"}
+                    and usable_amount
+                ):
+                    financial["amount"] += value
+                    currencies.add(row["currency"])
+                    if decision["amount_treatment"] == "include":
+                        finance_days[row["day"]] += value
+                else:
+                    financial["missing"] += 1
                 key = row["item_id"]
-                names.setdefault(key, row.get("item_name") or key)
+                if decision["kind"] == "physical_product":
+                    names.setdefault(key, row.get("item_name") or key)
                 categories.setdefault(key, row.get("category"))
-                bucket = daily[row["day"], key]
+                # Non-products keep finance and order provenance without entering physical series.
+                bucket = (
+                    daily[row["day"], key]
+                    if decision["kind"] == "physical_product"
+                    else {"quantity": Decimal(0), "amount": Decimal(0), "amount_missing": 0}
+                )
                 with localcontext(AMOUNT_CONTEXT):
                     bucket["quantity"] += money(row["quantity"])
                     value = money(row.get("line_amount"))
                     if mapping["amount_mode"] in {"line_amount", "quantity_unit_price"}:
                         if (
-                            value is not None
+                            decision["amount_treatment"] == "include"
+                            and value is not None
                             and value >= 0
                             and row.get("currency")
                             and "amount_source_conflict" not in row["issues"]
@@ -291,8 +353,10 @@ def process_retail(job, progress):
                             "totals": set(),
                             "missing": False,
                             "currency": row.get("currency"),
+                            "treatments": set(),
                         },
                     )
+                    state["treatments"].add(decision["amount_treatment"])
                     total = money(row.get("order_amount"))
                     if total is not None and total >= 0:
                         state["totals"].add(total)
@@ -336,19 +400,49 @@ def process_retail(job, progress):
             and bool(buckets)
             and not amount_missing
         )
+        financial_buckets = [(k, v) for k, v in finance.items() if k[0] == m]
+        selected = [v for k, v in financial_buckets if k[2] == "include"]
+        amount = sum((v["amount"] for v in selected), Decimal(0))
+        amount_missing = sum(v["missing"] for v in selected)
+        amount_available = (
+            mapping["amount_mode"] in {"line_amount", "quantity_unit_price"}
+            and bool(financial_buckets)
+            and not amount_missing
+            and not any(k[2] == "pending" for k, _ in financial_buckets)
+        )
         orders = [s for s in order_state.values() if s["day"].startswith(m)]
         if mapping["amount_mode"] == "order_amount":
             amount_available = (
                 bool(orders)
                 and m not in missing_order_months | incomplete_order_months
                 and all(
-                    len(s["totals"]) == 1 and not s["missing"] and s["currency"] for s in orders
+                    len(s["totals"]) == 1
+                    and not s["missing"]
+                    and s["currency"]
+                    and s["treatments"] in ({"include"}, {"exclude"})
+                    for s in orders
                 )
             )
             amount = sum(
-                (next(iter(s["totals"])) for s in orders if len(s["totals"]) == 1), Decimal(0)
+                (
+                    next(iter(s["totals"]))
+                    for s in orders
+                    if len(s["totals"]) == 1 and s["treatments"] == {"include"}
+                ),
+                Decimal(0),
             )
+        original_order_available = (
+            bool(orders)
+            and m not in missing_order_months | incomplete_order_months
+            and all(len(s["totals"]) == 1 and not s["missing"] and s["currency"] for s in orders)
+        )
+        original_order_amount = sum(
+            (next(iter(s["totals"])) for s in orders if len(s["totals"]) == 1), Decimal(0)
+        )
         totals[m] = {
+            "source_order_amount": float(original_order_amount)
+            if mapping["amount_mode"] == "order_amount" and original_order_available
+            else None,
             "quantity": float(quantity),
             "amount": float(amount) if amount_available else None,
             "amount_missing_rows": amount_missing,
@@ -371,7 +465,10 @@ def process_retail(job, progress):
             }
     forecast = (
         forecast_series(series, dates, progress)
-        if complete_month and kind != "monthly_summary" and not params.get("check_only")
+        if complete_month
+        and not pending_product_rows
+        and kind != "monthly_summary"
+        and not params.get("check_only")
         else {
             "status": "unavailable",
             "reason": "需要确认完整日期范围后，才能预测；月汇总不支持日级预测。",
@@ -383,7 +480,10 @@ def process_retail(job, progress):
     progress("sales_anomalies", 70)
     anomaly = (
         anomaly_series(series, dates, month, params["closed_dates"])
-        if complete_month and kind != "monthly_summary" and not params.get("check_only")
+        if complete_month
+        and not pending_product_rows
+        and kind != "monthly_summary"
+        and not params.get("check_only")
         else {
             "status": "unavailable",
             "reason": "当前记录无法核对完整的历史波动。",
@@ -421,7 +521,7 @@ def process_retail(job, progress):
             else []
         )
         flags, change, reason = [], None, ""
-        if complete_month and kind != "monthly_summary":
+        if complete_month and not pending_product_rows and kind != "monthly_summary":
             last = sum(v["quantity"] for v in daily_values[-7:])
             prior = sum(v["quantity"] for v in daily_values[-14:-7])
             change = (last - prior) / prior if prior > 0 else None
@@ -431,6 +531,7 @@ def process_retail(job, progress):
         if (
             kind == "monthly_summary"
             and complete_month
+            and not pending_product_rows
             and complete
             and params["coverage_start"] <= previous_end.replace(day=1).isoformat()
         ):
@@ -450,6 +551,8 @@ def process_retail(job, progress):
         products.append(
             {
                 "id": key,
+                "record_kind": "physical_product",
+                "classification_confirmed": True,
                 "name": name,
                 "category": categories[key],
                 "quantity": quantity,
@@ -478,7 +581,7 @@ def process_retail(job, progress):
     attention = [p["id"] for p in products if p["flags"]]
     grouped_actions = {}
     for p in products:
-        action = action_for(p)
+        action = action_for(p) if not pending_product_rows else None
         if action:
             group = action["id"].split(":")[0]
             if group not in grouped_actions:
@@ -503,7 +606,7 @@ def process_retail(job, progress):
                     "quantity": float(sum((b["quantity"] for b in values), Decimal(0)))
                     if values or complete_month
                     else None,
-                    "amount": float(sum((b["amount"] for b in values), Decimal(0)))
+                    "amount": float(finance_days[day.isoformat()])
                     if totals[month]["amount"] is not None
                     and mapping["amount_mode"] != "order_amount"
                     and (values or complete_month)
@@ -523,7 +626,7 @@ def process_retail(job, progress):
                 {
                     "date": day.isoformat(),
                     "quantity": float(sum((b["quantity"] for b in values), Decimal(0))),
-                    "amount": float(sum((b["amount"] for b in values), Decimal(0)))
+                    "amount": float(finance_days[day.isoformat()])
                     if totals[previous_month]["amount"] is not None
                     and mapping["amount_mode"] != "order_amount"
                     else None,
@@ -537,9 +640,7 @@ def process_retail(job, progress):
         "currency": next(iter(currencies), mapping.get("currency_constant")),
         "previous": totals[previous_month] if comparative else None,
         "complete_month": complete_month,
-        "amount_label": "按单价计算的销售额"
-        if mapping["amount_mode"] == "quantity_unit_price"
-        else "正向销售额（退款另计）",
+        "amount_label": "按确认分类口径的销售额（数量仅含实物，退款另计）",
         "average_order": totals[month]["amount"] / totals[month]["orders"]
         if totals[month]["amount"] is not None and totals[month]["orders"]
         else None,
@@ -565,6 +666,28 @@ def process_retail(job, progress):
             for s in sources
         ],
         "summary": summary,
+        "classification": {
+            "version": "record-classification-v1",
+            "sha256": classification_sha,
+            "policies": params.get("classifications", []),
+            "counts": dict(classification_counts),
+            "pending_product_rows": pending_product_rows,
+            "financial_breakdown": [
+                {
+                    "month": k[0],
+                    "record_kind": k[1],
+                    "label": LABELS[k[1]],
+                    "amount_treatment": k[2],
+                    "rows": v["rows"],
+                    "amount": float(v["amount"]) if not v["missing"] else None,
+                    "missing_amount_rows": v["missing"],
+                }
+                for k, v in sorted(finance.items())
+            ],
+            "order_amount_notice": "整单金额只计一次；混合计入/排除/待确认时不分摊，不发布销售额。"
+            if mapping["amount_mode"] == "order_amount"
+            else None,
+        },
         "chart": chart,
         "previous_chart": previous_chart,
         "products": products,
@@ -585,6 +708,14 @@ def process_retail(job, progress):
             "未提供库存和成本，销量变化不代表缺货、积压或利润变化。",
         ],
     }
+    if pending_product_rows:
+        report["notices"].append(
+            "存在待确认业务类型；不发布预测或备货行动，已确认的实物统计仍可查看。"
+        )
+    if any(k[0] == month and k[2] == "pending" for k in finance):
+        report["notices"].append(
+            "存在未确认金额口径，月报不发布合计金额；请查看分类分项并重新确认。"
+        )
     if not complete_month:
         report["notices"].append("本月完整性尚未确认，仅总结提供的记录；缺记录的日期不补成零销量。")
     if duplicates and params["duplicates"] == "keep":
@@ -608,5 +739,23 @@ def process_retail(job, progress):
         )
         writer.writeheader()
         writer.writerows(records)
+    with (output / "sales_classification.csv").open(
+        "w", encoding="utf-8-sig", newline=""
+    ) as stream:
+        rows = report["classification"]["financial_breakdown"]
+        writer = csv.DictWriter(
+            stream,
+            fieldnames=[
+                "month",
+                "record_kind",
+                "label",
+                "amount_treatment",
+                "rows",
+                "amount",
+                "missing_amount_rows",
+            ],
+        )
+        writer.writeheader()
+        writer.writerows(rows)
     write_json(output / "sales_report.json", report)
     return report
