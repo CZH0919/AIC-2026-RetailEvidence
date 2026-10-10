@@ -1,0 +1,9 @@
+{
+  "suite": "ux_help_final",
+  "source_commit": "0dbb6962dddb57c99222729c5df9917975f72b7e",
+  "exit_code": 0,
+  "seconds": 113.57931160926819,
+  "at": "2026-10-10T16:19:57.491135+00:00",
+  "command": "node scripts/ux_help_final.cjs",
+  "environment": "clean actual-main checkout; independent state; real Chromium"
+}

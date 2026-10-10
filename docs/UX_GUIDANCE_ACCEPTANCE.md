@@ -1,6 +1,6 @@
 # 操作提示真实验收报告
 
-执行日期：2026-10-10至11（北京时间）。初次完整审查→独立审查commit `6c82ab2616104e8842052b99e11b1ea426f9a40d`→实现→真实浏览器复测，严格遵循顺序。当前运行代码候选 `a673a440697bc4d75acde620b718cbe548379ca4`，0.6.2/schema5/sales-v2.2.0。最终GitHub发布与从实际main的干净复验收据另保存于交付工作区；本报告不冒填尚未发布SHA。
+执行日期：2026-10-10至11（北京时间）。初次完整审查→独立审查commit `6c82ab2616104e8842052b99e11b1ea426f9a40d`→实现→真实浏览器复测，严格遵循顺序。当前运行代码候选 `a673a440697bc4d75acde620b718cbe548379ca4`，0.6.2/schema5/sales-v2.2.0。实际main 0dbb6962dddb57c99222729c5df9917975f72b7e已发布并完成干净复验，收据见下文；后续只新增发布文档证据，运行代码树相同。最终最新main SHA以重新fetch收据为准，避免文件自引用SHA。
 
 ## 结果与口径
 
@@ -12,7 +12,7 @@
 
 Ubuntu24.04 CPU、Python3.12、Node24.21、Chromium/Playwright、单Worker；线程按既有2线程约束。Web仅回环18084，故障测试仅独立18085/18086，模型复用回环18082。浏览器profile/缓存/截图在个人隔离工作区，Windows产物只在D盘。正式共享源码、数据库及服务未部署或重启。完整数据来源、派生口径及SHA见 [输入manifest](verification/ux_guidance/after/context/manifest.json)。公开Online Retail parquet SHA `c0a6b6d27defeae17ba087e2a9e986f9cb2124682cb32534823f89ebf748d293`；原XLSX SHA `43465a06f2ccf7c8b5bd2892bc7defb52f97487934fe93b16ae4c3936424676d`。分类是公开测试的明确假设，不代表商户确认。
 
-最终候选完整新导入：项目`cf5cda48-313b-46fd-842e-1a9e13efef74`，V`fe650b33-3330-409e-8107-5e23d1b573c0`，run`a15cc731-37dc-4815-bfcf-a59863dcfc40`；输入3005行，实物商品2863种，销量626765原始单位，按确认口径销售额1105884.75GBP。单月汇总无每日预测是正确能力限制。真实CPU回答ai_used=true/model_inference，evidence_id与该run及分类hash匹配；HTML/CSV/JSON下载、真实浏览器file页打印A4 PDF、390px月报与三浏览会话PASS。此完整流在c34625a执行；最后唯一运行代码变更是帮助Tab焦点，a673a44已全42主题复测，发布后还须从实际main完整新导入复验。
+最终候选完整新导入：项目`cf5cda48-313b-46fd-842e-1a9e13efef74`，V`fe650b33-3330-409e-8107-5e23d1b573c0`，run`a15cc731-37dc-4815-bfcf-a59863dcfc40`；输入3005行，实物商品2863种，销量626765原始单位，按确认口径销售额1105884.75GBP。单月汇总无每日预测是正确能力限制。真实CPU回答ai_used=true/model_inference，evidence_id与该run及分类hash匹配；HTML/CSV/JSON下载、真实浏览器file页打印A4 PDF、390px月报与三浏览会话PASS。此完整流在c34625a执行；最后唯一运行代码变更是帮助Tab焦点，a673a44已全42主题复测，已从实际main完成完整新导入复验，详见下节。
 
 原始明细核查使用被冻结旧run`2b78c6a3-98f1-4d46-b308-4651224f5d96`（本轮实际UI查看，非声称重新计算旧run）。商品23084的七天预测1495.75，模拟当时可售10、确定到货7、备用3、每包装6，程序返回1482原始单位；历史库存日期提示2011-11-01，明确禁止填写今天库存。模拟库存不是实盘库存。
 
@@ -48,3 +48,11 @@ Ubuntu24.04 CPU、Python3.12、Node24.21、Chromium/Playwright、单Worker；线
 ## 未验证与现实限制
 
 3项NOT_RUN：完整600/1200秒分析预算耗尽、真实模型错误引用分支、共享服务重启。已有AI合同单测不等于这些真实分支均通过。真实商户/非开发者研究BLOCKED：没有人参与，不能从模型自查推导用户理解率或经营收益。暂无公网评委入口；没有部署共享正式环境。依赖复用已安装环境，未重装模型或重跑网络安装；干净源码复现与重新安装依赖应区分。测试PDF属于Chromium真实打印，不等于人工打印机测试。
+
+## 实际GitHub main干净复验（2026-10-11）
+
+专用Deploy Key快进推送main及feature/ux-guidance，重新fetch和ls-remote一致：`0dbb6962dddb57c99222729c5df9917975f72b7e`。从该SHA在新的final-main/source干净检出，重新构建、在线复制仅个人测试SQLite形成独立库；复用已安装的只读后端依赖及独立复制的前端依赖，未宣称重新网络安装。启动后真实Chromium串行执行完整新导入47.936秒PASS、42主题/11组帮助113.579秒PASS。新项目f187a0f3-71ae-4ac1-926d-8f28cf868a01、V0e73ce73-76dd-4bae-a1b4-3bed2200a74a、run0386ec96-a541-46a7-afd9-68f4c2cfdf7b。manifest source_commit与main匹配，application_version为0.6.2，真实CPU问答成功。
+
+导出产品CSV2863行、分类原始行计数3005、全部业务记录聚合2870行覆盖3005原始行；销量626765及计入销售额1105884.75GBP与JSON/分项一致。A4 PDF2页，第一页摘要、第二页分类对账，中文与版面两页实际渲染查看PASS。源文件/逐SHA/命令/耗时/环境与打印证据见 [干净复验收据](verification/ux_guidance/origin_main/release_tests.json)、[导出对账](verification/ux_guidance/origin_main/export_consistency.json)、[打印检查](verification/ux_guidance/origin_main/print_and_tunnel_check.json)。这是原37组之后的额外发布复验，不能把重复组当新增需求覆盖。
+
+正式共享89源码文件内容/mtime/集合及8张表与原安全基线相同，schema5；没有正式部署。[只读正式复核](verification/ux_guidance/origin_main/formal_recheck.json)。新Web仅回环18084，Windows专用D盘信任隧道18087已核对manifest。停掉本轮本人故障模拟18085/18086，不动队友18781/18782及既有个人18081/18082。当前入口与最终main收据保存D盘交付报告/TASK_PROGRESS，可在断线后恢复；隧道不是公网链接。

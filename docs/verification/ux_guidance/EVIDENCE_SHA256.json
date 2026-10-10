@@ -21,6 +21,14 @@
   "before/ux_mapping_errors_exit.json": "6d57065a042d5e87edc9895eb2a7b4787866413cab86681ccbffe22e8198c5c4",
   "before/inputs_manifest.json": "b13ad4372dc45b84d565361e1b183322d8766eb1ce6085fa72d1aff1cddbcfe4",
   "before/ux_daily_path_exit.json": "e775e6e16c0376bda3e9bfced9cdf31f8e8e1863f693bc4f154c6b909d4ebd1a",
+  "origin_main/startup.json": "0b7c618744772a646f685fee36608b188bec1dcf584691e60b3ca638df43ca4a",
+  "origin_main/release_tests.json": "5e7b1d20913605505681bd38642db001c665784a7433069ea4b6cc17e4c89742",
+  "origin_main/ux_candidate_journey_exit.json": "8f857c4d59940d89e16106943be52b78a43fa3b19d96776bdd3a89bbd927c069",
+  "origin_main/print_and_tunnel_check.json": "77f540372202c38191489213676857f86290ddbaa28e688ceb0337c2237c841f",
+  "origin_main/export_consistency.json": "ba22525ea19132a05bca5317688dc52d4d524f8083db1c0b19f98d9baf112ff1",
+  "origin_main/final_manifest.json": "7dbe3af3cbdccaf443d0176bd294ea2317c9050703f7bee876b366c808c974ec",
+  "origin_main/ux_help_final_exit.json": "b4c3869d57935e31024438ae2c4b233ad316862fe82fb39e102504e2e346a29c",
+  "origin_main/formal_recheck.json": "252caf18921cfcefd4c4670cc2086c28cfcbf1dc8216394cd4d32a2989666114",
   "after/context/input_reproduction.json": "49366fcb0b8f4e1b266cd8019f5c0c7b915df79f5bd9a0a8473fa0edf32fa7ca",
   "after/context/checks.json": "801e742d5ffcae12cc065c0c109046b5a5094001f79139f822d999f4381a40d1",
   "after/context/manifest.json": "b13ad4372dc45b84d565361e1b183322d8766eb1ce6085fa72d1aff1cddbcfe4",
@@ -175,5 +183,12 @@
   "before/ux_input_paths/C_missing_fields.txt": "1166b4a027d586882ab55afb3d9c71d0a5fbee5b4df4aa4c9b7ecafb5f2443aa",
   "before/ux_input_paths/B_xlsx_wrong_sheet.txt": "ae30a57fbfa04be6aabc69e74e7935f425e99dc657d94423e2bab9d3151f8ceb",
   "before/ux_ai_timeout/result.json": "92bd7243e9ff7c79cbbbf8d9547d8bea99a7e751554982e53c6b4a6e8750539e",
-  "before/ux_ai_timeout/fallback.txt": "1a7808c0ba5e71a35a5d028aca614240b8982a74e4f97a5b35ee048446115cf7"
+  "before/ux_ai_timeout/fallback.txt": "1a7808c0ba5e71a35a5d028aca614240b8982a74e4f97a5b35ee048446115cf7",
+  "origin_main/ux_candidate_journey/report.pdf": "97f2d3e19def603bc0431d115bfef4e5cd606dc992627c7f513fefd30990185a",
+  "origin_main/ux_candidate_journey/browser_import_acceptance.json": "36b0f925157c89b7f0e814ee5c4bff118b30ef2bd133f05677f480eafe6432c0",
+  "origin_main/ux_help_final/results.json": "832fd80ee7484ba3bfa77398697de499721422409c10e193570c11b134e13a5d",
+  "origin_main/logs/ux_candidate_journey.log": "3135a89674c731aebfa594d6e92127c2458664a82b822f4b5140cc2283231888",
+  "origin_main/logs/build.log": "e82a8ef70610323c98017d7ace55f4cfc0c6cbc28d85a13adb52ff983e421af8",
+  "origin_main/logs/web.log": "1fba84d41581520c5d28373e020a94ae60e6a174bb53ffdada3dc9ccb35d8dbe",
+  "origin_main/logs/ux_help_final.log": "b48f351ec66fce808b0f089e9115e2712d36ef8d62b15868b92ba289a6cfb320"
 }
