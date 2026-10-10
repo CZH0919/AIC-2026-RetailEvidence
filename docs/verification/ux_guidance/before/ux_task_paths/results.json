@@ -1,0 +1,26 @@
+{
+  "results": [
+    {
+      "id": "J_queue_cancel",
+      "status": "PASS",
+      "run_id": "4f574547-10cd-4a8a-8d75-4895a877aaa6"
+    },
+    {
+      "id": "J_running_cancel",
+      "status": "PASS",
+      "run_id": "ecff67a6-4c78-466f-adfd-f2e438e254fa"
+    },
+    {
+      "id": "F_note_conflict",
+      "status": "PASS",
+      "http": 409,
+      "draft_retained": true
+    },
+    {
+      "id": "J_old_report_immutable",
+      "status": "PASS",
+      "run_id": "2b78c6a3-98f1-4d46-b308-4651224f5d96"
+    }
+  ],
+  "fixture": "API创建两个真实隔离任务，前端查看并取消；未伪造队列状态"
+}

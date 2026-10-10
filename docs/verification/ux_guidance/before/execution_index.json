@@ -1,0 +1,58 @@
+{
+  "monthly": {
+    "exit_code": 0,
+    "seconds": 50.43924283981323,
+    "source_commit": "cf6566a38a44daf174b938306f79bf3c8b3ccd04",
+    "phase": "before",
+    "completed_at_utc": "2026-10-10T14:42:51.891668+00:00"
+  },
+  "ux_input_paths": {
+    "exit_code": 1,
+    "seconds": 134.75645923614502,
+    "source_commit": "cf6566a38a44daf174b938306f79bf3c8b3ccd04",
+    "phase": "before",
+    "completed_at_utc": "2026-10-10T14:59:13.333403+00:00"
+  },
+  "ux_daily_path": {
+    "exit_code": 0,
+    "seconds": 27.30443549156189,
+    "source_commit": "cf6566a38a44daf174b938306f79bf3c8b3ccd04",
+    "phase": "before",
+    "completed_at_utc": "2026-10-10T15:00:30.875075+00:00"
+  },
+  "ux_analysis_paths": {
+    "exit_code": 0,
+    "seconds": 153.9789662361145,
+    "source_commit": "cf6566a38a44daf174b938306f79bf3c8b3ccd04",
+    "phase": "before",
+    "completed_at_utc": "2026-10-10T15:07:19.014237+00:00"
+  },
+  "ux_task_paths": {
+    "exit_code": 0,
+    "seconds": 16.338452339172363,
+    "source_commit": "cf6566a38a44daf174b938306f79bf3c8b3ccd04",
+    "phase": "before",
+    "completed_at_utc": "2026-10-10T15:09:25.513064+00:00"
+  },
+  "ux_mapping_errors": {
+    "exit_code": 0,
+    "seconds": 4.4212658405303955,
+    "source_commit": "cf6566a38a44daf174b938306f79bf3c8b3ccd04",
+    "phase": "before",
+    "completed_at_utc": "2026-10-10T15:15:51.468262+00:00"
+  },
+  "ux_ai_unavailable": {
+    "exit_code": 0,
+    "seconds": 2.6188673973083496,
+    "source_commit": "cf6566a38a44daf174b938306f79bf3c8b3ccd04",
+    "phase": "before",
+    "completed_at_utc": "2026-10-10T14:54:16.767340+00:00"
+  },
+  "ux_ai_timeout": {
+    "exit_code": 0,
+    "seconds": 42.620306730270386,
+    "source_commit": "cf6566a38a44daf174b938306f79bf3c8b3ccd04",
+    "phase": "before",
+    "completed_at_utc": "2026-10-10T14:56:18.057349+00:00"
+  }
+}

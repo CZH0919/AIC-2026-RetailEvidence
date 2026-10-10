@@ -1,0 +1,12 @@
+{
+  "phase": "before",
+  "results": [
+    {
+      "id": "B_daily_summary",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/24313239-811f-484b-9a4e-89756ca44298?run=e7db4725-c218-41c4-b4f8-9d3240385df7",
+      "evidence": "B_daily_summary.png"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,137 @@
+{
+  "status": "PASS",
+  "phase": "before",
+  "answer": {
+    "answer": "AI 暂时无法回答。可以查看商品详情和对应依据，月报计算结果不受影响。",
+    "ai_used": false,
+    "mode": "inference_unavailable",
+    "evidence_id": "9dde874b-8595-4fb8-b3af-65131f2da2be:f87502ffa0a399d0401039392158ba8149974e0b57078b03f771ac147d456c90",
+    "evidence": {
+      "summary": {
+        "source_order_amount": null,
+        "quantity": 626765,
+        "amount": 1105884.75,
+        "amount_missing_rows": 0,
+        "orders": null,
+        "refund_amount": null,
+        "products": 2863,
+        "attention_total": 0,
+        "unit": "原始商品单位",
+        "currency": "GBP",
+        "previous": null,
+        "complete_month": false,
+        "amount_label": "按确认分类口径的销售额（数量仅含实物，退款另计）",
+        "average_order": null
+      },
+      "quality": {
+        "input_rows": 3005,
+        "included_rows": 3005,
+        "excluded_rows": 0,
+        "duplicate_candidates": 0,
+        "reasons": []
+      },
+      "forecast": {
+        "status": "unavailable",
+        "reason": "需要确认完整日期范围后，才能预测；月汇总不支持日级预测。",
+        "metrics": [],
+        "version": "sales-v2.2.0"
+      },
+      "anomaly": {
+        "status": "unavailable",
+        "reason": "当前记录无法核对完整的历史波动。",
+        "version": "sales-v2.2.0"
+      },
+      "classification": {
+        "version": "record-classification-v1",
+        "sha256": "f87502ffa0a399d0401039392158ba8149974e0b57078b03f771ac147d456c90",
+        "counts": {
+          "physical_product": 2998,
+          "other": 3,
+          "shipping_service": 3,
+          "manual_adjustment": 1
+        },
+        "pending_product_rows": 0,
+        "financial_breakdown": [
+          {
+            "month": "2011-10",
+            "record_kind": "manual_adjustment",
+            "label": "人工调整",
+            "amount_treatment": "exclude",
+            "rows": 1,
+            "amount": 21548.67,
+            "missing_amount_rows": 0
+          },
+          {
+            "month": "2011-10",
+            "record_kind": "other",
+            "label": "其他",
+            "amount_treatment": "exclude",
+            "rows": 3,
+            "amount": 79.72,
+            "missing_amount_rows": 0
+          },
+          {
+            "month": "2011-10",
+            "record_kind": "physical_product",
+            "label": "实物商品",
+            "amount_treatment": "include",
+            "rows": 2998,
+            "amount": 1105884.75,
+            "missing_amount_rows": 0
+          },
+          {
+            "month": "2011-10",
+            "record_kind": "shipping_service",
+            "label": "运费/服务",
+            "amount_treatment": "exclude",
+            "rows": 3,
+            "amount": 26681.09,
+            "missing_amount_rows": 0
+          }
+        ]
+      },
+      "items": [
+        {
+          "id": "22423",
+          "name": "REGENCY CAKESTAND 3 TIER",
+          "quantity": 1083,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "23084",
+          "name": "23084",
+          "quantity": 6348,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "23284",
+          "name": "DOORMAT KEEP CALM AND COME IN",
+          "quantity": 1540,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "85099B",
+          "name": "JUMBO BAG RED RETROSPOT",
+          "quantity": 5412,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "22086",
+          "name": "PAPER CHAIN KIT 50'S CHRISTMAS ",
+          "quantity": 3389,
+          "reason": "",
+          "flags": []
+        }
+      ],
+      "actions": []
+    },
+    "run_id": "9dde874b-8595-4fb8-b3af-65131f2da2be"
+  },
+  "seconds": 0.656,
+  "report_still_visible": true,
+  "test_upstream": "deliberately unreachable isolated upstream, shared CPU model unchanged"
+}
