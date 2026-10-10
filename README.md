@@ -1,6 +1,6 @@
 # RetailEvidence Studio
 
-小商户月度销售与备货助手，沿用团队 FastAPI、SQLite/SQLAlchemy、React/TypeScript 架构。版本 0.6.1，schema 5，销售算法 sales-v2.2.0；当前验收状态以 [实际报告](docs/ACCEPTANCE_REPORT.md) 为准。
+小商户月度销售与备货助手，沿用团队 FastAPI、SQLite/SQLAlchemy、React/TypeScript 架构。版本 0.6.2，schema 5，销售算法 sales-v2.2.0；本轮操作提示验收见 [真实UX报告](docs/UX_GUIDANCE_ACCEPTANCE.md)；原系统验收见 [历史交付报告](docs/ACCEPTANCE_REPORT.md)。
 
 上传收银明细、独立商品日汇总或月汇总 → 确认字段、月份、记录类型与金额口径 → 检查数据 → 生成月报 → 查看全部商品及异常原始记录 → 保存核对备注 → CPU AI 解释证据 → 导出 HTML/CSV/JSON、浏览器打印 PDF。RF/RFM 客户分群与 FP-growth 共购保留在“更多分析”。
 
@@ -9,6 +9,18 @@
 预览阶段可请本地CPU AI解释字段，列名建议由程序提出；点击应用后仍需人工确认类型、金额等业务口径。字段解释不保存数据版本、不自动确认。
 
 AI 只解释冻结证据，数字由程序填写。没有库存不能算进货量，没有成本不算利润；七天销量参考不等于整月采购量。公开批发数据验收不代表小店真实经营收益。
+
+## 站内操作提示与使用说明
+
+按上下文点击“怎么填写？”或“如何理解？”展开例子、未知数据处理和错误影响。42个统一主题覆盖上传、金额、记录分类、完整范围、月报、异常、预测、历史库存、AI、RF/RFM和共购。帮助支持点击、Enter/空格/Tab/Escape与焦点返回，不提交表单或调用模型。桌面、768px及390px真实浏览器复测。
+
+- [网站使用说明](docs/WEBSITE_USER_GUIDE.md)
+- [初次完整审查（独立提交）](docs/UX_GUIDANCE_AUDIT.md)
+- [实现对应](docs/UX_GUIDANCE_IMPLEMENTATION.md)
+- [真实复测与限制](docs/UX_GUIDANCE_ACCEPTANCE.md)
+- [改造前后真实截图](docs/UX_GUIDANCE_BEFORE_AFTER.md)
+
+本轮37个主浏览器组PASS，帮助3条内容合同测试、pytest60执行案例加6subtests、Ruff与类型/构建PASS；完整长时任务超限和真人商户研究尚未执行。原有验收记录按原日期/版本保留，不能当本轮重跑。当前依赖复用已安装环境，下面依赖安装步骤属于既有启动说明，本轮没有重新网络安装。
 
 ## 运行（Ubuntu，Python 3.12、Node 24）
 

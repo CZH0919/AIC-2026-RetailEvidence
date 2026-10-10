@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "csv_hash_matches": {
+    "monthly_2011-09.csv": true,
+    "monthly_2011-10.csv": true,
+    "daily_public.csv": true,
+    "chinese_gbk.csv": true,
+    "missing_fields.csv": true
+  },
+  "xlsx_note": "ZIP时间戳可能不同，派生来源与工作表内容相同；不宣称生成文件逐字节相同"
+}

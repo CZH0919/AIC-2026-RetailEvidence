@@ -1,0 +1,49 @@
+{
+  "source_commit": "a673a440697bc4d75acde620b718cbe548379ca4",
+  "checks": [
+    {
+      "command": [
+        "/home/ubuntu/AIC_Shared/tools/node-v24.21.0-linux-x64/bin/node",
+        "--test",
+        "scripts/test_ux_guidance.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.1212916374206543,
+      "at": "2026-10-10T16:04:39.147647+00:00"
+    },
+    {
+      "command": [
+        "/home/ubuntu/retailevidence_personal_20261009_01/updates/ux_guidance_20261010_01/source/.venv/bin/python",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "scripts/test_sales_v2.py",
+        "scripts/test_record_classification.py",
+        "scripts/test_task_safety.py",
+        "scripts/test_ai_contract.py",
+        "scripts/test_field_assistant.py",
+        "-q"
+      ],
+      "exit_code": 0,
+      "seconds": 13.063780784606934,
+      "at": "2026-10-10T16:04:52.211447+00:00"
+    },
+    {
+      "command": [
+        "/home/ubuntu/retailevidence_personal_20261009_01/updates/ux_guidance_20261010_01/source/.venv/bin/ruff",
+        "check",
+        "--no-cache",
+        "backend",
+        "scripts/test_record_classification.py",
+        "scripts/test_task_safety.py",
+        "scripts/test_ai_contract.py",
+        "scripts/test_field_assistant.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.01030874252319336,
+      "at": "2026-10-10T16:04:52.221772+00:00"
+    }
+  ]
+}

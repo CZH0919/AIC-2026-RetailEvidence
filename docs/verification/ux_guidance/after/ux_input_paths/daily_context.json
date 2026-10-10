@@ -1,0 +1,64 @@
+{
+  "project": {
+    "id": "283140a6-cf95-4eaf-beee-195c3cc84696",
+    "name": "UX商品日汇总 1791646960984",
+    "description": "公开数据派生UX自查，分类假定，非真实商户",
+    "color": "teal",
+    "created_at": "2026-10-10T15:42:41.435447+00:00",
+    "updated_at": "2026-10-10T15:42:41.435465+00:00",
+    "revision": 1
+  },
+  "run": {
+    "id": "11424f33-1686-45a1-8fe2-2a5f2aea61c7",
+    "project_id": "283140a6-cf95-4eaf-beee-195c3cc84696",
+    "dataset_version_id": "6b9fa350-073b-41cb-8357-c45e0c1153b6",
+    "policy_id": "de86e815-fa74-4234-a5e7-46b290084033",
+    "quality_run_id": null,
+    "kind": "sales",
+    "status": "queued",
+    "phase": "queued",
+    "progress": 0,
+    "message": "已加入处理队列。",
+    "created_at": "2026-10-10T15:43:01.213968+00:00",
+    "started_at": null,
+    "finished_at": null,
+    "error_code": null,
+    "peak_rss_bytes": 0,
+    "parameters": {
+      "sales": {
+        "sources": [
+          {
+            "version_id": "6b9fa350-073b-41cb-8357-c45e0c1153b6",
+            "mapping_revision": 1
+          }
+        ],
+        "month": "2011-10",
+        "merge_mode": "append",
+        "duplicates": "keep",
+        "coverage_start": "2011-06-01",
+        "coverage_end": "2011-10-31",
+        "complete_coverage": true,
+        "closed_dates": [],
+        "budget_seconds": 1200,
+        "check_only": false,
+        "classifications": [
+          {
+            "version_id": "6b9fa350-073b-41cb-8357-c45e0c1153b6",
+            "mapping_revision": 1,
+            "default_kind": "physical_product",
+            "default_amount_treatment": "include",
+            "confirmed": true,
+            "rules": []
+          }
+        ],
+        "source_hashes": {
+          "6b9fa350-073b-41cb-8357-c45e0c1153b6": "32ae582486730b429612f90d1ebaea3377697b0f4e6f1dd387ca3ad1549cd4d0"
+        },
+        "classification_sha256": "6d8f533cebabd7d162b63681c92f72db4a865a1bf536ca71e84dda07323a3ec3"
+      },
+      "timeout_seconds": 1200,
+      "memory_mb": 8192
+    },
+    "result": null
+  }
+}

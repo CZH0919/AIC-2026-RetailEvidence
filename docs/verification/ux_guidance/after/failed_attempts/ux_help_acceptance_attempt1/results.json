@@ -1,0 +1,60 @@
+{
+  "results": [
+    {
+      "id": "HELP_project_keyboard",
+      "status": "FAIL",
+      "error": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('[data-help-content=\"UX01\"]:visible') to be visible\n"
+    },
+    {
+      "id": "HELP_monthly_and_export",
+      "status": "FAIL",
+      "error": "The expression evaluated to a falsy value:\n\n  assert(box.x>=-1&&box.x+box.width<=page.viewportSize().width+1)\n"
+    },
+    {
+      "id": "HELP_classification_validation",
+      "status": "FAIL",
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: '生成月报', exact: true })\n    - locator resolved to <button type=\"button\" class=\"ant-btn css-oc1rc0 css-var-_r_0_ ant-btn-default ant-btn-color-default ant-btn-variant-outlined\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <p>人工调整语义未知时金额保留待确认，不补零、不猜退款。</p> from <div>…</div> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <p>人工调整语义未知时金额保留待确认，不补零、不猜退款。</p> from <div>…</div> subtree intercepts pointer events\n  2 × retrying click action\n      - waiting 100ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div id=\"_r_e_\" class=\"ant-drawer-title\">操作说明</div> from <div>…</div> subtree intercepts pointer events\n  14 × retrying click action\n       - waiting 500ms\n       - waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <p>人工调整语义未知时金额保留待确认，不补零、不猜退款。</p> from <div>…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n       - waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <p>人工调整语义未知时金额保留待确认，不补零、不猜退款。</p> from <div>…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n       - waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div id=\"_r_e_\" class=\"ant-drawer-title\">操作说明</div> from <div>…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n       - waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div id=\"_r_e_\" class=\"ant-drawer-title\">操作说明</div> from <div>…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <p>人工调整语义未知时金额保留待确认，不补零、不猜退款。</p> from <div>…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n"
+    },
+    {
+      "id": "HELP_mapping_and_state",
+      "status": "FAIL",
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('link', { name: '数据记录', exact: true })\n    - locator resolved to <a class=\"\" data-discover=\"true\" href=\"/projects/17f4583e-14ca-4adc-849f-c70430f1591b/data\">数据记录</a>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"ant-drawer-mask\"></div> from <div>…</div> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"ant-drawer-mask\"></div> from <div>…</div> subtree intercepts pointer events\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"ant-drawer-mask\"></div> from <div>…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n"
+    },
+    {
+      "id": "HELP_import_csv_xlsx",
+      "status": "FAIL",
+      "error": "locator.click: Target page, context or browser has been closed\nCall log:\n  - waiting for locator('[data-help-id=\"UX06\"]:visible').first()\n    - locator resolved to <button type=\"button\" data-help-id=\"UX06\" aria-expanded=\"false\" aria-haspopup=\"dialog\" aria-label=\"查看帮助：映射建议与未知字段\" class=\"ant-btn css-oc1rc0 css-var-_r_0_ ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-sm help-hint\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"ant-drawer-mask ant-drawer-mask-motion-appear ant-drawer-mask-motion-appear-active ant-drawer-mask-motion\"></div> from <div>…</div> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"ant-drawer-mask ant-drawer-mask-motion-appear ant-drawer-mask-motion-appear-active ant-drawer-mask-motion\"></div> from <div>…</div> subtree intercepts pointer events\n    - retrying click action\n      - waiting 100ms\n    57 × waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"ant-drawer-mask\"></div> from <div>…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n"
+    },
+    {
+      "id": "HELP_forecast_inventory_notes",
+      "status": "FAIL",
+      "error": "page.goto: Target page, context or browser has been closed"
+    },
+    {
+      "id": "HELP_ai_example_no_auto_request",
+      "status": "FAIL",
+      "error": "page.goto: Target page, context or browser has been closed"
+    },
+    {
+      "id": "HELP_more_analysis",
+      "status": "FAIL",
+      "error": "page.goto: Target page, context or browser has been closed"
+    },
+    {
+      "id": "HELP_responsive_and_guide",
+      "status": "FAIL",
+      "error": "page.setViewportSize: Target page, context or browser has been closed"
+    },
+    {
+      "id": "HELP_all_42_topics",
+      "status": "FAIL",
+      "error": "Visited 3: UX01,UX43,UX45\n\n3 !== 42\n"
+    }
+  ],
+  "visited": [
+    "UX01",
+    "UX43",
+    "UX45"
+  ],
+  "errors": []
+}

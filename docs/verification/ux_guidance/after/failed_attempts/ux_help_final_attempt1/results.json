@@ -1,0 +1,88 @@
+{
+  "results": [
+    {
+      "id": "HELP_project_keyboard",
+      "status": "PASS"
+    },
+    {
+      "id": "HELP_monthly_and_export",
+      "status": "PASS"
+    },
+    {
+      "id": "HELP_classification_validation",
+      "status": "FAIL",
+      "error": "Tab focus left the active help dialog"
+    },
+    {
+      "id": "HELP_mapping_and_state",
+      "status": "FAIL",
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('link', { name: '数据记录', exact: true })\n    - locator resolved to <a class=\"\" data-discover=\"true\" href=\"/projects/17f4583e-14ca-4adc-849f-c70430f1591b/data\">数据记录</a>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"ant-drawer-mask\"></div> from <div>…</div> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"ant-drawer-mask\"></div> from <div>…</div> subtree intercepts pointer events\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"ant-drawer-mask\"></div> from <div>…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n"
+    },
+    {
+      "id": "HELP_import_csv_xlsx",
+      "status": "PASS"
+    },
+    {
+      "id": "HELP_forecast_inventory_notes",
+      "status": "FAIL",
+      "error": "Tab focus left the active help dialog"
+    },
+    {
+      "id": "HELP_ai_example_no_auto_request",
+      "status": "FAIL",
+      "error": "Tab focus left the active help dialog"
+    },
+    {
+      "id": "HELP_more_analysis",
+      "status": "PASS"
+    },
+    {
+      "id": "HELP_responsive_and_guide",
+      "status": "FAIL",
+      "error": "Tab focus left the active help dialog"
+    },
+    {
+      "id": "HELP_outside_mask_and_header_escape",
+      "status": "PASS"
+    },
+    {
+      "id": "HELP_all_42_topics",
+      "status": "FAIL",
+      "error": "Visited 31: UX01,UX02,UX03,UX04,UX05,UX16,UX17,UX18,UX21,UX22,UX23,UX24,UX25,UX26,UX27,UX28,UX29,UX30,UX31,UX33,UX34,UX35,UX36,UX37,UX39,UX40,UX41,UX42,UX43,UX44,UX45\n\n31 !== 42\n"
+    }
+  ],
+  "visited": [
+    "UX01",
+    "UX02",
+    "UX03",
+    "UX04",
+    "UX05",
+    "UX16",
+    "UX17",
+    "UX18",
+    "UX21",
+    "UX22",
+    "UX23",
+    "UX24",
+    "UX25",
+    "UX26",
+    "UX27",
+    "UX28",
+    "UX29",
+    "UX30",
+    "UX31",
+    "UX33",
+    "UX34",
+    "UX35",
+    "UX36",
+    "UX37",
+    "UX39",
+    "UX40",
+    "UX41",
+    "UX42",
+    "UX43",
+    "UX44",
+    "UX45"
+  ],
+  "errors": []
+}

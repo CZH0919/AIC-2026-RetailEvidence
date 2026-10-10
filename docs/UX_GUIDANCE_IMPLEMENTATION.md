@@ -1,6 +1,6 @@
 # 操作提示实现记录
 
-改造前审查报告独立提交：`6c82ab2616104e8842052b99e11b1ea426f9a40d`。基线0.6.1，后端算法/schema保持。当前为实现候选，真实复测结果另见UX_GUIDANCE_ACCEPTANCE，不能以本文件代替验收。
+改造前审查报告独立提交：`6c82ab2616104e8842052b99e11b1ea426f9a40d`。基线0.6.1，后端算法/schema保持。完成后的真实复测结果见 [验收报告](UX_GUIDANCE_ACCEPTANCE.md)，本文件不代替测试证据。
 
 ## 统一组件和内容
 
@@ -57,8 +57,8 @@
 |UX34|可售库存与确定到货|统一主题 UX34|SalesWorkspace|
 |UX35|备用量、包装单位与公式|统一主题 UX35|SalesWorkspace|
 |UX36|核查备注与并发冲突恢复|界面处置 + 相关主题|ProductNote|
-|UX37|AI证据、澄清与回退|统一主题 UX37|SalesWorkspace/FieldAssistant|
-|UX38|可选择的问题示例|界面处置 + 相关主题|SalesWorkspace/FieldAssistant|
+|UX37|AI证据、澄清与回退|统一主题 UX37|SalesWorkspace（原FieldAssistant保持，映射建议解释由UX06补充）|
+|UX38|可选择的问题示例|界面处置 + 相关主题|SalesWorkspace（原FieldAssistant保持，映射建议解释由UX06补充）|
 |UX39|RF/RFM客户画像|统一主题 UX39|QualityReport|
 |UX40|群数与分群诊断|统一主题 UX40|QualityReport|
 |UX41|商品共购适用条件|统一主题 UX41|QualityReport|
@@ -67,3 +67,9 @@
 |UX44|导出格式与完整数据|统一主题 UX44|DataWorkspace/SalesWorkspace|
 |UX45|任务排队、取消与失败|统一主题 UX45|DataWorkspace/SalesWorkspace|
 |UX46|站内使用指南更新|界面处置 + 相关主题|Guide|
+
+## 键盘与响应式修复
+
+真实复测发现初次断点初始化导致帮助容器切换丢失焦点，以及768px轻提示超出右边界，分别修复于14161c3与317a2c4。最终追加Tab测试发现嵌套抽屉焦点离开当前帮助，修复于a673a44。所有帮助在正文范围循环Tab，Escape只关闭帮助，原表单继续保留；遮罩、标题关闭和正文关闭都返回触发按钮。112.124秒的最终真实浏览器专项11组PASS、42主题全覆盖。失败日志和截图保留，没有用旧PASS替代。
+
+版本0.6.2统一应用API、任务manifest、pyproject及前端包元数据；此前pyproject/任务manifest仍写0.6.0，这次修正新运行的版本记录。schema5、sales-v2.2.0及旧报告文件保持。原字段CPU解释功能并未新增智能确认；新示例按钮仅位于销售助手。
