@@ -1,5 +1,7 @@
 # 团队技术交接
 
+2026-10-10 更新：0.6.1 F01/F02 反馈修复与本轮真实验证见 [FEEDBACK_20261010](FEEDBACK_20261010.md)。个人当前隔离库位于 updates/review_20261010_01/state，源码为该目录 source；下方 2026-10-09 路径/run 为历史。正式目录未部署。本轮 candidate SHA d8f19452b5c89989f306f239ea20bb4d08ad629c，实际发布/最终运行收据另存个人工作区 evidence/feedback_20261010/release.json。
+
 先读TASK_PROGRESS.md（D盘工作区）和验收报告，再检查对应真实运行证据，不能仅凭进度文字判定PASS。本轮私人主开发目录 /home/ubuntu/retailevidence_personal_20261009_01；source源码、state数据库、storage资产、baseline备份、verification干净检出、evidence证据。正式 /home/ubuntu/AIC_Project 与 Project_Progress 是共享资产，不作为测试目录。
 
 ## 环境与服务

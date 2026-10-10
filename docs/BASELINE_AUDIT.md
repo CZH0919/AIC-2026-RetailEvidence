@@ -1,5 +1,7 @@
 # 基线审计
 
+2026-10-10 更新：0.6.1 F01/F02 反馈修复与本轮真实验证见 [FEEDBACK_20261010](FEEDBACK_20261010.md)。个人当前隔离库位于 updates/review_20261010_01/state，源码为该目录 source；下方 2026-10-09 路径/run 为历史。正式目录未部署。本轮 candidate SHA d8f19452b5c89989f306f239ea20bb4d08ad629c，实际发布/最终运行收据另存个人工作区 evidence/feedback_20261010/release.json。
+
 日期 2026-10-09；现场源码 /home/ubuntu/AIC_Project，正式目录无 .git。应用0.5.0/schema5/sales-v2.1.1，89个源码文件；以当前源文件哈希清单锁定，不用旧GitHub覆盖。原仓库HEAD dc9943573fa4e03ff805a35240940f1fe2be9661（0.3.0/S03），基线导入提交 a4dd458c2467dce1ff6a4ebdf9dfaa1153236fae。
 
 当前源码快照 SHA-256 `c46d6a9498e210ce53a247e5ecd0dc87297cd076d74c932279066c2de259ce08`。SQLite在线备份 SHA-256 `e67deee042429012f05a617b1e89c88e2956ab396f2e339d219705207c7332a2`，使用mode=ro来源与backup API，独立恢复 integrity_check=ok、foreign_key_check=0、user_version=5；20analysis_runs/6dataset_versions/6mappings/4projects。不是热库单文件拷贝。

@@ -1,5 +1,7 @@
 # 功能与验收追踪矩阵
 
+2026-10-10 更新：0.6.1 F01/F02 反馈修复与本轮真实验证见 [FEEDBACK_20261010](FEEDBACK_20261010.md)。个人当前隔离库位于 updates/review_20261010_01/state，源码为该目录 source；下方 2026-10-09 路径/run 为历史。正式目录未部署。本轮 candidate SHA d8f19452b5c89989f306f239ea20bb4d08ad629c，实际发布/最终运行收据另存个人工作区 evidence/feedback_20261010/release.json。
+
 2026-10-09；45项，{'PASS': 38, 'NOT_APPLICABLE': 3, 'BLOCKED': 3, 'NOT_RUN': 1}。历史证据与本轮实际提交区分；最新核心候选bb8b645d19abd6422f47f6682a21a9f55b3124a6，完整命令/数据哈希/预期与实际见acceptance_matrix.csv。最终远端main收据另在个人evidence/release_verification.json，不能由候选证据冒充。
 
 |测试ID|范围|需求/界面|实际源码|本次状态|证据与剩余范围|

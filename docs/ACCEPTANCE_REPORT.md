@@ -1,5 +1,7 @@
 # 本轮实际验收报告
 
+2026-10-10 更新：0.6.1 F01/F02 反馈修复与本轮真实验证见 [FEEDBACK_20261010](FEEDBACK_20261010.md)。个人当前隔离库位于 updates/review_20261010_01/state，源码为该目录 source；下方 2026-10-09 路径/run 为历史。正式目录未部署。本轮 candidate SHA d8f19452b5c89989f306f239ea20bb4d08ad629c，实际发布/最终运行收据另存个人工作区 evidence/feedback_20261010/release.json。
+
 2026-10-09；Ubuntu24.04/8CPU/约30GB RAM/Python3.12.3/Node24.21.0。当前已验收代码候选 `bb8b645d19abd6422f47f6682a21a9f55b3124a6`，应用0.6.0/schema5/sales-v2.2.0。GitHub最终main提交的发布/fetch/实际运行收据另在个人工作区 `evidence/release_verification.json`；本文件不把候选SHA当作已发布SHA。正式共享项目没有部署。
 
 |本轮检查|实际结果|可核对证据|

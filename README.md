@@ -1,6 +1,6 @@
 # RetailEvidence Studio
 
-小商户月度销售与备货助手，沿用团队 FastAPI、SQLite/SQLAlchemy、React/TypeScript 架构。版本 0.6.0，schema 5，销售算法 sales-v2.2.0；当前验收状态以 [实际报告](docs/ACCEPTANCE_REPORT.md) 为准。
+小商户月度销售与备货助手，沿用团队 FastAPI、SQLite/SQLAlchemy、React/TypeScript 架构。版本 0.6.1，schema 5，销售算法 sales-v2.2.0；当前验收状态以 [实际报告](docs/ACCEPTANCE_REPORT.md) 为准。
 
 上传收银明细、独立商品日汇总或月汇总 → 确认字段、月份、记录类型与金额口径 → 检查数据 → 生成月报 → 查看全部商品及异常原始记录 → 保存核对备注 → CPU AI 解释证据 → 导出 HTML/CSV/JSON、浏览器打印 PDF。RF/RFM 客户分群与 FP-growth 共购保留在“更多分析”。
 
@@ -42,6 +42,8 @@ bash scripts/run.sh
 模型使用 [官方 Qwen2.5-1.5B GGUF](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF) 和 llama.cpp CPU 服务，详细配置、SHA-256、线程与端口见 [技术交接](docs/HANDOFF.md)。模型不可用仍可使用确定性报告，界面明确标记回退。没有模型权重、原始大数据、个人凭据或数据库随 Git 发布。
 
 ## 测试与证据
+
+2026-10-10 反馈补丁已完成费用/旧未分类报告备货保护及历史 run 地址同步。49 唯一单测、20 HTTP 和 4 套真实浏览器专项已重跑通过，来源与实际 SHA 见 [本轮反馈验收](docs/FEEDBACK_20261010.md)。刷新、复制链接和浏览器返回保持所选报告；旧报告统计不重写。下文 2026-10-09 证据保留为历史。
 
 ```bash
 export PYTHONPATH="$PWD/backend"
