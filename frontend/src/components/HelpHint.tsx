@@ -32,7 +32,7 @@ export function HelpHint({ topic, context }: { topic: HelpId; context?: string }
   }, [open, drawer])
   const keys = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); change(false) }
-    if (event.key === 'Tab' && !drawer) {
+    if (event.key === 'Tab') {
       const buttons = event.currentTarget.querySelectorAll<HTMLElement>('button, a[href], [tabindex="0"]')
       if (!buttons.length) return
       const first = buttons[0], last = buttons[buttons.length - 1]
