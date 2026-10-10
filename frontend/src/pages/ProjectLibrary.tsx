@@ -1,3 +1,4 @@
+import { HelpHint } from '../components/HelpHint'
 import { useEffect, useState } from 'react'
 import { ArrowRightOutlined, BarChartOutlined, DatabaseOutlined, FolderOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import { Button, Input, Pagination } from 'antd'
@@ -31,7 +32,7 @@ export function ProjectLibrary() {
   }, [query, page, refresh, reload])
 
   return <>
-    <div className="page-heading"><div><h1>分析项目</h1><p>将交易数据组织成独立项目，让每一次分析都有清晰的依据。</p></div>
+    <div className="page-heading"><div><h1>分析项目</h1><HelpHint topic="UX01" /><p>将交易数据组织成独立项目，让每一次分析都有清晰的依据。</p></div>
       <Button type="primary" size="large" icon={<PlusOutlined />} onClick={createProject}>新建项目</Button>
     </div>
     <section className="library-panel" aria-labelledby="library-title">

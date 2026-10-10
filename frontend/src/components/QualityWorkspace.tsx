@@ -1,3 +1,4 @@
+import { HelpHint } from './HelpHint'
 import { useEffect, useRef, useState } from 'react'
 import { Alert, App, Button, Checkbox, Collapse, Input, Progress, Select, Tag } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, PlayCircleOutlined, ReloadOutlined } from '@ant-design/icons'
@@ -96,13 +97,13 @@ export default function QualityWorkspace({ projectId }: { projectId: string }) {
   if (!versions.length) return <section className="workspace-panel"><EmptyState compact title="先添加一份数据，再检查质量" description="导入并确认字段后，可以查看质量问题和各项分析的适用条件。" action={<Link className="button-link" to={`/projects/${projectId}/data`}>前往导入数据</Link>} /></section>
   const active = detail && !finished.has(detail.status)
   return <div className="quality-workspace">
-    <div className="data-heading"><div><span className="eyebrow">DATA QUALITY</span><h2>先确认数据，再相信结论</h2><p>看清记录的去向，明确每项分析可以使用的数据范围。</p></div><Button type="primary" icon={<PlayCircleOutlined />} loading={busy} disabled={!mappings.length} onClick={() => void submit()}>检查数据质量</Button></div>
+    <div className="data-heading"><div><span className="eyebrow">更多分析前的数据检查</span><h2>先确认数据，再相信结论</h2><HelpHint topic="UX24" /><p>看清记录的去向，明确每项分析可以使用的数据范围。</p></div><Button type="primary" icon={<PlayCircleOutlined />} loading={busy} disabled={!mappings.length} onClick={() => void submit()}>检查数据质量</Button></div>
     {error && <Alert className="import-alert" type="warning" showIcon title={error} />}
     {submitError && <Alert className="import-alert" type="error" showIcon title={submitError} />}
     <section className="workspace-panel quality-settings"><div className="quality-source-select"><label className="data-field"><span>数据版本</span><Select aria-label="质量检查数据版本" value={version} disabled={busy} options={versions.map(v => ({ value: v.id, label: `V${v.number} · ${v.filename}` }))} onChange={setVersion} /></label>
       <label className="data-field"><span>字段版本</span><Select aria-label="质量检查字段版本" value={mapping} disabled={busy} options={mappings.map(m => ({ value: m.revision, label: `M${m.revision} · ${formatDate(m.created_at)}` }))} onChange={setMapping} /></label></div>
       <Collapse activeKey={expanded} onChange={keys => setExpanded(typeof keys === 'string' ? [keys] : keys)} ghost items={[{ key: 'settings', label: '清洗策略与分析范围', children: <fieldset className="import-fieldset" disabled={busy}>
-        <div className="mapping-grid"><label className="data-field"><span>完全重复记录</span><Select aria-label="完全重复记录处理" value={config.duplicates} onChange={v => setConfig({ ...config, duplicates: v })} options={[{ value: 'keep', label: '保留并标记' }, { value: 'drop_exact', label: '移除完全重复记录' }]} /><small>订单与商品相同，不等于重复记录。</small></label>
+        <div className="help-topic-row"><HelpHint topic="UX25" /><HelpHint topic="UX23" /><HelpHint topic="UX26" /></div><div className="mapping-grid"><label className="data-field"><span>完全重复记录</span><Select aria-label="完全重复记录处理" value={config.duplicates} onChange={v => setConfig({ ...config, duplicates: v })} options={[{ value: 'keep', label: '保留并标记' }, { value: 'drop_exact', label: '移除完全重复记录' }]} /><small>订单与商品相同，不等于重复记录。</small></label>
           <label className="data-field"><span>客户金额缺失时</span><Select aria-label="客户金额缺失策略" value={config.monetary_subset} onChange={v => setConfig({ ...config, monetary_subset: v })} options={[{ value: 'all_customers', label: '先使用不依赖金额的 RF' }, { value: 'complete_customers', label: '允许仅对金额完整客户使用 RFM' }]} /><small>不把缺失金额填成零。</small></label>
           <label className="data-field"><span>开始日期（可选）</span><Input type="date" aria-label="开始日期" value={scope.date_start ?? ''} onChange={e => setScope({ ...scope, date_start: e.target.value || null })} /></label>
           <label className="data-field"><span>结束日期（可选，包含当天）</span><Input type="date" aria-label="结束日期" value={scope.date_end ?? ''} onChange={e => setScope({ ...scope, date_end: e.target.value || null })} /></label>
@@ -114,7 +115,7 @@ export default function QualityWorkspace({ projectId }: { projectId: string }) {
         <p className="field-help">每次结果固定数据版本、字段与清洗策略。修改设置会产生新的处理记录，原始文件保持完整。</p>
       </fieldset> }]} />
     </section>
-    <div className="quality-run-heading"><div><h3>处理记录</h3><span>选择一次记录，查看对应结果</span></div><Button type="text" icon={<ReloadOutlined />} onClick={() => setReload(v => v + 1)}>刷新</Button></div>
+    <div className="quality-run-heading"><div><h3>处理记录</h3><HelpHint topic="UX45" /><span>选择一次记录，查看对应结果</span></div><Button type="text" icon={<ReloadOutlined />} onClick={() => setReload(v => v + 1)}>刷新</Button></div>
     <div className="quality-run-strip">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{finished.has(run.status) ? <CheckCircleOutlined /> : <ClockCircleOutlined />}{stateLabel[run.status] ?? run.status}</span><small>{new Date(run.created_at).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</small></button>) : <p>还没有处理记录。选择数据与策略后，开始第一次检查。</p>}</div>
     {detail && <section className="workspace-panel quality-result-panel"><div className="quality-result-header"><div><Tag color={detail.result ? 'cyan' : active ? 'blue' : 'default'}>{stateLabel[detail.status]}</Tag><span>{detail.message}</span></div>{active && <Button danger onClick={async () => { try { setDetail(await qualityApi.cancel(projectId, detail.id)); void message.info('取消请求已提交') } catch (e) { void message.error(e instanceof Error ? e.message : '未能取消，请重试。') } }}>取消处理</Button>}</div>
       {active && <div className="quality-processing"><Progress percent={detail.progress} status="active" strokeColor="#087f73" /><p>处理在后台继续。离开页面后，可以从这条记录查看结果。</p></div>}

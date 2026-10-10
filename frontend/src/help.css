@@ -1,0 +1,17 @@
+
+.help-hint.ant-btn { display: inline-flex; align-items: center; width: fit-content; max-width: 100%; color: #087f73; font-weight: 500; border-radius: 6px; margin: 3px 4px 7px 0; vertical-align: middle; white-space: normal; height: auto; min-height: 28px; }
+.help-hint.ant-btn:focus-visible { outline: 2px solid #087f73; outline-offset: 2px; }
+.help-content { color: #243e49; max-width: 100%; overflow-wrap: anywhere; line-height: 1.7; }
+.help-content-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.help-content-heading h3 { margin: 0; font-size: 18px; line-height: 1.5; }
+.help-content-heading button { flex-shrink: 0; }
+.help-content h4 { font-size: 14px; margin: 16px 0 4px; color: #087f73; }
+.help-content p { margin: 4px 0 12px; }
+.help-context { background: #f0f8f5; padding: 12px; border-radius: 8px; }
+.help-popover .ant-popover-inner { max-width: min(420px, calc(100vw - 32px)); max-height: 70vh; overflow-y: auto; }
+.help-topic-row { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 8px 0; }
+.classification-source { overflow-wrap: anywhere; font-weight: 600; color: #087f73; }
+.help-drawer .ant-drawer-body { padding: 20px; }
+.help-ai-examples { margin: 10px 0; display: flex; gap: 6px; flex-wrap: wrap; }
+.help-ai-examples button { height: auto; white-space: normal; text-align: left; }
+@media (max-width: 575px) { .help-drawer .ant-drawer-body { padding: 16px; } .help-content-heading { flex-wrap: wrap; } .help-hint.ant-btn { font-size: 12px; } }

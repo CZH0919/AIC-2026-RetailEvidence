@@ -1,3 +1,4 @@
+import { HelpHint } from './HelpHint'
 import { useEffect, useState } from 'react'
 import { Alert, App, Button, Select, Table, Tag } from 'antd'
 import { CheckCircleOutlined, ExclamationCircleOutlined, InfoCircleOutlined, PlayCircleOutlined } from '@ant-design/icons'
@@ -47,7 +48,7 @@ export function QualityReport({ report, projectId, runId }: { report: Report; pr
   ]
   return <div className="quality-report">
     <div className="quality-metrics">{overview.map(([label, count, help]) => <article key={label}><span>{label}</span><strong>{Number(count).toLocaleString()}</strong><small>{help}</small></article>)}</div>
-    <div className="quality-section-title"><div><h3>这份数据适合做什么</h3><p>输入条件通过后，仍需在实际分析时检验结果质量。</p></div><span>字段版本 M{report.context.mapping_revision}</span></div>
+    <div className="quality-section-title"><div><h3>这份数据适合做什么</h3><HelpHint topic="UX24" /><HelpHint topic="UX26" /><p>输入条件通过后，仍需在实际分析时检验结果质量。</p></div><span>字段版本 M{report.context.mapping_revision}</span></div>
     <div className="capability-grid">{capabilities.map(([key, title, description]) => {
       const cap = report.capabilities[key]
       return <article key={key} className={`capability-card ${cap.allowed ? 'ready' : 'restricted'}`}>
@@ -58,7 +59,7 @@ export function QualityReport({ report, projectId, runId }: { report: Report; pr
     })}</div>
     <ClusterPanel report={report} projectId={projectId} qualityRunId={runId} />
     <AssociationPanel report={report} projectId={projectId} qualityRunId={runId} />
-    <div className="quality-section-title"><div><h3>每条记录都有去向</h3><p>每一行在每个视图中仅归入一个主要原因，各视图的纳入与排除之和均等于原始行数。</p></div></div>
+    <div className="quality-section-title"><div><h3>每条记录都有去向</h3><HelpHint topic="UX24" /><p>每一行在每个视图中仅归入一个主要原因，各视图的纳入与排除之和均等于原始行数。</p></div></div>
     <div className="quality-ledger">{Object.entries(report.views).map(([key, counts]) => <div className="ledger-row" key={key}>
       <div className="ledger-label"><strong>{viewLabels[key]}</strong><span>纳入 {counts.included_rows.toLocaleString()} · 排除 {counts.excluded_rows.toLocaleString()}</span></div>
       <div className="ledger-bar" role="img" aria-label={`${viewLabels[key]}纳入${counts.included_rows}行，排除${counts.excluded_rows}行`}><i style={{ width: `${report.raw_rows ? counts.included_rows / report.raw_rows * 100 : 0}%` }} /></div>
@@ -131,7 +132,7 @@ function ClusterPanel({ report, projectId, qualityRunId }: { report: Report; pro
   const active = detail && !finished.has(detail.status)
   const result = isClusterReport(detail?.result) ? detail.result : null
   return <section className="analysis-panel">
-    <div className="quality-section-title"><div><h3>客户分群</h3><p>使用通过质量检查的订单视图，生成可复核的 RF/RFM 群体画像。</p></div>
+    <div className="quality-section-title"><div><h3>客户分群</h3><HelpHint topic="UX39" /><HelpHint topic="UX40" /><p>使用通过质量检查的订单视图，生成可复核的 RF/RFM 群体画像。</p></div>
       <div className="analysis-actions">
         <Button icon={<PlayCircleOutlined />} disabled={!report.capabilities.rf.allowed} loading={busy === 'rf'} onClick={() => void submit('rf')}>运行 RF</Button>
         <Button icon={<PlayCircleOutlined />} disabled={!report.capabilities.rfm.allowed} loading={busy === 'rfm'} onClick={() => void submit('rfm')}>运行 RFM</Button>
@@ -209,7 +210,7 @@ function AssociationPanel({ report, projectId, qualityRunId }: { report: Report;
   const result = isAssociationReport(detail?.result) ? detail.result : null
   const percent = (value: number | null) => value === null ? '—' : `${(value * 100).toFixed(1)}%`
   return <section className="analysis-panel">
-    <div className="quality-section-title"><div><h3>商品共购</h3><p>从完整购物篮中挖掘规则，并用固定留出篮评测 Top-5 补全。</p></div>
+    <div className="quality-section-title"><div><h3>商品共购</h3><HelpHint topic="UX41" /><HelpHint topic="UX42" /><p>从完整购物篮中挖掘规则，并用固定留出篮评测 Top-5 补全。</p></div>
       <div className="analysis-actions"><Button icon={<PlayCircleOutlined />} disabled={!report.capabilities.association.allowed} loading={busy} onClick={() => void submit()}>运行共购</Button></div>
     </div>
     {error && <Alert className="import-alert" type="error" showIcon title={error} />}

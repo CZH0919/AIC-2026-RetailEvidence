@@ -4,6 +4,7 @@ import { App, ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
 import { Application } from './App'
 import './styles.css'
+import './help.css'
 import './analysis.css'
 import './retail.css'
 

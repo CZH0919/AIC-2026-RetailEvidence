@@ -1,3 +1,4 @@
+import { HelpHint } from './HelpHint'
 import { useEffect, useState } from 'react'
 import { Alert, Button, Form, Input, Modal, Radio } from 'antd'
 import { api, ApiError } from '../api'
@@ -35,10 +36,10 @@ export function ProjectEditor({ open, project, onClose, onSaved }: {
   return <Modal open={open} title={project ? '编辑项目' : '新建分析项目'} width={520}
     onCancel={() => { if (!saving) onClose() }} maskClosable={!saving} closable={!saving} keyboard={!saving}
     footer={null} destroyOnHidden>
-    <p className="modal-intro">用一个清晰的名称，为这次分析定义范围。</p>
+    <p className="modal-intro">同一家店可以在一个项目里追加不同月份的数据。<HelpHint topic="UX01" /></p>
     <Form form={form} layout="vertical" onFinish={submit} requiredMark="optional" disabled={saving}>
       <Form.Item name="name" label="项目名称" rules={[{ required: true, whitespace: true, message: '请填写项目名称。' }, { max: 64, message: '项目名称最多 64 个字符。' }]}>
-        <Input autoFocus maxLength={64} showCount placeholder="例如：华东门店季度复盘" autoComplete="off" />
+        <Input autoFocus maxLength={64} showCount placeholder="例如：小林便利店" autoComplete="off" />
       </Form.Item>
       <Form.Item name="description" label="项目说明" rules={[{ max: 500, message: '项目说明最多 500 个字符。' }]}>
         <Input.TextArea maxLength={500} showCount rows={3} placeholder="记录业务问题、数据范围或分析目标" />
