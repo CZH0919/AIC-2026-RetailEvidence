@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from .data_api import dump, require_project, scoped
 from .import_formats import DataIssue
 from .models import AnalysisRun, CleaningPolicy, DatasetVersion, MappingVersion, RunEvent, timestamp
-from .quality_schemas import AnalysisParameters, PolicyInput, QualityRunInput
+from .quality_schemas import AnalysisParameters, ClusteringRunInput, PolicyInput, QualityRunInput
 from .task_registry import TASK_SPECS
 from .task_runner import PUBLISHED, TERMINAL, event
 
@@ -33,6 +33,7 @@ def run_read(row, full=False):
             "project_id",
             "dataset_version_id",
             "policy_id",
+            "quality_run_id",
             "kind",
             "status",
             "phase",
@@ -45,6 +46,11 @@ def run_read(row, full=False):
             "peak_rss_bytes",
         ]
     }
+    if not full and row.kind == "sales":
+        sales = json.loads(row.parameters).get("sales", {})
+        result["parameters"] = {
+            "sales": {"month": sales.get("month"), "check_only": sales.get("check_only", False)}
+        }
     if full:
         result["parameters"] = json.loads(row.parameters)
         result["result"] = (
@@ -266,6 +272,130 @@ def install_quality_routes(app):
             if run.status not in PUBLISHED or not run.result:
                 raise DataIssue("请先完成数据质量检查。", "quality_not_ready", 409)
             return require_capability(json.loads(run.result), payload)
+
+    @router.post("/runs/{run_id}/cluster", status_code=202)
+    def cluster(project_id: UUID, run_id: UUID, payload: ClusteringRunInput):
+        if payload.parameters.kind not in {"rf", "rfm"}:
+            raise DataIssue("客户分群只能选择 RF 或 RFM。", "invalid_parameters")
+        parameters = {
+            "analysis": payload.parameters.model_dump(mode="json"),
+            "timeout_seconds": payload.timeout_seconds,
+            "memory_mb": payload.memory_mb,
+        }
+        sha = hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest()
+        with app.state.sessions() as session:
+            quality = scoped(session, AnalysisRun, run_id, project_id)
+            if quality.kind != "quality" or quality.status not in PUBLISHED or not quality.result:
+                raise DataIssue("请先完成数据质量检查。", "quality_not_ready", 409)
+            require_capability(json.loads(quality.result), payload.parameters)
+            existing = session.scalar(
+                select(AnalysisRun).where(
+                    AnalysisRun.project_id == str(project_id),
+                    AnalysisRun.idempotency_key == payload.idempotency_key,
+                )
+            )
+            if existing:
+                if existing.request_sha256 != sha:
+                    raise DataIssue(
+                        "同一提交标识对应了不同设置，请重新提交。", "idempotency_conflict", 409
+                    )
+                return run_read(existing, True)
+            row = AnalysisRun(
+                id=str(uuid4()),
+                project_id=str(project_id),
+                dataset_version_id=quality.dataset_version_id,
+                mapping_version_id=quality.mapping_version_id,
+                policy_id=quality.policy_id,
+                quality_run_id=quality.id,
+                kind="clustering",
+                idempotency_key=payload.idempotency_key,
+                request_sha256=sha,
+                parameters=dump(parameters),
+                message="已加入客户分群队列。",
+            )
+            session.add(row)
+            try:
+                session.flush()
+                session.add(
+                    RunEvent(run_id=row.id, status="queued", message="已加入客户分群队列。")
+                )
+                session.commit()
+            except IntegrityError:
+                session.rollback()
+                existing = session.scalar(
+                    select(AnalysisRun).where(
+                        AnalysisRun.project_id == str(project_id),
+                        AnalysisRun.idempotency_key == payload.idempotency_key,
+                    )
+                )
+                if existing and existing.request_sha256 == sha:
+                    return run_read(existing, True)
+                raise DataIssue(
+                    "提交设置发生冲突，请刷新后重试。", "idempotency_conflict", 409
+                ) from None
+            return run_read(row, True)
+
+    @router.post("/runs/{run_id}/association", status_code=202)
+    def associate(project_id: UUID, run_id: UUID, payload: ClusteringRunInput):
+        if payload.parameters.kind != "association":
+            raise DataIssue("商品共购只能选择关联分析参数。", "invalid_parameters")
+        parameters = {
+            "analysis": payload.parameters.model_dump(mode="json"),
+            "timeout_seconds": payload.timeout_seconds,
+            "memory_mb": payload.memory_mb,
+        }
+        sha = hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest()
+        with app.state.sessions() as session:
+            quality = scoped(session, AnalysisRun, run_id, project_id)
+            if quality.kind != "quality" or quality.status not in PUBLISHED or not quality.result:
+                raise DataIssue("请先完成数据质量检查。", "quality_not_ready", 409)
+            require_capability(json.loads(quality.result), payload.parameters)
+            existing = session.scalar(
+                select(AnalysisRun).where(
+                    AnalysisRun.project_id == str(project_id),
+                    AnalysisRun.idempotency_key == payload.idempotency_key,
+                )
+            )
+            if existing:
+                if existing.request_sha256 != sha:
+                    raise DataIssue(
+                        "同一提交标识对应了不同设置，请重新提交。", "idempotency_conflict", 409
+                    )
+                return run_read(existing, True)
+            row = AnalysisRun(
+                id=str(uuid4()),
+                project_id=str(project_id),
+                dataset_version_id=quality.dataset_version_id,
+                mapping_version_id=quality.mapping_version_id,
+                policy_id=quality.policy_id,
+                quality_run_id=quality.id,
+                kind="association",
+                idempotency_key=payload.idempotency_key,
+                request_sha256=sha,
+                parameters=dump(parameters),
+                message="已加入商品共购分析队列。",
+            )
+            session.add(row)
+            try:
+                session.flush()
+                session.add(
+                    RunEvent(run_id=row.id, status="queued", message="已加入商品共购分析队列。")
+                )
+                session.commit()
+            except IntegrityError:
+                session.rollback()
+                existing = session.scalar(
+                    select(AnalysisRun).where(
+                        AnalysisRun.project_id == str(project_id),
+                        AnalysisRun.idempotency_key == payload.idempotency_key,
+                    )
+                )
+                if existing and existing.request_sha256 == sha:
+                    return run_read(existing, True)
+                raise DataIssue(
+                    "提交设置发生冲突，请刷新后重试。", "idempotency_conflict", 409
+                ) from None
+            return run_read(row, True)
 
     @router.get("/runs/{run_id}/rows")
     async def rows(

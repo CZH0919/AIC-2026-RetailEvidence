@@ -3,7 +3,7 @@ import { request } from './api'
 export type Column = { key: string; name: string; missing: number; examples: string[] }
 export type Preview = { row_count: number; blank_rows_skipped: number; columns: Column[]; rows: Record<string, string | null>[]; suggestions: { columns: Record<string, string>; warnings: string[] } }
 export type ParseOptions = { encoding: string; delimiter: string; sheets: string[]; shape: string; basket_column: string | null; item_separator: string }
-export type Mapping = { columns: Record<string, string | null>; order_boundary: string; amount_mode: string; currency_constant: string | null; quantity_unit: string; time_format: string | null; timezone: string | null; status_rule: string; status_values: Record<string, string>; confirmed: boolean }
+export type Mapping = { record_kind?: string; summary_month?: string | null; columns: Record<string, string | null>; order_boundary: string; amount_mode: string; currency_constant: string | null; quantity_unit: string; time_format: string | null; timezone: string | null; status_rule: string; status_values: Record<string, string>; confirmed: boolean }
 export type MappingVersion = { id: string; revision: number; config: Mapping; created_at: string; validation: { warnings: string[] } }
 export type Draft = { id: string; filename: string; suffix: string; bytes: number; preview_token: string | null; inspection: { sheets: string[] }; options: ParseOptions | null; preview: Preview | null; mapping_draft: Mapping | null; source_dataset: string | null }
 export type Version = { id: string; number: number; filename: string; sha256: string; bytes: number; row_count: number; mapping_revision: number; source_dataset: string | null; created_at: string }
@@ -33,7 +33,7 @@ export function initialMapping(draft: Draft): Mapping {
   const retail = source === 'online_retail' || source === 'online_retail_ii'
   // The Retail II source uses Price, whose meaning is only supplied by its source notice.
   const price = draft.preview?.columns.find(c => c.name === 'Price')
-  return draft.mapping_draft ?? { columns: retail && price ? { ...columns, unit_price: price.key } : columns,
+  return draft.mapping_draft ?? { record_kind: 'transactions', summary_month: null, columns: retail && price ? { ...columns, unit_price: price.key } : columns,
     order_boundary: draft.options?.shape === 'basket_list' ? 'row_basket' : source === 'groceries' ? 'basket_id' : columns.order_id ? 'order_id' : 'unavailable',
     amount_mode: retail ? 'quantity_unit_price' : 'none', currency_constant: retail ? 'GBP' : null,
     quantity_unit: retail ? '原始商品单位' : '', time_format: retail ? 'iso8601' : null, timezone: retail ? 'Europe/London' : null,

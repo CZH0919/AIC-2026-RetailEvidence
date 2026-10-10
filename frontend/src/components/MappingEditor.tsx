@@ -24,6 +24,8 @@ export function MappingEditor({ preview, value, onChange }: { preview: Preview; 
     })}</div>
     <div className="semantics-heading"><h3>确认业务口径</h3><p>这些选择决定后续如何理解数据，不会修改原始文件。</p></div>
     <div className="mapping-grid">
+      <label className="data-field"><span>每行是什么记录</span><Select aria-label="记录类型" value={value.record_kind ?? 'transactions'} options={options([['transactions', '一笔商品销售明细'], ['daily_summary', '某商品一天的销售汇总'], ['monthly_summary', '某商品一个月的销售汇总']])} onChange={kind => update({ record_kind: kind, ...(kind !== 'transactions' ? { order_boundary: 'unavailable', columns: { ...value.columns, order_id: null, order_amount: null }, amount_mode: value.amount_mode === 'order_amount' ? 'none' : value.amount_mode } : {}) })} /></label>
+      {value.record_kind === 'monthly_summary' && <label className="data-field"><span>这份月汇总属于哪一月</span><input type="month" aria-label="月汇总月份" value={value.summary_month ?? ''} onChange={e => update({ summary_month: e.target.value || null })} /></label>}
       {select('order_boundary', '订单边界', [['order_id', '相同标识为同一订单'], ['basket_id', '相同标识为同一购物篮'], ['row_basket', '原始每行是一个购物篮'], ['unavailable', '无法确认订单边界']])}
       {select('amount_mode', '金额口径', [['none', '不使用金额'], ['line_amount', '使用行金额'], ['quantity_unit_price', '使用数量 × 单价'], ['order_amount', '使用订单总额，每单计一次']])}
       {value.amount_mode !== 'none' && !value.columns.currency && <label className="data-field"><span>固定币种</span><Input aria-label="固定币种" maxLength={3} placeholder="例如 GBP / CNY" value={value.currency_constant ?? ''} onChange={e => update({ currency_constant: e.target.value.toUpperCase() || null })} /></label>}

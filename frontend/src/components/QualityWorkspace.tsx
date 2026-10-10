@@ -6,7 +6,7 @@ import { ApiError } from '../api'
 import { dataApi } from '../data'
 import type { MappingVersion, Version } from '../data'
 import { cleanDefaults, finished, qualityApi, scopeDefaults, stateLabel } from '../quality'
-import type { CleaningConfig, DataScope, QualityRun } from '../quality'
+import type { CleaningConfig, DataScope, QualityReport as Report, QualityRun } from '../quality'
 import { formatDate } from '../pages/ProjectLibrary'
 import { EmptyState, ErrorState, LoadingState } from './States'
 import { QualityReport } from './QualityReport'
@@ -84,6 +84,7 @@ export default function QualityWorkspace({ projectId }: { projectId: string }) {
       const policies = await qualityApi.policies(projectId, detail.dataset_version_id)
       const policy = policies.items.find(value => value.id === detail.policy_id)
       if (!policy) throw new Error('未找到本次清洗策略，请刷新后重试。')
+      if (!detail.parameters?.scope) throw new Error('未找到本次范围设置，请刷新后重试。')
       setMapping(policy.mapping_revision); setConfig(policy.config); setScope(detail.parameters.scope)
       setExpanded(['settings']); submitKey.current = null
       void message.success('已载入本次设置，调整后可重新检查')
@@ -117,7 +118,7 @@ export default function QualityWorkspace({ projectId }: { projectId: string }) {
     <div className="quality-run-strip">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{finished.has(run.status) ? <CheckCircleOutlined /> : <ClockCircleOutlined />}{stateLabel[run.status] ?? run.status}</span><small>{new Date(run.created_at).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</small></button>) : <p>还没有处理记录。选择数据与策略后，开始第一次检查。</p>}</div>
     {detail && <section className="workspace-panel quality-result-panel"><div className="quality-result-header"><div><Tag color={detail.result ? 'cyan' : active ? 'blue' : 'default'}>{stateLabel[detail.status]}</Tag><span>{detail.message}</span></div>{active && <Button danger onClick={async () => { try { setDetail(await qualityApi.cancel(projectId, detail.id)); void message.info('取消请求已提交') } catch (e) { void message.error(e instanceof Error ? e.message : '未能取消，请重试。') } }}>取消处理</Button>}</div>
       {active && <div className="quality-processing"><Progress percent={detail.progress} status="active" strokeColor="#087f73" /><p>处理在后台继续。离开页面后，可以从这条记录查看结果。</p></div>}
-      {detail.result ? <QualityReport key={detail.id} report={detail.result} projectId={projectId} runId={detail.id} /> : !active && <div className="quality-stopped"><InfoText status={detail.status} /><Button loading={busy} onClick={() => void restoreSettings()}>调整设置</Button></div>}
+      {isQualityReport(detail.result) ? <QualityReport key={detail.id} report={detail.result} projectId={projectId} runId={detail.id} /> : !active && <div className="quality-stopped"><InfoText status={detail.status} /><Button loading={busy} onClick={() => void restoreSettings()}>调整设置</Button></div>}
       <div className="quality-events" aria-label="处理过程">{detail.events?.map((e, i) => <div key={`${e.created_at}-${i}`}><i /><span>{e.message}</span><time>{new Date(e.created_at).toLocaleTimeString('zh-CN', { hour12: false })}</time></div>)}</div>
     </section>}
   </div>
@@ -125,4 +126,8 @@ export default function QualityWorkspace({ projectId }: { projectId: string }) {
 
 function InfoText({ status }: { status: string }) {
   return <p>{status === 'cancelled' ? '本次处理已取消，原始数据与已有结果保持完整。' : status === 'interrupted' ? '本次处理被中断。查看设置后可重新提交，系统不会自行重跑。' : '本次没有发布结果。请检查提示，调整设置后重新提交。'}</p>
+}
+
+function isQualityReport(value: QualityRun['result']): value is Report {
+  return Boolean(value && 'capabilities' in value && 'views' in value)
 }

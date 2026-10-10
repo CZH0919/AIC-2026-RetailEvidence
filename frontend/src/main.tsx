@@ -4,6 +4,8 @@ import { App, ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
 import { Application } from './App'
 import './styles.css'
+import './analysis.css'
+import './retail.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode><ConfigProvider locale={zhCN} theme={{

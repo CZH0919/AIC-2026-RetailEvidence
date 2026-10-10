@@ -30,10 +30,34 @@ TERMINAL = {
 }
 PUBLISHED = {"succeeded", "completed_with_warnings", "not_applicable"}
 PHASES = {
+    "sales_quality": "正在核对销售记录。",
+    "sales_summary": "正在整理本月销售。",
+    "forecasting": "正在用历史记录检查预测误差。",
+    "sales_anomalies": "正在检查商品销售变化。",
     "normalizing": "正在核验记录与字段。",
     "selecting": "正在检查订单与分析范围。",
     "preparing_views": "正在整理各项分析的有效数据。",
-    "publishing": "正在保存质量结果。",
+    "building_features": "正在计算客户特征。",
+    "fitting_candidates": "正在比较候选分群。",
+    "preparing_baskets": "正在整理购物篮。",
+    "mining_rules": "正在挖掘共购规则。",
+    "evaluating_rules": "正在评测补全效果。",
+    "writing_results": "正在整理分群结果。",
+    "publishing": "正在保存结果。",
+}
+
+START_MESSAGES = {
+    "sales": ("sales_quality", "开始生成销售月报。"),
+    "quality": ("normalizing", "开始检查数据质量。"),
+    "clustering": ("building_features", "开始进行客户分群。"),
+    "association": ("preparing_baskets", "开始进行商品共购分析。"),
+}
+
+DONE_MESSAGES = {
+    "sales": "本月销售分析已完成。",
+    "quality": "质量检查已完成，请查看各项分析的适用条件。",
+    "clustering": "客户分群已完成，请查看群体画像和诊断。",
+    "association": "商品共购分析已完成，请查看规则和评测结果。",
 }
 
 
@@ -189,28 +213,72 @@ class TaskRunner:
                         return
                     staging.mkdir(parents=True)
                     staging_owned = True
-                    source = self.storage / "datasets" / "projects" / run.project_id / version.id
-                    config = json.loads(mapping.config)
                     context = {
                         "project_id": run.project_id,
                         "data_version_id": version.id,
                         "mapping_revision": mapping.revision,
                         "policy_id": policy.id,
+                        "quality_run_id": run.quality_run_id,
                         "run_id": run.id,
                     }
-                    job = {
-                        "kind": run.kind,
-                        "parent_pid": os.getpid(),
-                        "source": str(
-                            source / "mappings" / str(mapping.revision) / "canonical.parquet"
-                        ),
-                        "raw_source": str(source / "raw.parquet"),
-                        "output": str(staging),
-                        "mapping": config,
-                        "policy": json.loads(policy.config),
-                        "scope": parameters["scope"],
-                        "context": context,
-                    }
+                    if run.kind == "quality":
+                        source = (
+                            self.storage / "datasets" / "projects" / run.project_id / version.id
+                        )
+                        config = json.loads(mapping.config)
+                        job = {
+                            "kind": run.kind,
+                            "parent_pid": os.getpid(),
+                            "source": str(
+                                source / "mappings" / str(mapping.revision) / "canonical.parquet"
+                            ),
+                            "raw_source": str(source / "raw.parquet"),
+                            "output": str(staging),
+                            "mapping": config,
+                            "policy": json.loads(policy.config),
+                            "scope": parameters["scope"],
+                            "context": context,
+                        }
+                    elif run.kind in {"clustering", "association"}:
+                        from .analysis_inputs import resolve_analysis_input
+                        from .quality_schemas import AnalysisParameters
+
+                        analysis_input = resolve_analysis_input(
+                            session,
+                            self.storage,
+                            run.project_id,
+                            run.quality_run_id,
+                            AnalysisParameters(**parameters["analysis"]),
+                        )
+                        worker_input = {
+                            key: value for key, value in analysis_input.items() if key != "path"
+                        }
+                        job = {
+                            "kind": run.kind,
+                            "parent_pid": os.getpid(),
+                            "source": str(analysis_input["path"]),
+                            "output": str(staging),
+                            "analysis_input": worker_input,
+                            "context": context,
+                        }
+                    elif run.kind == "sales":
+                        from .retail_api import resolve_sources
+
+                        job = {
+                            "kind": "sales",
+                            "parent_pid": os.getpid(),
+                            "output": str(staging),
+                            "context": context,
+                            "parameters": parameters["sales"],
+                            "sources": resolve_sources(
+                                session,
+                                self.storage,
+                                run.project_id,
+                                parameters["sales"]["sources"],
+                            ),
+                        }
+                    else:
+                        raise ValueError("Unsupported task kind")
                     inputs = {
                         "context": context,
                         "source_sha256": version.sha256,
@@ -218,15 +286,22 @@ class TaskRunner:
                         "policy_sha256": policy.config_sha256,
                         "parameters": parameters,
                         "code_sha256": self.code_hash,
-                        "application_version": "0.3.0",
+                        "application_version": "0.5.0",
                         "python": platform.python_version(),
                         "dependencies": {
                             name: importlib.metadata.version(name)
-                            for name in ["pyarrow", "sqlalchemy", "psutil", "pydantic"]
+                            for name in [
+                                "pyarrow",
+                                "sqlalchemy",
+                                "psutil",
+                                "pydantic",
+                                "scikit-learn",
+                            ]
                         },
                     }
-                    event(session, run, "running", "开始检查数据质量。")
-                    run.phase, run.started_at = "normalizing", timestamp()
+                    phase, message = START_MESSAGES[run.kind]
+                    event(session, run, "running", message)
+                    run.phase, run.started_at = phase, timestamp()
                     session.commit()
                 write_json(staging / ".job.json", job)
                 env = {
@@ -257,7 +332,7 @@ class TaskRunner:
                                 progress = json.loads((staging / ".progress.json").read_text())
                                 run.phase = progress["phase"]
                                 run.progress = max(run.progress, min(99, int(progress["progress"])))
-                                run.message = PHASES.get(run.phase, "正在检查数据质量。")
+                                run.message = PHASES.get(run.phase, "正在处理。")
                             except (FileNotFoundError, ValueError, KeyError):
                                 pass
                             try:
@@ -298,14 +373,17 @@ class TaskRunner:
                         await asyncio.sleep(0.2)
                     if self.process.returncode:
                         try:
-                            code = json.loads((staging / ".error.json").read_text())["code"]
+                            worker_error = json.loads((staging / ".error.json").read_text())
+                            code = worker_error["code"]
+                            public_message = worker_error.get("message")
                         except (OSError, ValueError, KeyError):
                             code = "worker_error"
+                            public_message = None
                         status = "resource_limited" if code == "memory_limit" else "failed"
                         self.finish(
                             identity,
                             status,
-                            "处理未完成，原数据已保留，请调整范围或联系维护者。",
+                            public_message or "处理未完成，原数据已保留，请调整范围或联系维护者。",
                             code,
                             peak,
                         )
@@ -353,7 +431,7 @@ class TaskRunner:
                     run.result = dump(report)
                     run.progress, run.phase, run.finished_at = 100, "finished", timestamp()
                     run.peak_rss_bytes = peak
-                    event(session, run, state, "质量检查已完成，请查看各项分析的适用条件。")
+                    event(session, run, state, DONE_MESSAGES[run.kind])
                     session.commit()
                     published = True
             except asyncio.CancelledError:

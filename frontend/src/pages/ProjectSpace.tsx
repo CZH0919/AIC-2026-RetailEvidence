@@ -55,7 +55,7 @@ function ProjectSpace({ projectId }: { projectId: string }) {
     <div className="page-heading project-heading"><div className="project-title"><span className={`project-icon large ${project.color}`}><FolderOutlined /></span><div><h1>{project.name}</h1><p>{project.description || '一个新的分析空间，等待你的业务问题。'}</p></div></div>
       <Button icon={<EditOutlined />} onClick={() => setEditing(true)}>编辑项目</Button>
     </div>
-    <nav className="project-tabs" aria-label="项目导航"><NavLink to={`/projects/${project.id}`} end>项目概览</NavLink><NavLink to={`/projects/${project.id}/data`}>数据与版本</NavLink><NavLink to={`/projects/${project.id}/quality`}>质量与任务</NavLink></nav>
+    <nav className="project-tabs" aria-label="项目导航"><NavLink to={`/projects/${project.id}`} end>项目概览</NavLink><NavLink to={`/projects/${project.id}/data`}>数据与版本</NavLink><NavLink to={`/projects/${project.id}/quality`}>质量与分析</NavLink></nav>
     {isQuality ? <Suspense fallback={<LoadingState />}><QualityWorkspace projectId={project.id} /></Suspense> : isData ? <DataWorkspace projectId={project.id} /> : <div className="project-content-grid">
       <section className="workspace-panel">
         <div className="section-title"><h2>{isData ? '准备第一份交易数据' : '数据与分析'}</h2><span>{isData ? '从清晰的明细开始' : '当前项目'}</span></div>
