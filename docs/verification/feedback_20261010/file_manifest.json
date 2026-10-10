@@ -1,46 +1,46 @@
 [
   {
-    "file": "accepted_api20.log",
+    "file": "accepted_api20.txt",
     "bytes": 599,
     "sha256": "778b7c896f2218b61582db7ee72bea6e443f2fefb3dd5dacf2193fa17c79ba67"
   },
   {
-    "file": "accepted_feedback.log",
+    "file": "accepted_feedback.txt",
     "bytes": 1111,
     "sha256": "a5ca3ce74ca280be1b3506dc05cdb3c43a6c55311c64d61707ddf2fbaed192ef"
   },
   {
-    "file": "accepted_feedback_initial_failure.log",
+    "file": "accepted_feedback_initial_failure.txt",
     "bytes": 371,
     "sha256": "870916b4b366e6a685baf3074cbe5e3bda2aaf499cb33ede990a030c1132d8fe"
   },
   {
-    "file": "accepted_full.log",
+    "file": "accepted_full.txt",
     "bytes": 644,
     "sha256": "1dcb04c4e1bc475c0727f223ea06cf911f13d5923f19a85b4424fcb8e65badf4"
   },
   {
-    "file": "accepted_import.log",
+    "file": "accepted_import.txt",
     "bytes": 2980,
     "sha256": "6b620675fa480f2462ce11ea17db0b88ca5b61f94de3140ff942da272dd3543c"
   },
   {
-    "file": "accepted_more.log",
+    "file": "accepted_more.txt",
     "bytes": 353,
     "sha256": "cb62085cf13b3744dededd6e2bfc69cb53d693faa3835f0771c8808e11d5d1f1"
   },
   {
-    "file": "accepted_public.log",
+    "file": "accepted_public.txt",
     "bytes": 3718,
     "sha256": "cccbcc3cc90592f9b664ce2df0fc4171390f61fa62a58be9674c0fd75406caff"
   },
   {
-    "file": "accepted_pytest.log",
+    "file": "accepted_pytest.txt",
     "bytes": 664,
     "sha256": "83e72e6fe338d9e12c2bad01254103f830a0634c63ee5031be27a208934e3a89"
   },
   {
-    "file": "accepted_ruff.log",
+    "file": "accepted_ruff.txt",
     "bytes": 19,
     "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
   },
