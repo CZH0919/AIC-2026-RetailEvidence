@@ -10,7 +10,7 @@ export function HelpHint({ topic, context }: { topic: HelpId; context?: string }
   const info = helpContent[topic]
   const [open, setOpen] = useState(false)
   const screen = Grid.useBreakpoint()
-  const drawer = info.drawer || !screen.sm
+  const drawer = info.drawer || (screen.sm === undefined ? window.innerWidth < 576 : !screen.sm)
   const id = useId()
   const trigger = useRef<HTMLButtonElement>(null)
   const closer = useRef<HTMLButtonElement>(null)
