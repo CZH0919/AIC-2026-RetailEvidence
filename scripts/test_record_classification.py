@@ -250,6 +250,44 @@ class ClassificationTests(fixture.SalesTests):
         self.assertNotIn("<script>alert", exported)
         self.assertIn("&lt;script&gt;", exported)
 
+    def test_action_boundary_requires_confirmed_physical_product(self):
+        from app.retail_engine import action_for
+
+        p = {"id": "POSTER", "name": "POSTCARD SET", "flags": ["growth"], "reason": "fixture"}
+        self.assertIsNone(action_for(p))
+        p.update(record_kind="shipping_service", classification_confirmed=True)
+        self.assertIsNone(action_for(p))
+        p.update(record_kind="physical_product", classification_confirmed=False)
+        self.assertIsNone(action_for(p))
+        p["classification_confirmed"] = True
+        self.assertEqual(action_for(p)["item_id"], "POSTER")
+
+    def test_legacy_html_no_restock_and_frozen_report_unchanged(self):
+        from copy import deepcopy
+
+        from app.retail_export import render_report
+
+        source = self.source([self.sample(item_id="POST", item_name="POSTAGE")])
+        report, _ = self.run_report([source])
+        report.pop("classification")
+        report["highlights"] = ["POST"]
+        report["attention_ids"] = ["POST"]
+        report["actions"] = [
+            {
+                "id": "stock:POST",
+                "item_id": "POST",
+                "title": "下次进货前看看POSTAGE还剩多少",
+                "text": "核对库存",
+                "reason": "历史旧口径",
+                "review": "进货前",
+            }
+        ]
+        original = deepcopy(report)
+        exported = render_report(report, "历史报告", True)
+        self.assertNotIn("下次进货前看看POSTAGE还剩多少", exported)
+        self.assertIn("尚未确认业务记录类型", exported)
+        self.assertEqual(report, original)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

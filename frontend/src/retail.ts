@@ -2,7 +2,7 @@ import { request } from './api'
 import type { Mapping } from './data'
 
 export type Prediction = { quantity: number; method: string; validation_mae: number; start: string; end: string; notice: string }
-export type SalesProduct = { id: string; name: string; category: string | null; quantity: number; amount: number | null; change: number | null; flags: string[]; reason: string; daily: { date: string; quantity: number | null }[]; forecast: Prediction | null; anomalies: { date: string; actual: number; reference: number }[] }
+export type SalesProduct = { record_kind?: string; classification_confirmed?: boolean; id: string; name: string; category: string | null; quantity: number; amount: number | null; change: number | null; flags: string[]; reason: string; daily: { date: string; quantity: number | null }[]; forecast: Prediction | null; anomalies: { date: string; actual: number; reference: number }[] }
 export type SalesAction = { id: string; item_id: string; title: string; text: string; reason: string; review: string }
 export type ClassificationRule = {match_by:'item_id'|'source_row_id'|'category'; value:string; kind:string; amount_treatment:string; basis:string}
 export type ClassificationPolicy = {version_id:string; mapping_revision:number; default_kind:string; default_amount_treatment:string; confirmed:boolean; rules:ClassificationRule[]}

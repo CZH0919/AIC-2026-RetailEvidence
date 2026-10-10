@@ -36,6 +36,7 @@ let context,page;
  await page.screenshot({path:path.join(out,'03_quality.png'),fullPage:true});console.log('BUTTONS',await page.locator('.sales-drawer-footer button').evaluateAll(xs=>xs.map(x=>({text:x.textContent,disabled:x.disabled,html:x.outerHTML.slice(0,600)}))));
  console.log('Generate button enabled',await page.getByRole('button',{name:/确认并生成月报$/}).isEnabled());const [runResponse]=await Promise.all([page.waitForResponse(r=>r.url().endsWith('/sales/runs')&&r.request().method()==='POST',{timeout:30000}),page.getByRole('button',{name:/确认并生成月报$/}).click({timeout:30000})]);let run=await runResponse.json();
  for(let i=0;i<120;i++){run=await(await api.get(`${base}/api/projects/${project.id}/runs/${run.id}`)).json();if(run.result)break;assert(!['failed','resource_limited','cancelled'].includes(run.status),run.message);await page.waitForTimeout(1000)}
+ assert.equal(new URL(page.url()).searchParams.get('run'),run.id,'New report must be reflected in the URL before refresh');
  assert(run.result);assert.equal(run.result.summary.quantity,626765);assert.equal(run.result.summary.amount,1105884.75);assert.equal(run.result.summary.products,2863);assert.equal(run.result.classification.pending_product_rows,0);
  await page.goto(`${base}/projects/${project.id}?run=${run.id}`,{waitUntil:'networkidle'});await page.getByRole('heading',{name:/本月卖得怎么样/}).waitFor();
  await page.getByText('核对全部业务记录（含待确认、运费与调整）',{exact:true}).click();await page.screenshot({path:path.join(out,'04_monthly_business_records.png'),fullPage:true});

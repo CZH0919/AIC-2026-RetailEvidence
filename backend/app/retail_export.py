@@ -9,7 +9,15 @@ def render_report(report, project_name, all_attention=False):
 
     summary = report["summary"]
     products = {p["id"]: p for p in report["products"]}
-    ids = report["highlights"]
+    classification = report.get("classification")
+    confirmed = {
+        p["id"]
+        for p in report["products"]
+        if classification
+        and p.get("record_kind") == "physical_product"
+        and p.get("classification_confirmed")
+    }
+    ids = [k for k in report["highlights"] if k in confirmed]
     product_rows = "".join(
         f"<tr><td>{esc(products[k]['name'])}</td><td>{products[k]['quantity']:g}</td>"
         f"<td>{esc(products[k]['reason'])}</td></tr>"
@@ -20,9 +28,10 @@ def render_report(report, project_name, all_attention=False):
         f"<p>{esc(a['text'].split(' 另有 ', 1)[0])}</p>"
         f"<small>{esc(a['reason'])} · {esc(a['review'])}</small></li>"
         for a in report["actions"]
+        if a["item_id"] in confirmed
     )
     extra = ""
-    if all_attention:
+    if all_attention and classification:
         rows = "".join(
             f"<tr><td>{esc(products[k]['name'])}</td><td>{products[k]['quantity']:g}</td>"
             f"<td>{esc(products[k]['reason'])}</td></tr>"
@@ -33,7 +42,6 @@ def render_report(report, project_name, all_attention=False):
             "<thead><tr><th>商品</th><th>销量</th><th>原因</th></tr></thead>"
             f"<tbody>{rows}</tbody></table></section>"
         )
-    classification = report.get("classification")
     if classification:
         rows = "".join(
             "<tr>"
@@ -65,6 +73,8 @@ def render_report(report, project_name, all_attention=False):
         else "未提供完整金额"
     )
     notice = " ".join(report["notices"])
+    if not classification:
+        notice += " 尚未确认业务记录类型；重点商品和备货建议已暂停，请确认分类生成新月报。"
     context = esc(report["context"]["run_id"])
     sources = "、".join(esc(s["filename"]) for s in report["sources"])
     chart = ""

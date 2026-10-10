@@ -7,10 +7,11 @@ from pathlib import Path
 from uuid import uuid4
 import httpx
 
-parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,required=True);args=parser.parse_args()
-r=args.root;assert r.name=='retailevidence_personal_20261009_01'
+parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,required=True);parser.add_argument('--base',default='http://127.0.0.1:18081');args=parser.parse_args()
+r=args.root.resolve();personal=Path('/home/ubuntu/retailevidence_personal_20261009_01');assert r==personal or r.is_relative_to(personal/'updates')
+assert args.base in {'http://127.0.0.1:18081','http://127.0.0.1:18083'}
 out=r/'evidence/api_regression';out.mkdir(exist_ok=True)
-client=httpx.Client(base_url='http://127.0.0.1:18081/api',timeout=180)
+client=httpx.Client(base_url=args.base+'/api',timeout=180)
 checks=[]
 
 def request(path,data=None,method=None,content=None,expected=None,headers=None):

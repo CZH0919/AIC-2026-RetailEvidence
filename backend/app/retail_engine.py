@@ -74,6 +74,10 @@ def reason_for(row, config):
 
 
 def action_for(product):
+    if product.get("record_kind") != "physical_product" or not product.get(
+        "classification_confirmed"
+    ):
+        return None
     name = product["name"]
     if "anomaly" in product["flags"]:
         return {
