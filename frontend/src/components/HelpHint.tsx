@@ -58,6 +58,6 @@ export function HelpHint({ topic, context }: { topic: HelpId; context?: string }
     {info.label}</Button>
   return drawer ? <>{button}<Drawer id={id} className="help-drawer" title="操作说明" width={Math.min(560, window.innerWidth)} push={false}
     open={open} onClose={() => change(false)} keyboard={false} maskClosable afterOpenChange={shown => { if (!shown) trigger.current?.focus() }}>
-    {content}</Drawer></> : <Popover open={open} trigger="click" placement="bottomLeft" content={<div id={id}>{content}</div>}
+    {content}</Drawer></> : <Popover open={open} trigger="click" placement="bottomLeft" content={<div id={id} className="help-popup-body">{content}</div>}
     onOpenChange={change} classNames={{ root: 'help-popover' }}>{button}</Popover>
 }

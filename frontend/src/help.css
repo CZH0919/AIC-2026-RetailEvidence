@@ -15,3 +15,5 @@
 .help-ai-examples { margin: 10px 0; display: flex; gap: 6px; flex-wrap: wrap; }
 .help-ai-examples button { height: auto; white-space: normal; text-align: left; }
 @media (max-width: 575px) { .help-drawer .ant-drawer-body { padding: 16px; } .help-content-heading { flex-wrap: wrap; } .help-hint.ant-btn { font-size: 12px; } }
+
+.help-popup-body { width: min(396px, calc(100vw - 64px)); max-height: calc(70vh - 32px); overflow-y: auto; }
