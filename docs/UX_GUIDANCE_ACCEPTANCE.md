@@ -56,3 +56,5 @@ Ubuntu24.04 CPU、Python3.12、Node24.21、Chromium/Playwright、单Worker；线
 导出产品CSV2863行、分类原始行计数3005、全部业务记录聚合2870行覆盖3005原始行；销量626765及计入销售额1105884.75GBP与JSON/分项一致。A4 PDF2页，第一页摘要、第二页分类对账，中文与版面两页实际渲染查看PASS。源文件/逐SHA/命令/耗时/环境与打印证据见 [干净复验收据](verification/ux_guidance/origin_main/release_tests.json)、[导出对账](verification/ux_guidance/origin_main/export_consistency.json)、[打印检查](verification/ux_guidance/origin_main/print_and_tunnel_check.json)。这是原37组之后的额外发布复验，不能把重复组当新增需求覆盖。
 
 正式共享89源码文件内容/mtime/集合及8张表与原安全基线相同，schema5；没有正式部署。[只读正式复核](verification/ux_guidance/origin_main/formal_recheck.json)。新Web仅回环18084，Windows专用D盘信任隧道18087已核对manifest。停掉本轮本人故障模拟18085/18086，不动队友18781/18782及既有个人18081/18082。当前入口与最终main收据保存D盘交付报告/TASK_PROGRESS，可在断线后恢复；隧道不是公网链接。
+
+最终干净检出逐项哈希检查发现5个文本文件受CRLF→LF规范化影响，已改为按Git索引规范字节计算；全部证据索引应可在Linux检出直接核验，Windows方法见verification/ux_guidance/README.md。原始失败与修复记录保留。
