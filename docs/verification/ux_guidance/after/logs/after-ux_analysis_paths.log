@@ -1,0 +1,11 @@
+PASS F_raw_monthly_trend
+PASS F_anomaly_trace_note
+PASS G_inventory_reference
+PASS H_ai_complex_ambiguity
+PASS I_quality_scope
+PASS I_RF
+PASS I_RFM
+PASS I_association
+PASS J_network_failure
+PASS J_invalid_history
+PASS A_project_switch
