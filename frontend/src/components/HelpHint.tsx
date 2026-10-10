@@ -50,7 +50,11 @@ export function HelpHint({ topic, context }: { topic: HelpId; context?: string }
   </section>
   const button = <Button ref={trigger} htmlType="button" type="text" size="small" className="help-hint"
     data-help-id={topic} aria-label={`查看帮助：${info.title}`} aria-expanded={open} aria-haspopup="dialog" aria-controls={open ? id : undefined}
-    icon={<QuestionCircleOutlined aria-hidden="true" />} onClick={event => { event.preventDefault(); event.stopPropagation(); if (drawer) change(!open) }}>
+    icon={<QuestionCircleOutlined aria-hidden="true" />} onKeyDown={event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault(); event.stopPropagation(); change(!open)
+      }
+    }} onClick={event => { event.preventDefault(); event.stopPropagation(); if (drawer) change(!open) }}>
     {info.label}</Button>
   return drawer ? <>{button}<Drawer id={id} className="help-drawer" title="操作说明" width={Math.min(560, window.innerWidth)} push={false}
     open={open} onClose={() => change(false)} keyboard={false} maskClosable afterOpenChange={shown => { if (!shown) trigger.current?.focus() }}>
