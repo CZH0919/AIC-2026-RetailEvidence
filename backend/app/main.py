@@ -18,6 +18,7 @@ from .data_api import install_data_routes
 from .database import create_database
 from .import_formats import DataIssue
 from .models import Project, timestamp
+from .project_deletion import install_project_deletion
 from .quality_api import install_quality_routes
 from .retail_api import install_retail_routes
 from .schemas import ProjectInput, ProjectList, ProjectRead, ProjectUpdate, name_key
@@ -207,6 +208,7 @@ def create_app(
                 )
             return session.get(Project, str(project_id))
 
+    install_project_deletion(app)
     install_data_routes(app)
     install_quality_routes(app)
     install_retail_routes(app)

@@ -5,7 +5,7 @@ import type { Mapping, Preview } from '../data'
 export const fields = [
   ['order_id', '订单 / 购物篮标识'], ['item_id', '商品标识'], ['item_name', '商品名称'], ['customer_id', '客户标识'],
   ['event_time', '交易时间'], ['quantity', '数量'], ['unit_price', '单价'], ['line_amount', '行金额'],
-  ['order_amount', '订单总额'], ['currency', '币种'], ['record_status', '交易状态'], ['country', '国家 / 地区'], ['category', '商品分类'],
+  ['order_amount', '订单总额'], ['currency', '币种'], ['record_status', '交易状态'], ['country', '国家 / 地区'], ['category', '商品分类'], ['item_type', '商品类型（实物、费用、服务或记账，可选）'],
 ]
 const options = (pairs: string[][]) => pairs.map(([value, label]) => ({ value, label }))
 export function MappingEditor({ preview, value, onChange }: { preview: Preview; value: Mapping; onChange: (v: Mapping) => void }) {

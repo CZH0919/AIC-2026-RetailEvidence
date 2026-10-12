@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Alert, App, Button, Checkbox, Collapse, Input, Progress, Select, Tag } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, PlayCircleOutlined, ReloadOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { ApiError } from '../api'
 import { dataApi } from '../data'
 import type { MappingVersion, Version } from '../data'
@@ -12,6 +12,8 @@ import { EmptyState, ErrorState, LoadingState } from './States'
 import { QualityReport } from './QualityReport'
 
 export default function QualityWorkspace({ projectId }: { projectId: string }) {
+  const [params] = useSearchParams()
+  const sourceVersion = params.get('version')
   const [versions, setVersions] = useState<Version[] | null>(null)
   const [version, setVersion] = useState('')
   const [mappings, setMappings] = useState<MappingVersion[]>([])
@@ -32,10 +34,10 @@ export default function QualityWorkspace({ projectId }: { projectId: string }) {
     let active = true
     setError('')
     dataApi.versions(projectId).then(value => {
-      if (active) { setVersions(value.items); setVersion(old => old || value.items[0]?.id || '') }
+      if (active) { setVersions(value.items); setVersion(old => old || value.items.find(v => v.id === sourceVersion)?.id || value.items[0]?.id || '') }
     }).catch(e => { if (active) setError(e.message) })
     return () => { active = false }
-  }, [projectId, reload])
+  }, [projectId, reload, sourceVersion])
   useEffect(() => {
     let active = true
     setMappings([]); setSelected(''); setDetail(null); setRuns([])

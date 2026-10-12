@@ -23,7 +23,8 @@ export type AssociationReport = {
   context: { mapping_revision: number; policy_id: string; quality_run_id: string; run_id: string; data_version_id: string }
   analysis: { kind: 'association'; random_state: number; min_support: number; min_count: number; min_confidence: number; max_length: number }
   summary: { baskets: number; train_baskets: number; validation_baskets: number; test_baskets: number; items: number; itemsets: number; rules: number; publishable: boolean; reasons: string[] }
-  top_rules: { antecedents: string; consequents: string; support: number; confidence: number; lift: number; n_ab: number; n_a: number; n_b: number; denominator: number }[]
+  evaluation_notice?: string; notice?: string;
+  top_rules: { antecedents: string; consequents: string; support: number; confidence: number; lift: number; n_ab: number; n_a: number; n_b: number; denominator: number; confidence_lower?: number; confidence_upper?: number; validation_n_ab?: number; validation_denominator?: number }[]
   evaluations: { split: string; baskets: number; precision_at_5: number | null; recall_at_5: number | null; hit_rate_at_5: number | null; recommendation_coverage: number | null; popularity_hit_rate_at_5: number | null; popularity_coverage: number | null }[]
 }
 export type QualityRun = {

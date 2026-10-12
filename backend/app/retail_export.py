@@ -39,6 +39,18 @@ def render_report(report, project_name, all_attention=False):
         else "未提供完整金额"
     )
     notice = " ".join(report["notices"])
+    changes = report.get("change_drivers", {}).get("items", [])
+    drivers = ""
+    if changes:
+        drivers = (
+            "<p>主要销售额变化："
+            + "；".join(
+                f"{esc(r['name'])} {r['amount_change']:+,.2f} {esc(summary['currency'])}"
+                for r in changes[:3]
+                if r["amount_change"] is not None
+            )
+            + "。详情见商品依据。</p>"
+        )
     context = esc(report["context"]["run_id"])
     sources = "、".join(esc(s["filename"]) for s in report["sources"])
     chart = ""
@@ -66,7 +78,7 @@ def render_report(report, project_name, all_attention=False):
         amount=amount,
         quantity=f"{summary['quantity']:g} {esc(summary['unit'])}",
         products=summary["products"],
-        chart=chart,
+        chart=chart + drivers,
         product_rows=product_rows,
         attention=summary["attention_total"],
         shown=len(ids),

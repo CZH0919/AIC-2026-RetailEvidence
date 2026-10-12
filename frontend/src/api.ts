@@ -35,6 +35,7 @@ export const api = {
     request<ProjectList>(`/projects?${new URLSearchParams({ q, offset: String(offset), limit: '12' })}`, { signal }),
   get: (id: string, signal?: AbortSignal) => request<Project>(`/projects/${encodeURIComponent(id)}`, { signal }),
   create: (input: ProjectInput) => request<Project>('/projects', { method: 'POST', body: JSON.stringify(input) }),
+  remove: (id: string, revision: number) => request<{ id: string; deleted: boolean }>(`/projects/${encodeURIComponent(id)}?revision=${revision}`, { method: 'DELETE' }),
   update: (id: string, input: ProjectInput, revision: number) => request<Project>(`/projects/${encodeURIComponent(id)}`, {
     method: 'PATCH', body: JSON.stringify({ ...input, revision }),
   }),

@@ -14,6 +14,7 @@ import pyarrow.parquet as pq
 from .amounts import AMOUNT_CONTEXT, money
 from .data_api import digest, write_json
 from .import_formats import DataIssue
+from .product_insights import enrich_products, item_semantics, product_clusters, rank_focus
 from .quality import normalize
 from .sales_mining import MODEL_VERSION, anomaly_series, calendar, forecast_series
 
@@ -74,6 +75,18 @@ def reason_for(row, config):
 
 def action_for(product):
     name = product["name"]
+    if product.get("item_type", {}).get("kind", "unknown") != "physical":
+        if not any(flag in product["flags"] for flag in ["growth", "decline", "anomaly"]):
+            return None
+        return {
+            "id": "review:" + product["id"],
+            "item_id": product["id"],
+            "title": f"核对{name}的记录变化",
+            "text": "核对日期、数量和金额是否完整，确认变化的实际原因。",
+            "reason": product["reason"],
+            "review": "下次复盘时核对",
+            "evidence": product["id"],
+        }
     if "anomaly" in product["flags"]:
         return {
             "id": "check:" + product["id"],
@@ -174,6 +187,7 @@ def process_retail(job, progress):
                 )
     daily = defaultdict(lambda: {"quantity": Decimal(0), "amount": Decimal(0), "amount_missing": 0})
     names, categories, units = {}, {}, mapping["quantity_unit"]
+    type_rows, first_dates = defaultdict(list), {}
     excluded = Counter()
     currencies, seen, order_state = set(), set(), {}
     observed = set()
@@ -263,6 +277,9 @@ def process_retail(job, progress):
                 key = row["item_id"]
                 names.setdefault(key, row.get("item_name") or key)
                 categories.setdefault(key, row.get("category"))
+                if row.get("item_type"):
+                    type_rows[key].append({"item_type": row["item_type"]})
+                first_dates[key] = min(first_dates.get(key, row["day"]), row["day"])
                 bucket = daily[row["day"], key]
                 with localcontext(AMOUNT_CONTEXT):
                     bucket["quantity"] += money(row["quantity"])
@@ -319,6 +336,9 @@ def process_retail(job, progress):
     )
     month_days = calendar(month_start.isoformat(), month_end.isoformat())
     closed = set(params["closed_dates"])
+    missing = set(params.get("missing_dates", []))
+    if closed & missing:
+        raise DataIssue("停业日期和记录缺失日期不能重复。", "coverage_conflict")
     if any(
         d in observed and any(b["quantity"] > 0 for (day, _), b in daily.items() if day == d)
         for d in closed
@@ -366,7 +386,14 @@ def process_retail(job, progress):
         dates = calendar(start, cutoff) if start <= cutoff else []
         if dates:
             series = {
-                key: [float(daily.get((d.isoformat(), key), {}).get("quantity", 0)) for d in dates]
+                key: [
+                    float(daily.get((d.isoformat(), key), {}).get("quantity", 0))
+                    if d.isoformat()
+                    >= params.get("item_start_dates", {}).get(key, first_dates[key])
+                    and d.isoformat() not in missing
+                    else float("nan")
+                    for d in dates
+                ]
                 for key in names
             }
     forecast = (
@@ -396,10 +423,18 @@ def process_retail(job, progress):
     for (day, key), bucket in daily.items():
         by_item[key].append((day, bucket))
         by_day[day].append(bucket)
+    comparative = (
+        complete
+        and params["coverage_start"] <= previous_end.replace(day=1).isoformat()
+        and params["coverage_end"] >= month_end.isoformat()
+        and not any(previous_month <= d[:7] <= month for d in missing)
+    )
     products = []
     for key, name in names.items():
         current = [b for d, b in by_item[key] if d.startswith(month)]
-        if not current:
+        if not current and not (
+            comparative and any(d.startswith(previous_month) for d, _ in by_item[key])
+        ):
             continue
         quantity = float(sum((b["quantity"] for b in current), Decimal(0)))
         has_amount = mapping["amount_mode"] in {"line_amount", "quantity_unit_price"} and not any(
@@ -411,7 +446,13 @@ def process_retail(job, progress):
                 {
                     "date": d.isoformat(),
                     "quantity": float(daily.get((d.isoformat(), key), {}).get("quantity", 0))
-                    if complete_month or (d.isoformat(), key) in daily
+                    if (d.isoformat(), key) in daily
+                    or (
+                        complete_month
+                        and d.isoformat() not in missing
+                        and d.isoformat()
+                        >= params.get("item_start_dates", {}).get(key, first_dates[key])
+                    )
                     else None,
                     "recorded": (d.isoformat(), key) in daily,
                 }
@@ -421,7 +462,11 @@ def process_retail(job, progress):
             else []
         )
         flags, change, reason = [], None, ""
-        if complete_month and kind != "monthly_summary":
+        if (
+            complete_month
+            and kind != "monthly_summary"
+            and all(v["quantity"] is not None for v in daily_values[-14:])
+        ):
             last = sum(v["quantity"] for v in daily_values[-7:])
             prior = sum(v["quantity"] for v in daily_values[-14:-7])
             change = (last - prior) / prior if prior > 0 else None
@@ -451,6 +496,7 @@ def process_retail(job, progress):
             {
                 "id": key,
                 "name": name,
+                "item_type": item_semantics(key, type_rows[key], sources, params),
                 "category": categories[key],
                 "quantity": quantity,
                 "amount": amount,
@@ -459,6 +505,7 @@ def process_retail(job, progress):
                 "reason": reason,
                 "daily": daily_values,
                 "anomalies": anomalies,
+                "anomaly_events": anomaly.get("events", {}).get(key, []),
                 "forecast": forecast["predictions"].get(key),
                 "forecast_reason": forecast.get("reason")
                 or (
@@ -468,14 +515,33 @@ def process_retail(job, progress):
                 ),
             }
         )
-    products.sort(
-        key=lambda p: (
-            -len(p["flags"]),
-            -(p["amount"] if p["amount"] is not None else p["quantity"]),
-            p["id"],
-        )
+    change_drivers = enrich_products(
+        products,
+        by_item,
+        daily,
+        dates,
+        month,
+        previous_month,
+        comparative and mapping["amount_mode"] in {"line_amount", "quantity_unit_price"},
+        params,
     )
-    attention = [p["id"] for p in products if p["flags"]]
+    for product in products:
+        for event in product["anomaly_events"]:
+            past = [
+                b
+                for d, b in by_item[product["id"]]
+                if d < event["start"] and not b["amount_missing"] and b["quantity"] > 0
+            ]
+            quantity = sum((b["quantity"] for b in past), Decimal(0))
+            amount = sum((b["amount"] for b in past), Decimal(0))
+            event["amount_impact_reference"] = (
+                float(Decimal(str(event["difference"])) * amount / quantity) if quantity else None
+            )
+            event["amount_notice"] = "按此前成交均价计算的金额影响参考，不是实际损失。"
+    clusters = (
+        product_clusters(products) if not params.get("check_only") else {"status": "unavailable"}
+    )
+    attention, highlights = rank_focus(products)
     grouped_actions = {}
     for p in products:
         action = action_for(p)
@@ -501,20 +567,15 @@ def process_retail(job, progress):
                 {
                     "date": day.isoformat(),
                     "quantity": float(sum((b["quantity"] for b in values), Decimal(0)))
-                    if values or complete_month
+                    if values or (complete_month and day.isoformat() not in missing)
                     else None,
                     "amount": float(sum((b["amount"] for b in values), Decimal(0)))
                     if totals[month]["amount"] is not None
                     and mapping["amount_mode"] != "order_amount"
-                    and (values or complete_month)
+                    and (values or (complete_month and day.isoformat() not in missing))
                     else None,
                 }
             )
-    comparative = (
-        complete
-        and params["coverage_start"] <= previous_end.replace(day=1).isoformat()
-        and params["coverage_end"] >= month_end.isoformat()
-    )
     previous_chart = []
     if comparative and kind != "monthly_summary":
         for day in calendar(previous_end.replace(day=1).isoformat(), previous_end.isoformat()):
@@ -569,7 +630,15 @@ def process_retail(job, progress):
         "previous_chart": previous_chart,
         "products": products,
         "attention_ids": attention,
-        "highlights": attention[:5],
+        "highlights": highlights,
+        "change_drivers": change_drivers,
+        "product_clustering": clusters,
+        "amount_composition": {
+            kind: sum(p["amount"] or 0 for p in products if p["item_type"]["kind"] == kind)
+            for kind in ["physical", "fee_service", "accounting", "unknown"]
+        }
+        if totals[month]["amount"] is not None and mapping["amount_mode"] != "order_amount"
+        else None,
         "actions": actions,
         "forecast": {k: v for k, v in forecast.items() if k not in {"predictions", "backtests"}},
         "anomaly": {k: v for k, v in anomaly.items() if k != "items"},
@@ -589,14 +658,44 @@ def process_retail(job, progress):
         report["notices"].append("本月完整性尚未确认，仅总结提供的记录；缺记录的日期不补成零销量。")
     if duplicates and params["duplicates"] == "keep":
         report["notices"].append("完全重复候选仍按原记录保留，请在数据检查时核对。")
+    if missing:
+        report["notices"].append("单独标注的记录缺失日期保留未知，相关预测和跨期比较可能不可用。")
     progress("writing_results", 90)
     with (output / "sales_products.csv").open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.DictWriter(
-            stream, fieldnames=["id", "name", "quantity", "amount", "change", "reason", "attention"]
+            stream,
+            fieldnames=[
+                "id",
+                "name",
+                "quantity",
+                "amount",
+                "change",
+                "reason",
+                "attention",
+                "item_type",
+                "amount_share",
+                "amount_rank",
+                "profile_labels",
+                "amount_change",
+                "quantity_effect",
+                "price_effect",
+            ],
         )
         writer.writeheader()
         for p in products:
             values = {k: p[k] for k in ["id", "name", "quantity", "amount", "change", "reason"]}
+            values.update(
+                item_type=p["item_type"]["label"],
+                amount_share=p["profile"]["amount_share"],
+                amount_rank=p["profile"]["amount_rank"],
+                profile_labels="；".join(p["profile"]["labels"]),
+            )
+            values.update(
+                {
+                    k: (p.get("contribution") or {}).get(k)
+                    for k in ["amount_change", "quantity_effect", "price_effect"]
+                }
+            )
             for key in ["id", "name", "reason"]:
                 if str(values[key]).lstrip().startswith(("=", "+", "-", "@")):
                     values[key] = "'" + str(values[key])
