@@ -61,7 +61,13 @@ def product_explanation(report, question, item_id=None):
             "clarification",
             ["item", "anomaly"],
         )
-    if "预测" in question or "七天" in question or "进货" in question or "补货" in question:
+    if (
+        "预测" in question
+        or "七天" in question
+        or any(
+            word in question for word in ["进货多少", "补货多少", "进货量", "进货数量", "直接进货"]
+        )
+    ):
         forecast = item.get("forecast") if item else None
         if not forecast:
             if not item and report.get("forecast", {}).get("published_items"):
