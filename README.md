@@ -1,8 +1,8 @@
 # RetailEvidence Studio
 
-小商户月度销售与备货助手，沿用团队 FastAPI、SQLite/SQLAlchemy、React/TypeScript 架构。版本 0.6.2，schema 5，销售算法 sales-v2.2.0；本轮操作提示验收见 [真实UX报告](docs/UX_GUIDANCE_ACCEPTANCE.md)；原系统验收见 [历史交付报告](docs/ACCEPTANCE_REPORT.md)。
+小商户月度销售与备货助手，沿用团队 FastAPI、SQLite/SQLAlchemy、React/TypeScript 架构。版本 0.6.3，schema 5，销售算法 sales-v2.2.0；文案审计与本轮验收见 [文案验收](docs/USER_FACING_COPY_ACCEPTANCE.md)；此前操作提示验收见 [真实UX报告](docs/UX_GUIDANCE_ACCEPTANCE.md)；原系统验收见 [历史交付报告](docs/ACCEPTANCE_REPORT.md)。
 
-上传收银明细、独立商品日汇总或月汇总 → 确认字段、月份、记录类型与金额口径 → 检查数据 → 生成月报 → 查看全部商品及异常原始记录 → 保存核对备注 → CPU AI 解释证据 → 导出 HTML/CSV/JSON、浏览器打印 PDF。RF/RFM 客户分群与 FP-growth 共购保留在“更多分析”。
+上传收银明细、独立商品日汇总或月汇总 → 确认字段、月份、记录类型与金额口径 → 检查数据 → 生成月报 → 查看全部商品及异常原始记录 → 保存核对备注 → AI 辅助解释证据 → 导出 HTML/CSV/JSON、浏览器打印 PDF。RF/RFM 客户分群与 FP-growth 共购保留在“更多分析”。
 
 分类支持实物、运费/服务、人工调整、其他、待确认。规则按数据版本与字段版本冻结，来源行规则优先，其次商品编号、已映射分类、默认口径；类型与金额是否计入分别确认。待确认项能核对明细，关键类型未知时暂停不可靠预测与建议。不会按名称包含 POST 等字符串全局删行。旧报告保留原口径，修改分类产生新运行。
 
@@ -20,7 +20,7 @@ AI 只解释冻结证据，数字由程序填写。没有库存不能算进货�
 - [真实复测与限制](docs/UX_GUIDANCE_ACCEPTANCE.md)
 - [改造前后真实截图](docs/UX_GUIDANCE_BEFORE_AFTER.md)
 
-本轮37个主浏览器组PASS，帮助3条内容合同测试、pytest60执行案例加6subtests、Ruff与类型/构建PASS；完整长时任务超限和真人商户研究尚未执行。原有验收记录按原日期/版本保留，不能当本轮重跑。当前依赖复用已安装环境，下面依赖安装步骤属于既有启动说明，本轮没有重新网络安装。
+2026-10-11操作提示任务37个主浏览器组PASS，帮助3条内容合同测试、pytest60执行案例加6subtests、Ruff与类型/构建PASS；完整长时任务超限和真人商户研究尚未执行。原有验收记录按原日期/版本保留，不能当本轮重跑。当前依赖复用已安装环境，下面依赖安装步骤属于既有启动说明，本轮没有重新网络安装。
 
 ## 运行（Ubuntu，Python 3.12、Node 24）
 
@@ -51,7 +51,7 @@ bash scripts/run.sh
 
 默认 Web `http://127.0.0.1:8000`，单 Worker；首次在自己的状态目录初始化 schema 5。环境通过进程变量提供，脚本不会自动加载 `.env`；安全样例见 [.env.example](.env.example)。`.runtime/` 不提交 Git。Ubuntu 未安装 ensurepip 时可使用已有 uv，无须 sudo。Windows 操作需遵守 [C 盘保护与交接](docs/HANDOFF.md)，本任务主要测试在远端完成。
 
-模型使用 [官方 Qwen2.5-1.5B GGUF](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF) 和 llama.cpp CPU 服务，详细配置、SHA-256、线程与端口见 [技术交接](docs/HANDOFF.md)。模型不可用仍可使用确定性报告，界面明确标记回退。没有模型权重、原始大数据、个人凭据或数据库随 Git 发布。
+模型使用 [官方 Qwen2.5-1.5B GGUF](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF) 和 llama.cpp CPU 服务，详细配置、SHA-256、线程与端口见 [技术交接](docs/HANDOFF.md)。模型不可用仍可使用确定性报告，界面明确标记预设说明。没有模型权重、原始大数据、个人凭据或数据库随 Git 发布。
 
 ## 测试与证据
 
@@ -79,3 +79,7 @@ export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_TH
 ![真实公开数据月报](docs/verification/monthly_desktop.png)
 
 截图来自bb8b645的真实浏览器月汇总上传流程，待确认/费用展示对应docs/verification/final_candidate/browser_import.json中的run，不是设计Mock。
+
+## 0.6.3 全站文案核查
+
+本轮16区域、35主操作组、42帮助、12固定AI问题和6受控模型故障实际重跑。32项（5P0/19P1/8P2）完成处理，保留业务限制和全部质量详情；76 Python执行案例+6subtests、帮助3内容测试、受影响范围Ruff与构建PASS。全scripts132条继承格式问题单列FAIL，真人与长时预算未验证。见[原始审计](docs/USER_FACING_COPY_AUDIT.md)、[改造及前后对比](docs/USER_FACING_COPY_CHANGES.md)、[本轮验收](docs/USER_FACING_COPY_ACCEPTANCE.md)、[后续规范](docs/USER_FACING_COPY_STYLE_GUIDE.md)。

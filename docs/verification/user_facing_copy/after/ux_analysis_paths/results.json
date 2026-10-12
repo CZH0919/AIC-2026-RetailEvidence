@@ -1,0 +1,104 @@
+{
+  "phase": "after",
+  "results": [
+    {
+      "id": "F_raw_monthly_trend",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6?run=2b78c6a3-98f1-4d46-b308-4651224f5d96",
+      "evidence": "F_raw_monthly_trend.png"
+    },
+    {
+      "id": "F_anomaly_trace_note",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/products?run=2b78c6a3-98f1-4d46-b308-4651224f5d96",
+      "evidence": "F_anomaly_trace_note.png"
+    },
+    {
+      "id": "G_inventory_reference",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/products?run=2b78c6a3-98f1-4d46-b308-4651224f5d96",
+      "evidence": "G_inventory_reference.png"
+    },
+    {
+      "id": "H_ai_complex_ambiguity",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6?run=2b78c6a3-98f1-4d46-b308-4651224f5d96",
+      "evidence": "H_ai_complex_ambiguity.png"
+    },
+    {
+      "id": "I_quality_scope",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/quality",
+      "evidence": "I_quality_scope.png"
+    },
+    {
+      "id": "I_RF",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/quality",
+      "evidence": "I_RF.png"
+    },
+    {
+      "id": "I_RFM",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/quality",
+      "evidence": "I_RFM.png"
+    },
+    {
+      "id": "I_association",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/quality",
+      "evidence": "I_association.png"
+    },
+    {
+      "id": "J_network_failure",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/data",
+      "evidence": "J_network_failure.png"
+    },
+    {
+      "id": "J_invalid_history",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects/e1711757-601a-4e9a-a05f-037d7e6909e6?run=00000000-0000-0000-0000-000000000000",
+      "evidence": "J_invalid_history.png"
+    },
+    {
+      "id": "A_project_switch",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18088/projects",
+      "evidence": "A_project_switch.png"
+    }
+  ],
+  "errors": [],
+  "newRuns": [
+    {
+      "id": "5629823c-2c59-4d4a-b85b-f54e45ed36bc",
+      "kind": "quality",
+      "status": "completed_with_warnings",
+      "message": "质量检查已完成，请查看各项分析的适用条件。"
+    },
+    {
+      "id": "23fdb451-827b-4e0a-a540-da5d30ec66c5",
+      "kind": "clustering",
+      "status": "succeeded",
+      "message": "客户分群已完成，请查看购买习惯与分组质量。"
+    },
+    {
+      "id": "8b424c16-c5fe-41f0-86e4-da897b60c42a",
+      "kind": "clustering",
+      "status": "succeeded",
+      "message": "客户分群已完成，请查看购买习惯与分组质量。"
+    },
+    {
+      "id": "9d9fca8b-928b-464d-8d84-f5e8b02bbcc1",
+      "kind": "quality",
+      "status": "completed_with_warnings",
+      "message": "质量检查已完成，请查看各项分析的适用条件。"
+    },
+    {
+      "id": "1ac96ab8-2768-4f06-bf36-76f1c73d2cf6",
+      "kind": "association",
+      "status": "succeeded",
+      "message": "商品共购分析已完成，请查看规则和评测结果。"
+    }
+  ]
+}

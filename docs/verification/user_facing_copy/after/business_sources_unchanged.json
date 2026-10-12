@@ -1,0 +1,11 @@
+{
+  "backend/app/retail_engine.py": true,
+  "backend/app/sales_mining.py": true,
+  "backend/app/quality.py": true,
+  "backend/app/clustering.py": true,
+  "backend/app/association.py": true,
+  "backend/app/record_classification.py": true,
+  "backend/app/retail_schemas.py": true,
+  "backend/app/models.py": true,
+  "backend/app/database.py": true
+}

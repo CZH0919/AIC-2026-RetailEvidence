@@ -1,0 +1,141 @@
+{
+  "success": {
+    "answer": "本月销售情况如下：销量为626,765，销售额为1,105,884.75。进货前请核对记录，记录类型和金额口径以用户确认为准。销量和销售额仅包含实物，退款不计入。仅作短期销售参考，不能直接决定整月进货。销售情况与历史数据有偏差，原因需要店主核对。",
+    "ai_used": true,
+    "mode": "model_inference",
+    "references": [
+      "summary",
+      "classification"
+    ],
+    "evidence": {
+      "summary": {
+        "source_order_amount": null,
+        "quantity": 626765,
+        "amount": 1105884.75,
+        "amount_missing_rows": 0,
+        "orders": null,
+        "refund_amount": null,
+        "products": 2863,
+        "attention_total": 0,
+        "unit": "原始商品单位",
+        "currency": "GBP",
+        "previous": null,
+        "complete_month": false,
+        "amount_label": "按确认分类口径的销售额（数量仅含实物，退款另计）",
+        "average_order": null
+      },
+      "quality": {
+        "input_rows": 3005,
+        "included_rows": 3005,
+        "excluded_rows": 0,
+        "duplicate_candidates": 0,
+        "reasons": []
+      },
+      "forecast": {
+        "status": "unavailable",
+        "reason": "需要确认完整日期范围后，才能预测；月汇总不支持日级预测。",
+        "metrics": [],
+        "version": "sales-v2.2.0"
+      },
+      "anomaly": {
+        "status": "unavailable",
+        "reason": "当前记录无法核对完整的历史波动。",
+        "version": "sales-v2.2.0"
+      },
+      "classification": {
+        "version": "record-classification-v1",
+        "sha256": "1368de754ae3047ba9912e76da1bcb640a26029053c4699a360207e1c5850d77",
+        "counts": {
+          "physical_product": 2998,
+          "other": 3,
+          "shipping_service": 3,
+          "manual_adjustment": 1
+        },
+        "pending_product_rows": 0,
+        "financial_breakdown": [
+          {
+            "month": "2011-10",
+            "record_kind": "manual_adjustment",
+            "label": "人工调整",
+            "amount_treatment": "exclude",
+            "rows": 1,
+            "amount": 21548.67,
+            "missing_amount_rows": 0
+          },
+          {
+            "month": "2011-10",
+            "record_kind": "other",
+            "label": "其他",
+            "amount_treatment": "exclude",
+            "rows": 3,
+            "amount": 79.72,
+            "missing_amount_rows": 0
+          },
+          {
+            "month": "2011-10",
+            "record_kind": "physical_product",
+            "label": "实物商品",
+            "amount_treatment": "include",
+            "rows": 2998,
+            "amount": 1105884.75,
+            "missing_amount_rows": 0
+          },
+          {
+            "month": "2011-10",
+            "record_kind": "shipping_service",
+            "label": "运费/服务",
+            "amount_treatment": "exclude",
+            "rows": 3,
+            "amount": 26681.09,
+            "missing_amount_rows": 0
+          }
+        ]
+      },
+      "items": [
+        {
+          "id": "22423",
+          "name": "REGENCY CAKESTAND 3 TIER",
+          "quantity": 1083,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "23084",
+          "name": "23084",
+          "quantity": 6348,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "23284",
+          "name": "DOORMAT KEEP CALM AND COME IN",
+          "quantity": 1540,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "85099B",
+          "name": "JUMBO BAG RED RETROSPOT",
+          "quantity": 5412,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "22086",
+          "name": "PAPER CHAIN KIT 50'S CHRISTMAS ",
+          "quantity": 3389,
+          "reason": "",
+          "flags": []
+        }
+      ],
+      "actions": []
+    },
+    "run_id": "b9ba34b0-d35b-43c5-9663-60639bc17e54",
+    "model": "qwen2.5-1.5b-instruct-q4_k_m",
+    "prompt_version": "sales-explain-v6",
+    "evidence_id": "b9ba34b0-d35b-43c5-9663-60639bc17e54:1368de754ae3047ba9912e76da1bcb640a26029053c4699a360207e1c5850d77"
+  },
+  "prior": "AI 辅助解释\n\n本月销售情况如下：销量为626,765，销售额为1,105,884.75。进货前请核对记录，记录类型和金额口径以用户确认为准。销量和销售额仅包含实物，退款不计入。仅作短期销售参考，不能直接决定整月进货。销售情况与历史数据有偏差，原因需要店主核对。\n\n核对本次月报依据",
+  "failed_visible": "提问未完成\n\n暂时无法连接，请检查连接后重试。\n\n核对本次月报依据",
+  "prior_label_reused": false
+}
