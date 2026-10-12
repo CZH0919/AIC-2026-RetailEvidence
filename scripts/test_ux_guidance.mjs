@@ -30,6 +30,6 @@ test('Accounting, stock-date and AI unknown-data safeguards are explicitly expla
   assert.match(text('UX33'), /不能配上今天/)
   assert.match(text('UX34'), /不确定.*不要/)
   assert.match(text('UX35'), /不保证/)
-  assert.match(text('UX37'), /数字由程序/)
+  assert.match(text('UX37'), /数字来自月报计算/)
   assert.match(text('UX42'), /不证明/)
 })

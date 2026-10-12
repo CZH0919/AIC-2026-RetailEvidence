@@ -38,7 +38,7 @@ export const associationDefaults = (): AnalysisParameters => ({ kind: 'associati
 export const cleanDefaults: CleaningConfig = { trim_identifiers: true, duplicates: 'keep', monetary_subset: 'all_customers', accept_selected_amount_source: false }
 export const scopeDefaults: DataScope = { date_start: null, date_end: null, countries: [], item_ids: [], currency: null }
 export const finished = new Set(['succeeded', 'completed_with_warnings', 'not_applicable', 'failed', 'cancelled', 'resource_limited', 'interrupted'])
-export const stateLabel: Record<string, string> = { queued: '等待处理', running: '正在检查', succeeded: '检查完成', completed_with_warnings: '完成 · 有提示', not_applicable: '完成 · 条件不足', failed: '处理未完成', cancelled: '已取消', resource_limited: '达到处理上限', interrupted: '处理已中断' }
+export const stateLabel: Record<string, string> = { queued: '等待处理', running: '正在处理', succeeded: '处理完成', completed_with_warnings: '完成 · 有提示', not_applicable: '完成 · 条件不足', failed: '处理未完成', cancelled: '已取消', resource_limited: '达到处理上限', interrupted: '处理已中断' }
 export const viewLabels: Record<string, string> = { common: '有效正向记录', rf: '客户频次与时间', rfm: '客户频次、时间与金额', amount: '有效金额', association: '完整购物篮' }
 const root = (project: string) => `/projects/${encodeURIComponent(project)}`
 export const qualityApi = {

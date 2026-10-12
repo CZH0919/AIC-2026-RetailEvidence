@@ -56,7 +56,7 @@ START_MESSAGES = {
 DONE_MESSAGES = {
     "sales": "本月销售分析已完成。",
     "quality": "质量检查已完成，请查看各项分析的适用条件。",
-    "clustering": "客户分群已完成，请查看群体画像和诊断。",
+    "clustering": "客户分群已完成，请查看购买习惯与分组质量。",
     "association": "商品共购分析已完成，请查看规则和评测结果。",
 }
 
@@ -286,7 +286,7 @@ class TaskRunner:
                         "policy_sha256": policy.config_sha256,
                         "parameters": parameters,
                         "code_sha256": self.code_hash,
-                        "application_version": "0.6.2",
+                        "application_version": "0.6.3",
                         "source_commit": os.environ.get("AIC_SOURCE_COMMIT"),
                         "python": platform.python_version(),
                         "dependencies": {
