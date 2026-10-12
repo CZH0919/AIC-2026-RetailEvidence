@@ -1,0 +1,65 @@
+{
+  "id": "4d18d068-56f6-4704-95c3-189dfa0fc671",
+  "status": "succeeded",
+  "summary": {
+    "baskets": 9835,
+    "train_baskets": 5901,
+    "validation_baskets": 1967,
+    "test_baskets": 1967,
+    "items": 168,
+    "itemsets": 1030,
+    "rules": 905,
+    "publishable": true,
+    "reasons": []
+  },
+  "parameters": {
+    "analysis": {
+      "kind": "association",
+      "k_min": 2,
+      "k_max": 8,
+      "random_state": 42,
+      "n_init": 10,
+      "min_support": 0.005,
+      "min_count": 20,
+      "min_confidence": 0.2,
+      "max_length": 3
+    },
+    "timeout_seconds": 600,
+    "memory_mb": 8192
+  },
+  "rules": [
+    {
+      "antecedents": "curd | domestic eggs",
+      "consequents": "whole milk",
+      "support": 0.0054228096932723265,
+      "confidence": 0.7272727272727273,
+      "lift": 2.7831623629288997,
+      "n_ab": 32,
+      "n_a": 44,
+      "n_b": 1542,
+      "denominator": 5901
+    },
+    {
+      "antecedents": "beef | tropical fruit",
+      "consequents": "other vegetables",
+      "support": 0.005083884087442806,
+      "confidence": 0.6976744186046512,
+      "lift": 3.7190395159765552,
+      "n_ab": 30,
+      "n_a": 43,
+      "n_b": 1107,
+      "denominator": 5901
+    },
+    {
+      "antecedents": "butter | whipped/sour cream",
+      "consequents": "whole milk",
+      "support": 0.006947974919505169,
+      "confidence": 0.6949152542372882,
+      "lift": 2.6593352239002837,
+      "n_ab": 41,
+      "n_a": 59,
+      "n_b": 1542,
+      "denominator": 5901
+    }
+  ]
+}
