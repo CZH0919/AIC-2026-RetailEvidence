@@ -250,12 +250,17 @@ def rank_focus(products):
 
     products.sort(key=lambda p: (-impact(p), p["id"]))
     attention = [p["id"] for p in products if p["flags"]]
+    merchandise = [
+        p
+        for p in products
+        if p.get("item_type", {}).get("kind", "unknown") not in {"fee_service", "accounting"}
+    ]
     selected = []
     for flag in ["anomaly", "decline", "growth", "contribution"]:
-        p = next((p for p in products if flag in p["flags"] and p["id"] not in selected), None)
+        p = next((p for p in merchandise if flag in p["flags"] and p["id"] not in selected), None)
         if p:
             selected.append(p["id"])
-    selected += [key for key in attention if key not in selected]
+    selected += [p["id"] for p in merchandise if p["flags"] and p["id"] not in selected]
     return attention, selected[:5]
 
 

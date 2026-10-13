@@ -2,10 +2,15 @@ import { request } from './api'
 import type { Mapping } from './data'
 
 export type Prediction = { quantity: number; method: string; validation_mae: number; test_mae?: number | null; test_origins?: number; start: string; end: string; notice: string; range?: {lower: number; upper: number} | null; range_reason?: string }
+export type ItemKind = 'physical' | 'fee_service' | 'accounting' | 'unknown'
+export const itemKindOptions: {value: ItemKind; label: string}[] = [
+  {value: 'unknown', label: '待确认'}, {value: 'physical', label: '实物商品'},
+  {value: 'fee_service', label: '费用或服务'}, {value: 'accounting', label: '记账项目'},
+]
 export type ChangeDriver = {item_id: string; name: string; period: string; amount_change: number | null; quantity_change: number; quantity_effect: number | null; price_effect: number | null}
 export type SalesProduct = { id: string; name: string; category: string | null; quantity: number; amount: number | null; change: number | null; flags: string[]; reason: string; daily: { date: string; quantity: number | null }[]; forecast: Prediction | null; forecast_reason?: string; anomalies: { date: string; actual: number; reference: number }[]; item_type?: {kind: string; label: string}; profile?: {labels: string[]; amount_share: number | null; amount_rank: number | null; contribution_band: string | null; weekly_cv: number | null; nonzero_day_share: number | null; complete_weeks: number; first_observed: string; last_observed: string}; contribution?: ChangeDriver | null; focus_reason?: string; anomaly_events?: {start: string; end: string; days: number; actual: number; reference: number; dates: string[]}[] }
-export type SalesAction = { id: string; item_id: string; title: string; text: string; reason: string; review: string }
-export type SalesParameters = { sources: { version_id: string; mapping_revision: number }[]; month: string; merge_mode: string; duplicates: string; complete_coverage: boolean; coverage_start: string | null; coverage_end: string | null; closed_dates: string[]; missing_dates?: string[]; check_only?: boolean }
+export type SalesAction = { id: string; item_id: string; title: string; text: string; reason: string; review: string; related_items?: string[]; item_type?: ItemKind; signal?: string; count?: number; priority_notice?: string }
+export type SalesParameters = { sources: { version_id: string; mapping_revision: number }[]; month: string; merge_mode: string; duplicates: string; complete_coverage: boolean; coverage_start: string | null; coverage_end: string | null; closed_dates: string[]; missing_dates?: string[]; check_only?: boolean; item_types?: Record<string, ItemKind>; item_start_dates?: Record<string, string>; budget_seconds?: 600 | 1200 }
 export type SalesReport = {
   version?: string; context: { run_id: string }; month: string; available_months: string[]; parameters: SalesParameters;
   change_drivers?: {comparable: boolean; items: ChangeDriver[]; amount_change: number | null; notice: string};
@@ -15,7 +20,7 @@ export type SalesReport = {
   highlights: string[]; attention_ids: string[]; actions: SalesAction[]; notices: string[];
   quality: { input_rows: number; included_rows: number; excluded_rows: number; duplicate_candidates: number; reasons: { code: string; label: string; count: number }[] };
   sources: { version_id: string; filename: string; mapping_revision: number; canonical_sha256: string }[];
-  forecast: { status: string; reason: string; selected_method?: string; tested_items?: number; published_items?: number; metrics: { method: string; split: string; mae: number | null; wape: number | null; samples: number }[] };
+  forecast: { status: string; reason: string; selected_method?: string; tested_items?: number; published_items?: number; test_used_for_selection?: boolean; evaluation_notice?: string; metrics: { method: string; split: string; mae: number | null; wape: number | null; samples: number }[] };
   anomaly: { status: string; reason: string; flagged_samples?: number; tested_samples?: number; warning?: string };
 }
 export type SalesRun = { id: string; status: string; message: string; created_at: string; finished_at: string | null; result: SalesReport | null; parameters?: { sales: SalesParameters } }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Alert, Button, Checkbox, DatePicker, Drawer, Input, Select, Spin, Steps, Table } from 'antd'
+import { Alert, Button, DatePicker, Drawer, Select, Spin, Steps, Table } from 'antd'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import { CloudUploadOutlined, FileTextOutlined } from '@ant-design/icons'
@@ -9,6 +9,7 @@ import { salesApi } from '../retail'
 import type { SalesParameters, SalesRun, SourceInfo } from '../retail'
 import { finished } from '../quality'
 import { SalesImportFields } from './SalesImportFields'
+import { CoverageConfirmation } from './CoverageConfirmation'
 
 function salesMapping(draft: Draft): Mapping {
   const mapping = initialMapping(draft)
@@ -113,7 +114,7 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
       if (!info.length) throw new Error('请先选择销售表。')
       if (!info.some(s => s.months.includes(month))) throw new Error('所选月份不在这份表格里，请选择下方已识别的月份。')
       if (complete && (!coverageStart || !coverageEnd || coverageEnd < coverageStart)) throw new Error('请填写并核对完整记录的起止日期。')
-      const params: SalesParameters = { sources: info.map(s => ({ version_id: s.version_id, mapping_revision: s.mapping_revision })), month, complete_coverage: complete, coverage_start: complete ? coverageStart : null, coverage_end: complete ? coverageEnd : null, merge_mode: merge, duplicates, closed_dates: closed.split(',').map(s => s.trim()).filter(Boolean), missing_dates: missing.split(',').map(s => s.trim()).filter(Boolean), check_only: false }
+      const params: SalesParameters = { sources: info.map(s => ({ version_id: s.version_id, mapping_revision: s.mapping_revision })), month, complete_coverage: complete, coverage_start: complete ? coverageStart : null, coverage_end: complete ? coverageEnd : null, merge_mode: merge, duplicates, closed_dates: complete ? closed.split(',').map(s => s.trim()).filter(Boolean) : [], missing_dates: complete ? missing.split(',').map(s => s.trim()).filter(Boolean) : [], check_only: false }
       setCurrent(await salesApi.create(projectId, params)); setStep(2)
     })
   }
@@ -143,17 +144,16 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
             {draft.suffix === '.csv' && <><label className="sales-upload-field"><span>文件编码</span><Select aria-label="销售表文件编码" value={options.encoding} options={[{ value: 'utf-8-sig', label: 'UTF-8' }, { value: 'gb18030', label: 'GBK / GB18030' }, { value: 'cp1252', label: 'Windows-1252' }]} onChange={encoding => setOptions(v => ({ ...v, encoding }))} /></label><label className="sales-upload-field"><span>列分隔符</span><Select aria-label="销售表列分隔符" value={options.delimiter} options={[[',', '逗号'], [';', '分号'], ['\t', '制表符'], ['|', '竖线']].map(([value, label]) => ({ value, label }))} onChange={delimiter => setOptions(v => ({ ...v, delimiter }))} /></label></>}
           </div>{changedReading && <p>读取设置已改变，请重新读取后继续。</p>}<Button disabled={!!busy} onClick={() => void work('正在重新读取销售表', () => read(draft, options))}>重新读取</Button></details>}
         </>}
-        {step === 1 && <><div className="sales-upload-intro"><h3>确认这份表格的内容</h3><p>{existing ? '选择销售表和月份，就可以开始分析。' : '已自动识别部分字段，核对后选择要分析的月份。'}</p></div>
+        {step === 1 && <><div className="sales-upload-intro"><h3>确认这份表格的内容</h3><p>{existing ? '选择销售表和月份，并核对下方记录范围与可用分析。' : '核对字段和月份，再确认记录范围；下方会说明可用的分析。'}</p></div>
           {existing ? <label className="sales-upload-field"><span>使用销售表</span><Select aria-label="分析使用的销售表" mode="multiple" value={sourceIds} options={versions.map(v => ({ value: v.id, label: v.filename }))} onChange={setSourceIds} /></label> : draft?.preview && mapping && <SalesImportFields preview={draft.preview} value={mapping} onChange={next => { setMapping(next); setSourceInfo([]) }} />}
           <div className="sales-upload-month"><label className="sales-upload-field"><span>分析月份</span><DatePicker picker="month" aria-label="上传流程分析月份" placeholder="选择月份" format="YYYY-MM" value={month ? dayjs(`${month}-01`) : null} onChange={date => setMonth(date?.format('YYYY-MM') ?? '')} /></label>
             {!!months.length && <label className="sales-upload-field"><span>表格里已识别的月份</span><Select aria-label="已识别月份" value={months.includes(month) ? month : undefined} placeholder="选择月份" options={months.map(value => ({ value, label: value }))} onChange={setMonth} /></label>}
           </div>
           {!existing && mapping?.columns.event_time && !sourceInfo.length && <p className="sales-upload-muted">月份根据预览日期填写，可修改。日期格式和时区可在“更多字段设置”中调整。</p>}
+          <CoverageConfirmation month={month} kinds={existing ? sourceInfo.map(s => s.mapping.record_kind ?? 'transactions') : mapping ? [mapping.record_kind ?? 'transactions'] : []}
+            complete={complete} start={coverageStart} end={coverageEnd} missing={missing} closed={closed}
+            onComplete={setComplete} onStart={setCoverageStart} onEnd={setCoverageEnd} onMissing={setMissing} onClosed={setClosed} />
           <details className="sales-upload-more"><summary>更多分析设置</summary><div className="sales-upload-settings">
-            <Checkbox checked={complete} onChange={e => setComplete(e.target.checked)}>我已核对指定日期范围内的销售记录，没有漏传（单独列出的缺失日除外）</Checkbox>
-            {complete && <><div className="sales-upload-grid"><label className="sales-upload-field"><span>完整记录开始日</span><input aria-label="完整记录开始日" type="date" value={coverageStart} onChange={e => setCoverageStart(e.target.value)} /></label><label className="sales-upload-field"><span>完整记录截止日</span><input aria-label="完整记录截止日" type="date" value={coverageEnd} onChange={e => setCoverageEnd(e.target.value)} /></label></div><p className="sales-upload-muted">请填写实际覆盖范围，包含没有成交的日期。第一笔和最后一笔销售的日期不一定是记录边界。</p></>}
-            <label className="sales-upload-field"><span>记录缺失日期（可选）</span><Input aria-label="记录缺失日期" placeholder="例如 2026-10-03，多天用逗号隔开" value={missing} onChange={e => setMissing(e.target.value)} /><small>漏传或无法确认的日期保留未知，不算作零销量。</small></label>
-            <label className="sales-upload-field"><span>停业日期（可选）</span><Input aria-label="上传流程停业日期" placeholder="例如 2026-10-01，多天用逗号隔开" value={closed} onChange={e => setClosed(e.target.value)} /></label>
             <label className="sales-upload-field"><span>重复记录</span><Select aria-label="上传流程重复记录" value={duplicates} options={[{ value: 'keep', label: '保留重复候选' }, { value: 'drop_exact', label: '删除完全相同的记录' }]} onChange={setDuplicates} /></label>
             {sourceIds.length > 1 && existing && <label className="sales-upload-field"><span>多个文件日期重叠时</span><Select aria-label="上传流程重叠日期" value={merge} options={[{ value: 'append', label: '仅追加不重叠日期' }, { value: 'replace_overlap', label: '用较新文件替换重叠日期' }]} onChange={setMerge} /></label>}
           </div></details>

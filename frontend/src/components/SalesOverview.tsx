@@ -12,13 +12,14 @@ function comparison(current: number | null, previous: number | null | undefined)
   return change === 0 ? '与上月持平' : `比上月${change > 0 ? '增加' : '减少'} ${Math.abs(change).toFixed(1)}%`
 }
 
-export function SalesOverview({ report, chartScope, onChartScope, records, onProduct, onAllProducts, onActionStatus, onActionNote, onAsk }: {
+export function SalesOverview({ report, chartScope, onChartScope, records, onProduct, onAllProducts, onActionGroup, onActionStatus, onActionNote, onAsk }: {
   report: SalesReport
   chartScope: string
   onChartScope: (scope: string) => void
   records: Record<string, SavedRecord>
   onProduct: (id: string) => void
   onAllProducts: () => void
+  onActionGroup: (action: SalesAction) => void
   onActionStatus: (action: SalesAction, status: string) => void
   onActionNote: (action: SalesAction) => void
   onAsk: () => void
@@ -84,7 +85,7 @@ export function SalesOverview({ report, chartScope, onChartScope, records, onPro
           <div>
             <h4>{action.title}</h4>
             <p>{action.text.replace(/\s*另有.*$/, '')}</p>
-            <Button type="link" size="small" onClick={() => onProduct(action.item_id)}>查看相关商品</Button>
+            <Button type="link" size="small" onClick={() => onActionGroup(action)}>查看相关记录（{action.related_items?.length ?? 1}）</Button>
             <details className="overview-action-details">
               <summary>依据与处理记录</summary>
               <p>{action.reason}</p><p className="overview-muted">{action.review}</p>

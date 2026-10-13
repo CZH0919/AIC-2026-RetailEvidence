@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Alert, App, Button, Checkbox, Drawer, Dropdown, Input, InputNumber, Select, Segmented, Spin, Table } from 'antd'
 import { DownloadOutlined, FileSearchOutlined, MessageOutlined, PlusOutlined, MoreOutlined, SendOutlined, StopOutlined } from '@ant-design/icons'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { dataApi } from '../data'
 import type { Version } from '../data'
-import { salesApi } from '../retail'
+import { itemKindOptions, salesApi } from '../retail'
 import type { SalesProduct, SalesRun, SavedRecord, SourceRecords } from '../retail'
 import { finished } from '../quality'
 import { SalesImportWizard } from './SalesImportWizard'
@@ -13,6 +13,7 @@ import { SalesOverview } from './SalesOverview'
 import { SalesReportExplanation } from './SalesReportExplanation'
 import { ProductNote } from './ProductNote'
 import { ProductEvidence } from './ProductEvidence'
+import { SalesTypeReview } from './SalesTypeReview'
 import { EmptyState, LoadingState } from './States'
 
 const number = (v: number | null | undefined) => v == null ? '—' : v.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
@@ -31,9 +32,15 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
   const [category, setCategory] = useState('all')
   const [inventory, setInventory] = useState({ available: 0, incoming: 0, reserve: 0, pack_size: 1, arrival_date: '', confirmed: false })
   const [inventorySet, setInventorySet] = useState(false)
+  const [actionGroupId, setActionGroupId] = useState<string | null>(null)
+  const [typeReview, setTypeReview] = useState<{focusId?: string} | null>(null)
   const [params] = useSearchParams(), navigate = useNavigate(), { message } = App.useApp()
   const report = current?.result, product = report?.products.find(p => p.id === detailId)
   const root = `/projects/${projectId}`
+  const productsById = useMemo(() => new Map(report?.products.map(p => [p.id, p]) ?? []), [report])
+  const actionGroup = report?.actions.find(a => a.id === actionGroupId)
+  const groupProducts = (actionGroup?.related_items ?? (actionGroup ? [actionGroup.item_id] : [])).map(id => productsById.get(id)).filter((p): p is SalesProduct => !!p)
+  const openTypeReview = (focusId?: string) => { setTypeReview({focusId}); setDetailId(null); setActionGroupId(null) }
 
   async function reload(preferred?: string) {
     const [v, r] = await Promise.all([dataApi.versions(projectId), salesApi.list(projectId)])
@@ -99,11 +106,13 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
         <Dropdown trigger={['click']} menu={{ items: [
           ...(versions.length ? [{ key: 'generate', label: '生成月报' }] : []),
           ...(report ? [{ key: 'evidence', label: '月报怎么算的' }] : []),
+          ...(report ? [{ key: 'types', label: '确认记录类型' }] : []),
           { key: 'data', label: '数据记录' },
           { key: 'analysis', label: '补充分析' },
         ], onClick: ({ key }) => {
           if (key === 'generate') setComposing(true)
           else if (key === 'evidence') setEvidence(true)
+          else if (key === 'types') openTypeReview()
           else navigate(`${root}/${key === 'data' ? 'data' : 'quality'}`)
         } }}><Button type="text" icon={<MoreOutlined />} aria-label="更多操作">更多</Button></Dropdown>
       </div>
@@ -115,6 +124,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
     {report && !productsMode && <SalesOverview key={current!.id}
       report={report} chartScope={chartScope} onChartScope={setChartScope} records={records}
       onProduct={setDetailId} onAllProducts={() => navigate(`${root}/products?run=${current!.id}`)} onAsk={() => setAi(true)}
+      onActionGroup={action => setActionGroupId(action.id)}
       onActionStatus={(action, status) => void perform(async () => {
         const old = records[`action:${action.id}`]
         const saved = await salesApi.action(projectId, current!.id, action.id, status, old?.value.note ?? '', old?.revision ?? 0)
@@ -127,6 +137,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
         <Segmented value={filteringAttention ? 'attention' : 'all'} options={[{ value: 'all', label: `全部商品 ${report.products.length}` }, { value: 'attention', label: `待关注 ${report.attention_ids.length}` }]} onChange={v => navigate(`${root}/products?run=${current?.id ?? ''}${v === 'attention' ? '&attention=1' : ''}`)} />
         <Input.Search aria-label="搜索商品" placeholder="商品名称或编号" value={query} onChange={e => setQuery(e.target.value)} style={{ maxWidth: 240 }} />
         <Select aria-label="筛选销售变化" value={signal} onChange={setSignal} options={[{ value: 'all', label: '所有变化' }, ...Object.entries(flagNames).map(([value, label]) => ({ value, label }))]} style={{ width: 140 }} />
+        <Button onClick={() => openTypeReview()}>确认记录类型</Button>
         {report.products.some(p => p.category) && <Select aria-label="商品分类" value={category} onChange={setCategory} style={{ width: 150 }} options={[{ value: 'all', label: '全部分类' }, ...Array.from(new Set(report.products.map(p => p.category).filter((c): c is string => !!c))).sort().map(c => ({ value: c, label: c }))]} />}
       </div>
       <p className="sales-product-list-hint">点击商品名称查看趋势和原因。销量单位：{report.summary.unit}。{report.products.some(p => p.change !== null) && (report.products.some(p => p.daily.length) ? '变化幅度比较月底最后 7 天与此前 7 天。' : '变化幅度与上月比较。')}</p>
@@ -135,6 +146,18 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
     {(importing || composing) && <SalesImportWizard projectId={projectId} versions={versions} existing={composing} initialSources={report?.parameters.sources.map(s => s.version_id)}
       onClose={() => { setImporting(false); setComposing(false); void reload() }}
       onDone={run => { setCurrent(run); setImporting(false); setComposing(false); setDetailId(null); setChartScope('current'); navigate(`${root}?run=${run.id}`); void reload(run.id) }} />}
+    {typeReview && report && <SalesTypeReview key={`types:${current!.id}`} projectId={projectId} report={report} focusId={typeReview.focusId}
+      onClose={() => setTypeReview(null)} onDone={run => { setTypeReview(null); setCurrent(run); setChartScope('current'); navigate(`${root}?run=${run.id}`); void reload(run.id) }} />}
+    <Drawer title={actionGroup?.title ?? '相关记录'} open={!!actionGroup} width={760} onClose={() => setActionGroupId(null)}>
+      {actionGroup && <div className="sales-action-group"><p>{actionGroup.text.replace(/\s*另有.*$/, '')}</p><p className="sales-type-hint">共 {groupProducts.length} 项。{actionGroup.priority_notice ?? '保留该次月报的相关记录。'}</p>
+        {actionGroup.item_type === 'unknown' && <Button onClick={() => openTypeReview()}>确认记录类型</Button>}
+        <Table<SalesProduct> rowKey="id" size="small" dataSource={groupProducts} pagination={{pageSize: 10, showSizeChanger: false}} scroll={{x: 480}} columns={[
+          {title: '相关记录', key: 'name', width: 190, render: (_: unknown, p) => <Button type="link" className="sales-item-name" onClick={() => { setActionGroupId(null); setDetailId(p.id) }}>{p.name}</Button>},
+          {title: '类型', key: 'type', width: 110, render: (_: unknown, p) => itemKindOptions.find(v => v.value === p.item_type?.kind)?.label ?? '待确认'},
+          {title: '核对依据', dataIndex: 'reason', render: (value: string) => <span className="sales-action-evidence">{value || '查看商品详情中的销售变化。'}</span>},
+        ]} />
+      </div>}
+    </Drawer>
     <Drawer title={product?.name ?? '商品详情'} open={!!product} width={690} onClose={() => setDetailId(null)}>
       {product && report && <div className="product-detail" key={`${current!.id}:${product.id}`}>
         <header className="product-detail-summary">
@@ -142,6 +165,8 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
           <h2>{product.flags.includes('growth') ? '销量明显上升' : product.flags.includes('decline') ? '销量有所下降' : product.anomalies.length ? `发现 ${product.anomalies.length} 天销量异常` : '本月销售概况'}</h2>
           {(product.flags.includes('growth') || product.flags.includes('decline')) && <p>{product.daily.length ? '比较月底最后 7 天与此前 7 天' : '与上月比较'}{product.anomalies.length > 0 && ` · 销量异常：${product.anomalies.length} 天`}</p>}
         </header>
+
+        <div className="product-type-confirmation"><span>记录类型：{itemKindOptions.find(v => v.value === product.item_type?.kind)?.label ?? '待确认'}</span><Button type="link" size="small" onClick={() => openTypeReview(product.id)}>确认或调整类型</Button></div>
 
         <div className="product-detail-metrics">
           <div><span>本月销量</span><strong>{number(product.quantity)}</strong><small>{report.summary.unit}</small></div>
@@ -162,7 +187,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
             <details className="product-detail-method">
               <summary>预测说明</summary>
               <p>参考方法：{methods[product.forecast.method]}。历史检验中，七天总销量平均相差约 {number(product.forecast.validation_mae)} {report.summary.unit}。</p>
-              {product.forecast.test_mae != null && <p>最近 {product.forecast.test_origins} 次独立检查中，七天总量平均相差约 {number(product.forecast.test_mae)} {report.summary.unit}。请结合近期误差使用预测。</p>}
+              {product.forecast.test_mae != null && <p>最近 {product.forecast.test_origins} 次{report.forecast.test_used_for_selection === false ? '独立检验' : '历史检查'}中，七天总量平均相差约 {number(product.forecast.test_mae)} {report.summary.unit}。请结合近期误差使用预测。</p>}
               <p>{product.forecast.notice}</p>
             </details>
           </> : <>

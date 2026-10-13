@@ -100,6 +100,7 @@ export function SalesReportExplanation({ report, onDownload }: {
         {report.forecast.metrics.length > 0 ? <>
           <p>{report.change_drivers ? '按历史成交情况比较不同销量参考，并检查最后几个时间段的表现。' : '对比梯度提升树、上一周销量、过去四周平均销量。'}本次主要采用：{methods[report.forecast.selected_method ?? ''] ?? report.forecast.selected_method ?? '未选择'}。</p>
           <p>用过去的数据检查七天总销量预测误差。MAE 是平均相差的销量；WAPE 是绝对误差总和除以实际销量总和，越小越好。</p>
+          {report.forecast.test_used_for_selection === false && <p>先在较早的验证期确定方法和回退规则，再用最后三个时间段评价固定方案；检验结果不会反过来改变方法选择。</p>}
           <Table size="small" rowKey={row => row.method + row.split} pagination={false} dataSource={report.forecast.metrics} scroll={{ x: 560 }} columns={[
             { title: '方法', dataIndex: 'method', render: (value: string) => methods[value] ?? value },
             { title: '数据用途', dataIndex: 'split', render: (value: string) => value === 'test' ? '检验结果' : '选择方法' },

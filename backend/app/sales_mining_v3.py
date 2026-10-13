@@ -8,7 +8,7 @@ from sklearn.ensemble import HistGradientBoostingRegressor, IsolationForest
 
 from .sales_mining_baseline import calendar as calendar
 
-MODEL_VERSION = "sales-v3.0.0"
+MODEL_VERSION = "sales-v3.1.0"
 METHODS = [
     "gradient_boosting",
     "last_week",
@@ -106,6 +106,61 @@ def _model(series, keys, origin, dates):
     ).fit(x, y)
 
 
+def select_policy(validation, validation_count):
+    """Freeze the selection policy using validation rows only, before final evaluation."""
+    available = [
+        m
+        for m in METHODS
+        if m != "gradient_boosting" or all(r["gradient_fitted"] for r in validation)
+    ]
+
+    def error(rows, method):
+        return score([r["actual"] for r in rows], [r[method] for r in rows])["mae"]
+
+    baseline = min(
+        [m for m in METHODS[:3] if m in available],
+        key=lambda m: (error(validation, m), METHODS.index(m)),
+    )
+    rules = {}
+    for stratum in ["all", *sorted({r["stratum"] for r in validation})]:
+        rows = (
+            validation if stratum == "all" else [r for r in validation if r["stratum"] == stratum]
+        )
+        if stratum != "all" and (len(rows) < 30 or len({r["origin"] for r in rows}) < 6):
+            continue
+        allowed = (
+            METHODS if stratum.startswith("intermittent") or stratum == "all" else METHODS[:-1]
+        )
+        candidate = min(
+            [m for m in allowed if m in available],
+            key=lambda m: (error(rows, m), METHODS.index(m)),
+        )
+        base_error = error(rows, baseline)
+        passed = (
+            validation_count >= 6 and base_error > 0 and error(rows, candidate) <= 0.95 * base_error
+        )
+        if stratum == "all" and passed:
+            for group in sorted({r["stratum"] for r in rows}):
+                subset = [r for r in rows if r["stratum"] == group]
+                if len(subset) >= 30 and error(subset, candidate) > 1.05 * error(subset, baseline):
+                    passed = False
+        rules[stratum] = {
+            "baseline": baseline,
+            "candidate": candidate,
+            "validation_adopted": passed,
+            "selected": candidate if passed else baseline,
+        }
+    selected = [r[rules.get(r["stratum"], rules["all"])["selected"]] for r in validation]
+    adopted = any(rule["selected"] != baseline for rule in rules.values()) and score(
+        [r["actual"] for r in validation], selected
+    )["mae"] <= 0.95 * error(validation, baseline)
+    if not adopted:
+        for rule in rules.values():
+            rule["selected"] = baseline
+            rule["policy_gate"] = "验证期整体未达到采用门槛，保留基线"
+    return rules, adopted, available
+
+
 def forecast_series(series, dates, progress=lambda *_: None):
     result = {
         "version": MODEL_VERSION,
@@ -194,11 +249,7 @@ def forecast_series(series, dates, progress=lambda *_: None):
     if not validation or not test:
         result["reason"] = "可回测的历史样本不足，暂不发布预测。"
         return result
-    available_methods = [
-        m
-        for m in METHODS
-        if m != "gradient_boosting" or all(r["gradient_fitted"] for r in validation + test)
-    ]
+    selection_rules, policy_passed, available_methods = select_policy(validation, validation_count)
     metrics = [
         {
             "method": method,
@@ -212,64 +263,17 @@ def forecast_series(series, dates, progress=lambda *_: None):
     def error(rows, method):
         return score([r["actual"] for r in rows], [r[method] for r in rows])["mae"]
 
-    baseline = min(
-        [m for m in METHODS[:3] if m in available_methods],
-        key=lambda m: (error(validation, m), METHODS.index(m)),
-    )
-    selection_rules = {}
-    for stratum in ["all", *sorted({r["stratum"] for r in validation})]:
-        rows = (
-            validation if stratum == "all" else [r for r in validation if r["stratum"] == stratum]
-        )
-        if stratum != "all" and (len(rows) < 30 or len({r["origin"] for r in rows}) < 6):
-            continue
-        allowed = (
-            METHODS if stratum.startswith("intermittent") or stratum == "all" else METHODS[:-1]
-        )
-        allowed = [m for m in allowed if m in available_methods]
-        candidate = min(allowed, key=lambda m: (error(rows, m), METHODS.index(m)))
-        base_error = error(rows, baseline)
-        passed = (
-            validation_count >= 6 and base_error > 0 and error(rows, candidate) <= 0.95 * base_error
-        )
-        if stratum == "all" and passed:
-            for group in sorted({r["stratum"] for r in rows}):
-                subset = [r for r in rows if r["stratum"] == group]
-                if len(subset) >= 30 and error(subset, candidate) > 1.05 * error(subset, baseline):
-                    passed = False
-        selection_rules[stratum] = {
-            "baseline": baseline,
-            "candidate": candidate,
-            "validation_adopted": passed,
-            "selected": candidate if passed else baseline,
-        }
     for stratum, rule in selection_rules.items():
         rows = test if stratum == "all" else [r for r in test if r["stratum"] == stratum]
-        stable = bool(rows) and error(rows, rule["selected"]) <= error(rows, baseline)
-        rule["test_supported"] = stable
-        if not stable:
-            rule["selected"] = baseline
-
-    def policy_error(rows):
-        return float(
-            np.mean(
-                [
-                    abs(
-                        r[selection_rules.get(r["stratum"], selection_rules["all"])["selected"]]
-                        - r["actual"]
-                    )
-                    for r in rows
-                ]
-            )
+        # A diagnostic only: the final holdout cannot revise the frozen method or fallback.
+        rule["test_supported"] = bool(rows) and error(rows, rule["selected"]) <= error(
+            rows, rule["baseline"]
         )
-
-    policy_passed = policy_error(validation) <= 0.95 * error(validation, baseline) and policy_error(
-        test
-    ) <= error(test, baseline)
-    if not policy_passed:
-        for rule in selection_rules.values():
-            rule["selected"] = baseline
-            rule["policy_gate"] = "整体未达到采用门槛，保留基线"
+    for row in records:
+        row["selected_method"] = selection_rules.get(row["stratum"], selection_rules["all"])[
+            "selected"
+        ]
+        row["selected"] = row[row["selected_method"]]
     by_item = defaultdict(list)
     for row in validation:
         by_item[row["item_id"]].append(row)
@@ -300,7 +304,12 @@ def forecast_series(series, dates, progress=lambda *_: None):
             "method": chosen,
             "validation_mae": round(mae, 3),
             "validation_origins": len(rows),
-            "test_mae": round(error(item_test, chosen), 3) if item_test else None,
+            "test_mae": round(
+                score([r["actual"] for r in item_test], [r["selected"] for r in item_test])["mae"],
+                3,
+            )
+            if item_test
+            else None,
             "test_origins": len(item_test),
             "stratum": stratum,
             "start": (dates[-1] + timedelta(days=1)).isoformat(),
@@ -326,12 +335,7 @@ def forecast_series(series, dates, progress=lambda *_: None):
                 if heldout
                 else 0
             )
-            if (
-                coverage >= 0.8
-                and heldout_coverage >= 0.8
-                and drift
-                and radius <= max(2, estimates[chosen])
-            ):
+            if coverage >= 0.8 and drift and radius <= max(2, estimates[chosen]):
                 prediction.update(
                     range={
                         "lower": max(0, round(estimates[chosen] - radius, 3)),
@@ -343,11 +347,6 @@ def forecast_series(series, dates, progress=lambda *_: None):
                     range_reason="同类商品历史误差形成的经验参考范围，不保证未来覆盖。",
                 )
         result["predictions"][key] = prediction
-    for row in records:
-        row["selected_method"] = selection_rules.get(row["stratum"], selection_rules["all"])[
-            "selected"
-        ]
-        row["selected"] = row[row["selected_method"]]
     metrics += [
         {
             "method": "selected_policy",
@@ -366,7 +365,11 @@ def forecast_series(series, dates, progress=lambda *_: None):
         cutoffs=[dates[t].isoformat() for t in origins],
         backtests=records,
         published_items=len(result["predictions"]),
-        evaluation_notice="方法在历史验证期选择，最后三个时间段用于独立检验。短历史不更换方法。",
+        test_used_for_selection=False,
+        selection_period_end=max(r["target_end"] for r in validation),
+        test_period_start=min(r["origin"] for r in test),
+        evaluation_notice="方法与回退规则仅在验证期确定；最后三个时间段只评价固定策略，"
+        "即使结果较差也不据此改选方法。预测范围由校准期决定，测试覆盖率仅作诊断。",
     )
     return result
 

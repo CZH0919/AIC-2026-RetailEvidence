@@ -30,7 +30,9 @@ export function SalesImportFields({ preview, value, onChange }: { preview: Previ
       {value.amount_mode === 'quantity_unit_price' && column('unit_price', '单价', true)}
       {value.amount_mode !== 'none' && !value.columns.currency && <label className="sales-upload-field"><span>销售额币种</span><Select aria-label="销售额币种" placeholder="请选择币种" value={value.currency_constant ?? undefined} options={[{ value: 'CNY', label: '人民币（CNY）' }, { value: 'GBP', label: '英镑（GBP）' }, { value: 'USD', label: '美元（USD）' }, { value: 'EUR', label: '欧元（EUR）' }]} onChange={currency_constant => update({ currency_constant })} /></label>}
       <label className="sales-upload-field"><span>销售记录包含</span><Select aria-label="销售记录包含" value={value.status_rule} options={[{ value: 'unspecified', label: '请选择记录内容' }, { value: 'all_forward', label: '正常销售记录' }, { value: 'uci_cancel_prefix', label: 'UCI 数据，C 开头订单为取消' }, { value: 'status_column', label: '包含取消、退货，按状态列区分' }]} onChange={status_rule => update({ status_rule })} /></label>
+      {column('item_type', '商品或费用类型所在列')}
     </div>
+    <p className="sales-upload-muted">类型列可填写“实物商品、费用、服务、记账”。没有类型列也可分析，之后在商品详情中确认；未确认前不自动当作实物商品。</p>
     <details className="sales-upload-more" open={value.status_rule === 'status_column' || undefined}><summary>更多字段设置</summary><MappingEditor preview={preview} value={value} onChange={onChange} /></details>
   </div>
 }

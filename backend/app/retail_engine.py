@@ -16,6 +16,7 @@ from .data_api import digest, write_json
 from .import_formats import DataIssue
 from .product_insights import enrich_products, item_semantics, product_clusters, rank_focus
 from .quality import normalize
+from .sales_actions import build_actions
 from .sales_mining import MODEL_VERSION, anomaly_series, calendar, forecast_series
 
 REASONS = {
@@ -74,51 +75,8 @@ def reason_for(row, config):
 
 
 def action_for(product):
-    name = product["name"]
-    if product.get("item_type", {}).get("kind", "unknown") != "physical":
-        if not any(flag in product["flags"] for flag in ["growth", "decline", "anomaly"]):
-            return None
-        return {
-            "id": "review:" + product["id"],
-            "item_id": product["id"],
-            "title": f"核对{name}的记录变化",
-            "text": "核对日期、数量和金额是否完整，确认变化的实际原因。",
-            "reason": product["reason"],
-            "review": "下次复盘时核对",
-            "evidence": product["id"],
-        }
-    if "anomaly" in product["flags"]:
-        return {
-            "id": "check:" + product["id"],
-            "item_id": product["id"],
-            "title": f"先查一下{name}的销售记录",
-            "text": "这款商品有几天卖得和平常差别比较大。"
-            "先看看有没有缺货、大单或漏记，再决定下次怎么进。",
-            "reason": product["reason"],
-            "review": "下次进货前核对",
-            "evidence": product["id"],
-        }
-    if "decline" in product["flags"]:
-        return {
-            "id": "review:" + product["id"],
-            "item_id": product["id"],
-            "title": f"先看看{name}为什么卖少了",
-            "text": "先确认是否缺货、停业或结束活动。原因没查清之前，别直接按下降幅度减少进货。",
-            "reason": product["reason"],
-            "review": "下次进货前核对",
-            "evidence": product["id"],
-        }
-    if "growth" in product["flags"]:
-        return {
-            "id": "stock:" + product["id"],
-            "item_id": product["id"],
-            "title": f"下次进货前看看{name}还剩多少",
-            "text": "最近卖得更多了，先核对库存和到货时间，再决定是否补一些。",
-            "reason": product["reason"],
-            "review": "下次进货前核对",
-            "evidence": product["id"],
-        }
-    return None
+    actions = build_actions([product])
+    return actions[0] if actions else None
 
 
 def process_retail(job, progress):
@@ -542,23 +500,7 @@ def process_retail(job, progress):
         product_clusters(products) if not params.get("check_only") else {"status": "unavailable"}
     )
     attention, highlights = rank_focus(products)
-    grouped_actions = {}
-    for p in products:
-        action = action_for(p)
-        if action:
-            group = action["id"].split(":")[0]
-            if group not in grouped_actions:
-                action["related_items"] = [p["id"]]
-                grouped_actions[group] = action
-            else:
-                grouped_actions[group]["related_items"].append(p["id"])
-    actions = list(grouped_actions.values())[:3]
-    for action in actions:
-        if len(action["related_items"]) > 1:
-            action["text"] += (
-                f" 另有 {len(action['related_items']) - 1} 件商品有同类情况，"
-                "可在待关注列表一起核对。"
-            )
+    actions = build_actions(products)
     chart = []
     if kind != "monthly_summary":
         for day in month_days:
