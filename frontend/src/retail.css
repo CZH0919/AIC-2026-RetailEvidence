@@ -357,3 +357,14 @@
   .sales-type-footer { align-items: flex-start; }
   .sales-type-footer > div { margin-left: auto; }
 }
+
+.sales-table-help { text-align: left; margin-top: 18px; color: #51635a; font-size: 13px; line-height: 1.75; }
+.sales-table-help p { margin: 10px 0; color: inherit; font-size: inherit; }
+.sales-table-help summary { cursor: pointer; color: #26745a; }
+.sales-table-help table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
+.sales-table-help caption { text-align: left; color: #62736a; margin-bottom: 6px; }
+.sales-table-help th, .sales-table-help td { padding: 7px 8px; border-bottom: 1px solid #dce7e0; text-align: left; }
+.sales-assistant-questions { display: grid; gap: 8px; margin: 16px 0; }
+.sales-assistant-questions p { margin: 0 0 2px; color: #62736a; font-size: 12px; }
+.sales-assistant-questions .ant-btn { height: auto; min-height: 36px; white-space: normal; text-align: left; justify-content: flex-start; padding: 8px 12px; }
+.product-detail-next { font-size: 13px; line-height: 1.8; color: #52675b; }

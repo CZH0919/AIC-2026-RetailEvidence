@@ -107,10 +107,10 @@ def create_app(
         for issue in exc.errors():
             field = str(issue["loc"][-1])
             messages = {
-                "name": "请填写 1–64 个字符的项目名称。",
-                "description": "项目说明最多 500 个字符。",
-                "color": "请选择有效的项目标记。",
-                "revision": "项目信息已变化，请刷新后重试。",
+                "name": "请填写 1–64 个字符的店铺名称。",
+                "description": "店铺说明最多 500 个字符。",
+                "color": "请选择有效的店铺标记。",
+                "revision": "店铺信息已变化，请刷新后重试。",
             }
             fields[field] = messages.get(field, "请检查输入内容。")
         return error(422, "validation_error", "请检查填写的信息。", fields)
@@ -123,7 +123,7 @@ def create_app(
     @app.exception_handler(SQLAlchemyError)
     async def database_error(_, exc):
         logger.error("Database operation failed", exc_info=exc)
-        return error(503, "storage_unavailable", "暂时无法保存或读取项目，请稍后重试。")
+        return error(503, "storage_unavailable", "暂时无法保存或读取店铺，请稍后重试。")
 
     @app.exception_handler(DataIssue)
     async def data_error(_, exc):
@@ -166,8 +166,8 @@ def create_app(
                 return error(
                     409,
                     "name_exists",
-                    "已存在同名项目，请使用一个不同的名称。",
-                    {"name": "项目名称已被使用。"},
+                    "已存在同名店铺，请使用一个不同的名称。",
+                    {"name": "店铺名称已被使用。"},
                 )
             return project
 
@@ -176,7 +176,7 @@ def create_app(
         with app.state.sessions() as session:
             project = session.get(Project, str(project_id))
             if project is None:
-                raise HTTPException(404, "这个项目不存在，请返回项目库重新选择。")
+                raise HTTPException(404, "这个店铺不存在，请返回店铺列表重新选择。")
             return project
 
     @app.patch("/api/projects/{project_id}", response_model=ProjectRead)
@@ -195,16 +195,16 @@ def create_app(
                 if changed.rowcount == 0:
                     session.rollback()
                     if session.get(Project, str(project_id)) is None:
-                        raise HTTPException(404, "这个项目不存在，请返回项目库重新选择。")
-                    return error(409, "revision_conflict", "其他成员已更新此项目，请刷新后再编辑。")
+                        raise HTTPException(404, "这个店铺不存在，请返回店铺列表重新选择。")
+                    return error(409, "revision_conflict", "其他成员已更新此店铺，请刷新后再编辑。")
                 session.commit()
             except IntegrityError:
                 session.rollback()
                 return error(
                     409,
                     "name_exists",
-                    "已存在同名项目，请使用一个不同的名称。",
-                    {"name": "项目名称已被使用。"},
+                    "已存在同名店铺，请使用一个不同的名称。",
+                    {"name": "店铺名称已被使用。"},
                 )
             return session.get(Project, str(project_id))
 

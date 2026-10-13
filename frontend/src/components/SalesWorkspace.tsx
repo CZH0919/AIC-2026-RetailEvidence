@@ -1,3 +1,4 @@
+import { SalesAssistantQuestions } from './SalesAssistantQuestions'
 import { useEffect, useMemo, useState } from 'react'
 import { Alert, App, Button, Checkbox, Drawer, Dropdown, Input, InputNumber, Select, Segmented, Spin, Table } from 'antd'
 import { DownloadOutlined, FileSearchOutlined, MessageOutlined, PlusOutlined, MoreOutlined, SendOutlined, StopOutlined } from '@ant-design/icons'
@@ -67,7 +68,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
     return () => clearInterval(timer)
   }, [current?.id, current?.status, projectId])
   useEffect(() => { if (report) salesApi.records(projectId, current!.id).then(r => setRecords(r.items)).catch(e => setError(e.message)); else setRecords({}) }, [current?.id, report?.context.run_id, projectId])
-  useEffect(() => { setRecordRows(null); setInventorySet(false); setInventory({ available: 0, incoming: 0, reserve: 0, pack_size: 1, arrival_date: '', confirmed: false }); setAnswer('') }, [detailId, current?.id])
+  useEffect(() => { setRecordRows(null); setInventorySet(false); setInventory({ available: 0, incoming: 0, reserve: 0, pack_size: 1, arrival_date: '', confirmed: false }); setAnswer(''); setQuestion('') }, [detailId, current?.id])
 
   const perform = async (task: () => Promise<void>) => { setBusy(true); setError(''); try { await task() } catch (e) { setError((e as Error).message) } finally { setBusy(false) } }
   const exportFile = (url: string) => { const anchor = document.createElement('a'); anchor.href = url; anchor.click() }
@@ -191,8 +192,8 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
               <p>{product.forecast.notice}</p>
             </details>
           </> : <>
-            <p className="product-detail-muted">这款商品暂时没有可用预测。</p>
-            <details className="product-detail-method"><summary>查看原因</summary><p>{product.forecast_reason || report.forecast.reason || '这款商品的历史成交或检验效果不足，暂不发布预测。'}</p></details>
+            <p className="product-detail-muted">{product.forecast_unavailable?.message ?? '这份历史月报未记录具体的预测不可用原因。'}</p>
+            <p className="product-detail-next">{product.forecast_unavailable?.next_step ?? '可在销售总览的“更多”中选择“生成月报”，使用原销售表重新分析后查看。'}</p>
           </>}
         </section>
 
@@ -250,7 +251,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
       {report && <SalesReportExplanation report={report} onDownload={file => void exportFile(salesApi.download(projectId, current!.id, file))} />}
     </Drawer>
     <Drawer title="导出月报" open={exporting} width={420} onClose={() => setExporting(false)}><Checkbox checked={allExport} onChange={e => setAllExport(e.target.checked)}>附上全部待关注商品</Checkbox><div className="sales-export-actions"><Button type="primary" icon={<DownloadOutlined />} onClick={() => current && exportFile(salesApi.report(projectId, current.id, allExport))}>下载月报</Button><Button icon={<DownloadOutlined />} onClick={() => current && exportFile(salesApi.download(projectId, current.id, 'sales_products.csv'))}>下载全部商品表</Button></div><p className="sales-caveat">月报可在浏览器中打印保存为 PDF。</p></Drawer>
-    <Drawer title="销售助手" open={ai} width={470} onClose={() => setAi(false)}><p>{product ? `正在查看：${product.name}` : '根据当前月报回答'}</p><Input.TextArea aria-label="向销售助手提问" value={question} onChange={e => setQuestion(e.target.value)} maxLength={500} autoSize={{ minRows: 3, maxRows: 6 }} placeholder="为什么建议我留意这件商品？" /><Button className="sales-ask" type="primary" icon={<SendOutlined />} loading={aiBusy} disabled={!question.trim() || !report} onClick={async () => { setAiBusy(true); try { const r = await salesApi.ask(projectId, current!.id, question, detailId); setAnswer(r.answer) } catch (e) { setAnswer((e as Error).message) } finally { setAiBusy(false) } }}>提问</Button>{answer && <div className="sales-ai-answer"><p style={{ whiteSpace: 'pre-line' }}>{answer}</p><Button type="link" onClick={() => setEvidence(true)}>查看月报怎么算的</Button></div>}</Drawer>
+    <Drawer title="销售助手" open={ai} width={470} onClose={() => setAi(false)}><p>{product ? `正在查看：${product.name}` : '根据当前月报回答'}</p><SalesAssistantQuestions product={product} disabled={aiBusy || !report} onChoose={setQuestion} /><Input.TextArea aria-label="向销售助手提问" value={question} onChange={e => setQuestion(e.target.value)} maxLength={500} autoSize={{ minRows: 3, maxRows: 6 }} placeholder={product ? '询问这件商品的销售变化或预测依据' : '询问本月销售变化、数据范围或分析限制'} /><Button className="sales-ask" type="primary" icon={<SendOutlined />} loading={aiBusy} disabled={!question.trim() || !report} onClick={async () => { setAiBusy(true); try { const r = await salesApi.ask(projectId, current!.id, question, detailId); setAnswer(r.answer) } catch (e) { setAnswer((e as Error).message) } finally { setAiBusy(false) } }}>提问</Button>{answer && <div className="sales-ai-answer"><p style={{ whiteSpace: 'pre-line' }}>{answer}</p><Button type="link" onClick={() => setEvidence(true)}>查看月报怎么算的</Button></div>}</Drawer>
     <Drawer title="记录处理情况" width={430} open={!!actionEdit} onClose={() => setActionEdit(null)}><Input.TextArea aria-label="处理备注" value={note} onChange={e => setNote(e.target.value)} maxLength={500} rows={4} placeholder="例如：当天缺货，已核对" /><Button className="sales-ask" type="primary" loading={busy} onClick={() => void perform(async () => { if (!actionEdit || !current) return; const old = records[`action:${actionEdit}`]; const saved = await salesApi.action(projectId, current.id, actionEdit, old?.value.status ?? 'pending', note, old?.revision ?? 0); setRecords(r => ({ ...r, [`action:${actionEdit}`]: saved })); setActionEdit(null); void message.success('已保存处理备注') })}>保存备注</Button></Drawer>
   </div>
 }

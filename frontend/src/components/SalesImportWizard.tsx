@@ -1,3 +1,4 @@
+import { SalesTableHelp } from './SalesTableHelp'
 import { useEffect, useState } from 'react'
 import { Alert, Button, DatePicker, Drawer, Select, Spin, Steps, Table } from 'antd'
 import dayjs from 'dayjs'
@@ -135,7 +136,7 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
       {busy && <div className="sales-upload-progress" role="status"><Spin size="small" /><span>{busy}，请稍候。</span></div>}
       <fieldset disabled={!!busy} className="sales-upload-fieldset">
         {step === 0 && <>
-          {!draft ? <div className="sales-upload-zone"><CloudUploadOutlined /><h3>上传你的销售表</h3><p>支持 CSV、Excel（XLSX），上传后自动读取并预览。</p><label className="file-picker">选择文件<input type="file" accept=".csv,.xlsx" aria-label="选择销售表" disabled={!!busy} onChange={e => { if (e.target.files?.[0]) upload(e.target.files[0]); e.target.value = '' }} /></label><small>单个文件不超过 100 MB</small></div> : <>
+          {!draft ? <div className="sales-upload-zone"><CloudUploadOutlined /><h3>上传你的销售表</h3><p>支持 CSV、Excel（XLSX），上传后自动读取并预览。</p><label className="file-picker">选择文件<input type="file" accept=".csv,.xlsx" aria-label="选择销售表" disabled={!!busy} onChange={e => { if (e.target.files?.[0]) upload(e.target.files[0]); e.target.value = '' }} /></label><small>单个文件不超过 100 MiB</small><SalesTableHelp example /></div> : <>
             <div className="sales-upload-file"><FileTextOutlined /><strong>{draft.filename}</strong><label className="sales-upload-replace">换一个文件<input type="file" accept=".csv,.xlsx" aria-label="更换销售表" disabled={!!busy} onChange={e => { if (e.target.files?.[0]) upload(e.target.files[0]); e.target.value = '' }} /></label></div>
             {draft.preview && <><p className="sales-upload-muted">已读取 {draft.preview.row_count.toLocaleString()} 行，先看看前 5 行是否正常。</p><Table className="sales-upload-preview" size="small" pagination={false} rowKey="source_row_id" dataSource={draft.preview.rows.slice(0, 5)} scroll={{ x: 'max-content' }} columns={draft.preview.columns.map(c => ({ title: c.name, dataIndex: c.key, key: c.key, width: 130, render: (value: string | null) => <span className="sales-upload-cell">{value ?? '—'}</span> }))} /></>}
             {draft.inspection.sheets.length > 1 && <label className="sales-upload-field"><span>选择工作表</span><Select aria-label="销售表工作表" mode="multiple" value={options.sheets} options={draft.inspection.sheets.map(s => ({ value: s, label: s }))} onChange={sheets => { const next = { ...options, sheets }; setOptions(next); void work('正在读取工作表', () => read(draft, next)) }} /></label>}

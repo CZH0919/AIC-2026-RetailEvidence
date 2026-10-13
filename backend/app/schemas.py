@@ -31,7 +31,7 @@ class ProjectInput(BaseModel):
     @classmethod
     def single_line_name(cls, value: str) -> str:
         if "\n" in value or "\t" in value or not name_key(value).strip():
-            raise ValueError("项目名称应为一行非空文字")
+            raise ValueError("店铺名称应为一行非空文字")
         return value
 
 

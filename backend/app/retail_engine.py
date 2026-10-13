@@ -354,12 +354,16 @@ def process_retail(job, progress):
                 ]
                 for key in names
             }
+    from .forecast_availability import report_blocker
+
+    forecast_blocker = report_blocker(kind, complete, complete_month, params.get("check_only"))
     forecast = (
         forecast_series(series, dates, progress)
         if complete_month and kind != "monthly_summary" and not params.get("check_only")
         else {
             "status": "unavailable",
-            "reason": "需要确认完整日期范围后，才能预测；月汇总不支持日级预测。",
+            "reason": forecast_blocker["message"],
+            "unavailable": forecast_blocker,
             "predictions": {},
             "metrics": [],
             "version": MODEL_VERSION,
@@ -450,6 +454,11 @@ def process_retail(job, progress):
             reason = (
                 reason + " " if reason else ""
             ) + f"本月有 {len(anomalies)} 天的销量偏离历史表现，建议核对原因。"
+        forecast_issue = (
+            None
+            if key in forecast["predictions"]
+            else (forecast.get("item_unavailability", {}).get(key) or forecast.get("unavailable"))
+        )
         products.append(
             {
                 "id": key,
@@ -465,12 +474,8 @@ def process_retail(job, progress):
                 "anomalies": anomalies,
                 "anomaly_events": anomaly.get("events", {}).get(key, []),
                 "forecast": forecast["predictions"].get(key),
-                "forecast_reason": forecast.get("reason")
-                or (
-                    "预测回测误差较大，或该商品在固定回测起点前的记录不足；暂不发布数量。"
-                    if key not in forecast["predictions"]
-                    else ""
-                ),
+                "forecast_unavailable": forecast_issue,
+                "forecast_reason": forecast_issue["message"] if forecast_issue else "",
             }
         )
     change_drivers = enrich_products(
@@ -582,7 +587,11 @@ def process_retail(job, progress):
         if totals[month]["amount"] is not None and mapping["amount_mode"] != "order_amount"
         else None,
         "actions": actions,
-        "forecast": {k: v for k, v in forecast.items() if k not in {"predictions", "backtests"}},
+        "forecast": {
+            k: v
+            for k, v in forecast.items()
+            if k not in {"predictions", "backtests", "item_unavailability"}
+        },
         "anomaly": {k: v for k, v in anomaly.items() if k != "items"},
         "quality": {
             "input_rows": input_rows,

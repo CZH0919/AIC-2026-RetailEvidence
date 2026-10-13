@@ -6,9 +6,10 @@ from datetime import date, timedelta
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingRegressor, IsolationForest
 
+from .forecast_availability import unavailable
 from .sales_mining_baseline import calendar as calendar
 
-MODEL_VERSION = "sales-v3.1.0"
+MODEL_VERSION = "sales-v3.1.1"
 METHODS = [
     "gradient_boosting",
     "last_week",
@@ -166,7 +167,9 @@ def forecast_series(series, dates, progress=lambda *_: None):
         "version": MODEL_VERSION,
         "horizon_days": 7,
         "status": "unavailable",
-        "reason": "需要至少 90 天完整日记录，并有足够重复成交。",
+        "reason": unavailable("history_short")["message"],
+        "unavailable": unavailable("history_short"),
+        "item_unavailability": {},
         "predictions": {},
         "eligible_items": 0,
         "tested_items": 0,
@@ -181,6 +184,16 @@ def forecast_series(series, dates, progress=lambda *_: None):
     calibration_count = 20 if n >= 56 + (validation_count + 23) * 7 else 0
     origins = list(range(n - (validation_count + calibration_count + 3) * 7, n, 7))
     selection = origins[0]
+    withheld = result["item_unavailability"]
+    for key, values in arrays.items():
+        finite = np.flatnonzero(np.isfinite(values))
+        first = int(finite[0]) if len(finite) else n
+        if first > selection - 28:
+            withheld[key] = unavailable("item_history_short")
+        elif not np.isfinite(values[first:selection]).all():
+            withheld[key] = unavailable("missing_days")
+        elif np.count_nonzero(values[selection - 28 : selection]) < 4:
+            withheld[key] = unavailable("early_sales_sparse")
     candidates = {
         k: v
         for k, v in arrays.items()
@@ -196,6 +209,17 @@ def forecast_series(series, dates, progress=lambda *_: None):
         for k in keys
         if np.isfinite(arrays[k][-90:]).all() and np.count_nonzero(arrays[k][-28:]) >= 4
     }
+    for key in candidates:
+        if key not in keys:
+            withheld[key] = unavailable("capacity_limit")
+        elif not np.isfinite(arrays[key][-90:]).all():
+            first = int(np.flatnonzero(np.isfinite(arrays[key]))[0])
+            withheld[key] = unavailable(
+                "recent_history_short" if first > n - 90 else "missing_days"
+            )
+        elif np.count_nonzero(arrays[key][-28:]) < 4:
+            withheld[key] = unavailable("recent_sales_sparse")
+    result.update(reason="", unavailable=None)
     result.update(
         eligible_items=len(final_eligible),
         tested_items=len(keys),
@@ -207,6 +231,10 @@ def forecast_series(series, dates, progress=lambda *_: None):
         excluded_missing_or_short=len(arrays) - len(final_eligible),
     )
     if not keys:
+        result.update(
+            reason=unavailable("no_eligible_items")["message"],
+            unavailable=unavailable("no_eligible_items"),
+        )
         return result
     records = []
     for index, origin in enumerate(origins):
@@ -247,7 +275,10 @@ def forecast_series(series, dates, progress=lambda *_: None):
     validation = [r for r in records if r["split"] == "validation"]
     test = [r for r in records if r["split"] == "test"]
     if not validation or not test:
-        result["reason"] = "可回测的历史样本不足，暂不发布预测。"
+        issue = unavailable("comparison_unavailable")
+        result.update(reason=issue["message"], unavailable=issue)
+        for key in keys:
+            withheld.setdefault(key, issue)
         return result
     selection_rules, policy_passed, available_methods = select_policy(validation, validation_count)
     metrics = [
@@ -287,7 +318,10 @@ def forecast_series(series, dates, progress=lambda *_: None):
         else {}
     )
     for key in keys:
-        if key not in final_eligible or not by_item[key]:
+        if key not in final_eligible:
+            continue
+        if not by_item[key]:
+            withheld[key] = unavailable("comparison_unavailable")
             continue
         values = arrays[key]
         stratum = _stratum(values)
@@ -297,6 +331,7 @@ def forecast_series(series, dates, progress=lambda *_: None):
         item_test = [row for row in test if row["item_id"] == key]
         recent = float(values[-28:].sum() / 4)
         if mae > max(2, recent * 0.5):
+            withheld[key] = unavailable("validation_error")
             continue
         estimates = {**_simple(values), "gradient_boosting": gb.get(key, recent)}
         prediction = {

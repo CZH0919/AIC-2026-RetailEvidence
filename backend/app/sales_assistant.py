@@ -151,7 +151,13 @@ def prepare_answer(report, question, item_id=None, records=None, pairing=None):
             prediction = p.get("forecast")
             if prediction:
                 recent_error = (
-                    f"最近{prediction['test_origins']}次独立检查平均相差约 "
+                    f"最近{prediction['test_origins']}次"
+                    + (
+                        "独立检查"
+                        if report["forecast"].get("test_used_for_selection") is False
+                        else "历史检查"
+                    )
+                    + "平均相差约 "
                     f"{_number(prediction['test_mae'])} {unit}。"
                     if prediction.get("test_mae") is not None
                     else ""
@@ -171,10 +177,10 @@ def prepare_answer(report, question, item_id=None, records=None, pairing=None):
                     prefix + "_forecast",
                     f"{p['name']}暂不提供七天销量参考："
                     + (
-                        p.get("forecast_reason")
-                        or report["forecast"]["reason"]
-                        or "历史成交或检验效果不足。"
-                    ),
+                        (p.get("forecast_unavailable") or {}).get("message")
+                        or "这份历史月报没有记录具体原因，请重新生成月报后查看。"
+                    )
+                    + (p.get("forecast_unavailable") or {}).get("next_step", ""),
                     ["items", "forecast"],
                 )
         if intents["anomaly"]:
@@ -244,9 +250,10 @@ def prepare_answer(report, question, item_id=None, records=None, pairing=None):
                     )
                     refs = ["records"]
                 else:
-                    text = (
-                        f"{name}尚无已确认的库存与到货记录，不能确定缺货或采购数量。"
+                    text = f"{name}尚无已确认的库存与到货记录，不能确定缺货或采购数量。" + (
                         "可在商品详情填写库存后计算数量参考。"
+                        if product.get("forecast")
+                        else "当前没有可用预测，暂不能计算备货参考。"
                     )
                     refs = ["records", "forecast"]
             add("inventory_" + product["id"], text, refs)
