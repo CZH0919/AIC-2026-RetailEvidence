@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { Button, Drawer, Grid, Popover } from 'antd'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { helpContent } from '../helpContent'
+import { overlayLayers } from '../overlayLayers'
 import type { HelpId } from '../helpContent'
 import type { KeyboardEvent } from 'react'
 
@@ -56,8 +57,8 @@ export function HelpHint({ topic, context }: { topic: HelpId; context?: string }
       }
     }} onClick={event => { event.preventDefault(); event.stopPropagation(); if (drawer) change(!open) }}>
     {info.label}</Button>
-  return drawer ? <>{button}<Drawer id={id} className="help-drawer" title="操作说明" width={Math.min(560, window.innerWidth)} push={false}
+  return drawer ? <>{button}<Drawer id={id} className="help-drawer" zIndex={overlayLayers.help} title="操作说明" width={Math.min(560, window.innerWidth)} push={false}
     open={open} onClose={() => change(false)} keyboard={false} maskClosable afterOpenChange={shown => { if (!shown) trigger.current?.focus() }}>
-    {content}</Drawer></> : <Popover open={open} trigger="click" placement="bottomLeft" content={<div id={id} className="help-popup-body">{content}</div>}
+    {content}</Drawer></> : <Popover zIndex={overlayLayers.help} open={open} trigger="click" placement="bottomLeft" content={<div id={id} className="help-popup-body">{content}</div>}
     onOpenChange={change} classNames={{ root: 'help-popover' }}>{button}</Popover>
 }
