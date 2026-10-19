@@ -1,4 +1,5 @@
 import { HelpHint } from './HelpHint'
+import { AnalysisHistory } from './AnalysisHistory'
 import { qualityCopy } from '../productCopy'
 import { useEffect, useState } from 'react'
 import { Alert, App, Button, Select, Table, Tag } from 'antd'
@@ -140,7 +141,7 @@ function ClusterPanel({ report, projectId, qualityRunId }: { report: Report; pro
       </div>
     </div>
     {error && <Alert className="import-alert" type="error" showIcon title={error} />}
-    <div className="quality-run-strip compact">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{stateLabel[run.status] ?? run.status}</span><small>{run.parameters?.analysis?.kind?.toUpperCase() ?? '分群'}</small></button>) : <p>还没有客户分群记录。</p>}</div>
+    <AnalysisHistory title="客户分群" runs={runs} selected={selected} detail={detail} onSelect={id => { setSelected(id); setDetail(null) }} />
     {detail && <div className="cluster-result">
       <div className="quality-result-header"><div><Tag color={result?.summary.publishable ? 'cyan' : active ? 'blue' : 'default'}>{stateLabel[detail.status] ?? detail.status}</Tag><span>{qualityCopy(detail.message)}</span></div>
         {active && <Button danger onClick={async () => { try { setDetail(await qualityApi.cancel(projectId, detail.id)); void message.info('取消请求已提交') } catch (e) { void message.error(e instanceof Error ? e.message : '未能取消，请重试。') } }}>取消</Button>}</div>
@@ -215,7 +216,7 @@ function AssociationPanel({ report, projectId, qualityRunId }: { report: Report;
       <div className="analysis-actions"><Button icon={<PlayCircleOutlined />} disabled={!report.capabilities.association.allowed} loading={busy} onClick={() => void submit()}>运行共购</Button></div>
     </div>
     {error && <Alert className="import-alert" type="error" showIcon title={error} />}
-    <div className="quality-run-strip compact">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{stateLabel[run.status] ?? run.status}</span><small>关联规则</small></button>) : <p>还没有商品共购记录。</p>}</div>
+    <AnalysisHistory title="商品共购" runs={runs} selected={selected} detail={detail} onSelect={id => { setSelected(id); setDetail(null) }} />
     {detail && <div className="cluster-result">
       <div className="quality-result-header"><div><Tag color={result?.summary.publishable ? 'cyan' : active ? 'blue' : 'default'}>{stateLabel[detail.status] ?? detail.status}</Tag><span>{qualityCopy(detail.message)}</span></div>
         {active && <Button danger onClick={async () => { try { setDetail(await qualityApi.cancel(projectId, detail.id)); void message.info('取消请求已提交') } catch (e) { void message.error(e instanceof Error ? e.message : '未能取消，请重试。') } }}>取消</Button>}</div>

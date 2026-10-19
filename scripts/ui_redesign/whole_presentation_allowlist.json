@@ -243,5 +243,20 @@
     "file": "frontend/src/components/QualityReport.tsx",
     "original": "dataIndex: 'popularity_hit_rate_at_5'",
     "changed": "align: 'right' as const, dataIndex: 'popularity_hit_rate_at_5'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "import { HelpHint } from './HelpHint'",
+    "changed": "import { HelpHint } from './HelpHint'\nimport { AnalysisHistory } from './AnalysisHistory'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "<div className=\"quality-run-strip compact\">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{stateLabel[run.status] ?? run.status}</span><small>{run.parameters?.analysis?.kind?.toUpperCase() ?? '分群'}</small></button>) : <p>还没有客户分群记录。</p>}</div>",
+    "changed": "<AnalysisHistory title=\"客户分群\" runs={runs} selected={selected} detail={detail} onSelect={id => { setSelected(id); setDetail(null) }} />"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "<div className=\"quality-run-strip compact\">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{stateLabel[run.status] ?? run.status}</span><small>关联规则</small></button>) : <p>还没有商品共购记录。</p>}</div>",
+    "changed": "<AnalysisHistory title=\"商品共购\" runs={runs} selected={selected} detail={detail} onSelect={id => { setSelected(id); setDetail(null) }} />"
   }
 ]
