@@ -1,0 +1,38 @@
+{
+  "favicon.svg": {
+    "sha256": "6545344e2872a3ce5c45e4165c6fbc97305a6aa7ea1f6cd77980138f1157029a",
+    "bytes": 176
+  },
+  "index.html": {
+    "sha256": "97d9ac2f5cfb3591df9ad3209d995e6ac310cc4cd60116d3335de5ddaaab8def",
+    "bytes": 814
+  },
+  "assets/quality-CPPPCJmQ.js": {
+    "sha256": "a6d26494973c9418dc715e349df470499f3c2673731515283001c5a421a288ca",
+    "bytes": 2063
+  },
+  "assets/SalesWorkspace-DVM1BtAQ.js": {
+    "sha256": "816ce86d3be59ad8f58ec4ee1bc5d17093d7572b6681551bb88cf9a0ea508d82",
+    "bytes": 75995
+  },
+  "assets/QualityWorkspace-BZ-2aovC.js": {
+    "sha256": "9f153f4f481f48bee9e1d641ef2d339c30cbf824239116edc12552023d36c0ce",
+    "bytes": 55351
+  },
+  "assets/index-KtXhBEjr.js": {
+    "sha256": "0bc5ad3fa51c98b3c45a54dd5e9fd34dca3d1bee04d62bd33e5ffa02189103ac",
+    "bytes": 108813
+  },
+  "assets/rolldown-runtime-CbXtAM7H.js": {
+    "sha256": "bbf7c5086ae414dc3f33777e3eebf16ea8631325b8bb4690d25091c03567f31a",
+    "bytes": 589
+  },
+  "assets/data-C5oT-J4n.js": {
+    "sha256": "6f862baec13a82755ac64d642414b13540924ffbd2c63f09d05e2c64e96263d2",
+    "bytes": 1009702
+  },
+  "assets/index-DCzLmG91.css": {
+    "sha256": "d369239b189ec62e2340ebeee60253a5a52afa3d280ced1d0d2047edadd1cc22",
+    "bytes": 35567
+  }
+}

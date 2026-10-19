@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-19T11:58:27.260634+00:00",
+  "source_sha": "160a90c47b6f2a675386355cc283fb869e85334a",
+  "source_git_status": "",
+  "backup_sha256": "ed80dd6e7d8e3d1bbea02df340510c530bce26e93d00854903457300a2501e60",
+  "source_bundle_sha256": "61152233bad99a1593cff5d6f644df32e2fb40b5381abe381f8507d6fa4d7417",
+  "integrity_check": "ok",
+  "tables": [
+    "analysis_runs",
+    "cleaning_policies",
+    "dataset_versions",
+    "import_drafts",
+    "mapping_versions",
+    "projects",
+    "run_events",
+    "sales_records"
+  ],
+  "storage_bytes": 46435951,
+  "dependency_bytes": 151632525,
+  "ports_reserved_for_task": [
+    18100,
+    18101,
+    18102
+  ],
+  "shared_assets_modified": false
+}

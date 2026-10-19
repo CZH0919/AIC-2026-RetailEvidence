@@ -1,106 +1,95 @@
 # 商业化 UI 改版：功能与版本基线
 
-审计日期：2026-10-19（Asia/Shanghai）。状态：**源代码与输入核查已完成；运行和浏览器基线受阻，第一阶段未完成。没有开始 UI 修改。**
+日期：2026-10-19。**运行基线已恢复并实测；尚未修改 UI。** 初次 SSH 超时保留在提交82e1ad5及 connectivity.json，不作为当前阻塞。所有结果是开发自查，不是真实商户研究。
 
-本文件不代表现有站点已经通过本轮浏览器验收。2026-10-14 的截图和 PASS 仅是历史参考，不用作本轮改版前截图。恢复后必须补齐实际部署、备份、截图与测试，另行提交完整基线，之后才能修改业务页面。
+## 1. 版本、运行及隔离
 
-## 1. 已实际核实的版本
+- GitHub main 实际 fetch/ls-remote：`160a90c47b6f2a675386355cc283fb869e85334a`。应用0.6.3 / schema5 / sales-v2.2.0；React19.3.0、TS7.0.2、AntD6.6.5、Vite8.3.3、Router7.18.4。
+- 本机 D:/AIC_RetailEvidence_Work/delivery_20261009_01/ui_refresh_20261019_01/source，分支 feature/commercial-ui-refresh；原 history/authors/tags/upstream 保留。只使用专用 Deploy Key，未推送本轮分支或合并main。
+- 远端任务 `/home/ubuntu/retailevidence_personal_20261009_01/updates/ui_refresh_20261019_01`（下称 TASK）。baseline/source 是160a90c无硬链接Git克隆，原 verified-main 干净；candidate 使用独立数据库/存储。共享 AIC_Project 无可核实 Git HEAD，本轮没有改写它。
+- 服务器刚开机时无旧 Web/AI/tmux；18088/18089/18094无服务。本轮只创建 re-ui-base / re-ui-ai，分别监听127.0.0.1:18100 /18102。候选预留18101，未替换旧演示、未修改共享服务。端口不作为版本证据，构建收据位于 dist/assets/ui-release.json。
+- Web启动：`bash TASK/start_baseline.sh`；AI：`bash TASK/start_ai.sh`。不要与现有tmux重复启动。只停止本任务时可 `tmux kill-session -t re-ui-base` / `-t re-ui-ai`，不影响原演示数据库。
+- 依赖只读复用既有venv，前端node_modules复制到TASK；模型只读引用已有Qwen2.5-1.5B GGUF。CPU模型4线程、上下文2048、并发1；数值库线程2；不安装/升级系统依赖。
+- 缓存、profile、TMP、输出均TASK或D盘，未主动写C盘。SSH仍D盘已授权信任+StrictHostKeyChecking=yes；没有修改全局配置。不能保证OS/Codex背景零写入。
 
-| 对象 | 本轮结果 | 证据 |
-|---|---|---|
-| 目标仓库 | LSTongXXN/RetailEvidence-Studio；沿用专用 Deploy Key；未使用 GitHub 连接器 | 任务目录 evidence/github_baseline.json |
-| GitHub main | `160a90c47b6f2a675386355cc283fb869e85334a`；实际 fetch 和 ls-remote 一致 | 同上 |
-| 当前工作分支 | `feature/commercial-ui-refresh`，从 origin/main 新建，无重置或强推 | 同上及本地 Git |
-| 应用 | frontend/package.json 0.6.3；React 19.3.0 / TypeScript 7.0.2 / AntD 6.6.5 / Vite 8.3.3 / Router 7.18.4 | 实际源码，不推断当前运行版本 |
-| 当前部署、前端构建来源、端口、tmux、远端未提交内容 | **BLOCKED** | 严格 SSH 两次均连接超时，未执行远端检查 |
-| schema / 算法实际运行版本 | **BLOCKED**；历史为 schema5 / sales-v2.2.0，不当成本次实测 | 历史记录与当前运行分开 |
-| 本轮前端构建、构建大小 | NOT_RUN；本地副本没有 node_modules，依计划在服务器复用既有依赖构建 | 不在 Windows 安装或升级依赖 |
+## 2. 一致性备份与可回滚基线
 
-本机源码：`D:/AIC_RetailEvidence_Work/delivery_20261009_01/ui_refresh_20261019_01/source`。远端隔离目录计划：`/home/ubuntu/retailevidence_personal_20261009_01/updates/ui_refresh_20261019_01`，尚未连接验证、未创建。旧演示与共享目录均未修改。
+SQLite 在线备份API形成 TASK/backups/demo_consistent.sqlite3，SHA256 `ed80dd6e7d8e3d1bbea02df340510c530bce26e93d00854903457300a2501e60`。integrity_check=ok，foreign_key_check=[]，user_version=5，八张表可读取。未单独复制活动主库冒充备份；原库不变。本轮浏览器新建任务只写baseline独立恢复库。
 
-## 2. 运行阻塞与安全边界
+源码全历史bundle TASK/backups/source_before.bundle，SHA256 `61152233bad99a1593cff5d6f644df32e2fb40b5381abe381f8507d6fa4d7417`。必要模拟storage仅46,435,951字节，未复制模型/无关真实数据。恢复方法：在新任务目录用sqlite3 backup API从该备份恢复至独立state，复制对应模拟storage，git从bundle检出160a90c，设置独立STATE/STORAGE/STATIC路径和空闲回环端口。验证见 verification/ui_redesign/baseline_setup.json。
 
-`audit/ssh_remote.py` 通过既有 Ed25519 登录身份、D 盘 known_hosts、StrictHostKeyChecking=yes、UpdateHostKeys=no 连接原 IP/22。2026-10-19 两次返回 `ssh: connect to host 43.172.115.244 port 22: Connection timed out`，REMOTE_EXIT=255。日志在本轮 logs/preflight_remote.log、preflight_remote_retry.log。**这不能证明服务器已经关机。**
+构建实际执行 `npm run build -- --configLoader runner`（包含tsc -b），PASS；dist总1,289,070 bytes。既有data chunk约1MB触发500kB警告，记录为既有构建提示，不通过删功能降体积。
 
-未修改 SSH/代理/防火墙/安全组，也未关闭主机校验。当前仅服务器恢复可达才能解除运行阻塞。没有对活动数据库进行文件复制、迁移或写入，没有启动/停止共享服务。
+## 3. 冻结数据、报告与确定性基线
 
-进程缓存/临时文件沿用 D 盘 Invoke-InWorkspace.ps1；现有程序和认证只通过正常接口使用，无主动 C 盘写入或例外批准。无法承诺 Windows/Codex 所有后台零写入。
+完全模拟青禾CSV：SHA256 `e34d6cf870876e2baff8af00e45a74e70cea5a5a228f603fad21f30258425923`，17,641行/8700订单/240模拟客户/12实物商品，2026-04—09，CNY/Asia-Shanghai。独立csv+Decimal全量及六个月7PASS；每单重复总额仅计一次。
 
-恢复操作顺序：读取远端各工作树 HEAD/status、运行进程 cwd、监听、/api/health 和 /assets/ui-release.json；与当前 main 比对；确认新目录及端口未占用；用 SQLite 在线备份 API 形成一致性独立副本并验证 integrity_check/版本/关键引用；对必要 storage 做限量清单及哈希；建立自己的基线/候选库及运行输出。禁止改共享 AIC_Project、现有个人演示数据库或复用 worker.lock。
-
-## 3. 冻结输入与需要核对的数值
-
-本轮实际读取并重新核算青禾便利店**完全模拟**交易 CSV。SHA-256：`e34d6cf870876e2baff8af00e45a74e70cea5a5a228f603fad21f30258425923`，2,075,257 bytes，17,641 行，8700 订单、240 客户、12 商品，CNY、Asia/Shanghai。输入文件保留在任务根 demo_dataset_20261014_01/数据包，不提交大数据进 Git。
-
-本轮 csv + Decimal 独立计算，按订单检查每个重复总额等于该订单行金额之和：全量及六个月 **7 项 PASS**。收据：`verification/ui_redesign/frozen_input_check.json`。这是输入基线，尚非当前应用结果。
-
-| 输入范围 | 销售额（元） | 数量（件） | 订单数 |
+|范围|金额CNY|数量|订单|
 |---|---:|---:|---:|
-| 2026-04—09 | 416263.10 | 66607 | 8700 |
-| 2026-08 | 70402.60 | 11276 | 1397 |
-| 2026-09 | 66434.40 | 10640 | 1326 |
+|全量|416263.10|66607|8700|
+|8月|70402.60|11276|1397|
+|9月|66434.40|10640|1326|
 
-适用后续样板的数据：同包 XLSX（二选一，不和同CSV重复导入）、日汇总、8/9月独立月汇总、边界数据中的费用/人工未知/POST实物、缺字段、错误工作表。每个异常场景使用独立项目。
+同数据CSV和XLSX新项目实际上传→映射→分类→月报，9月数值与上表相符。CSV项目 `5b289dba-c261-438d-8c2d-5a6548729771`、版本 `0288ff9f-0014-4531-8727-340a43fc9ed8`、run `e35a597d-4380-4506-93c5-befcf4db0d10`；XLSX IDs在 baseline_xlsx.json。
 
-历史演示定位线索：项目 `8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a`；9月 run `35cf3631-064c-4a90-a845-b06485eb9a3e`；版本 `079c4221-28b1-460c-9df2-be174312d824`。这些仅从旧收据读取，必须从本轮一致性备份和 API 再核实。不得把 18095 端口本身当作版本证据。
+样板固定旧项目 `8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a` / 版本 `079c4221-28b1-460c-9df2-be174312d824` / run `35cf3631-064c-4a90-a845-b06485eb9a3e`。本轮API重新核对amount=66434.4；完整result保存于 TASK/baseline/evidence/before_v2/frozen_run.json。前后比较必须使用此同run，不修改旧报告。
 
-历史 P006 七天参考177、手填库存10/到货7/备用3/包装6对应168，仅作为重跑预期，当前应用尚未复验。库存日期必须与历史预测区间一致，不能把今天库存填入旧预测。
+P006七天参考177件；同预测期间库存10、确定到货7（2026-10-01）、备用3、包装6，实际备货参考168；备注保存回读、异常日来源记录、AI evidence_id与当前run相符，ai_used=true。历史日期库存用于模拟，不填今天库存制造结论。
 
 ## 4. 功能保护矩阵
 
-下表是对当前 main 源码逐入口清点；所有新入口计划保留原位，不变更导航和步骤。每项具体用例、原/新入口和状态另存 `UI_REDESIGN_PROTECTION_MATRIX.csv`。基线 BLOCKED 与改后 NOT_RUN 分开。
+下表是对当前 main 源码逐入口清点；所有新入口计划保留原位，不变更导航和步骤。每项具体用例、原/新入口和状态另存 `UI_REDESIGN_PROTECTION_MATRIX.csv`。表中 PASS 仅表示下文列明的已覆盖主流程，未覆盖细项仍为 NOT_RUN。
 
 | 编号 | 页面/能力 | 原入口、字段与动作 | 保留的数据和规则 | 对应源码（frontend/src 下，另注除外） | 基线 / 改后 |
 |---|---|---|---|---|---|
-| UI-01 | 项目库与店铺 | /projects；新建项目、编辑店铺、搜索项目、分页、最近访问、空项目引导 | 保留名称/说明/颜色校验、250ms搜索与12项分页、切换项目清理范围 | pages/ProjectLibrary.tsx；pages/RetailProjectSpace.tsx；components/ProjectEditor.tsx | BLOCKED / NOT_RUN |
-| UI-02 | CSV读取与草稿 | 数据记录→导入数据→选择文件→读取设置→字段与口径；保存/继续/放弃草稿 | 文件大小/类型限制、编码/分隔符、原始行、preview_token、busy防重复和关闭限制 | components/ImportEditor.tsx；components/DataWorkspace.tsx；data.ts | BLOCKED / NOT_RUN |
-| UI-03 | XLSX与输入形状 | 同一导入抽屉：工作表、多表、普通逐行/购物篮长表/商品列表 | 只有同表头和顺序才合并；不制造客户/金额/时间；不改变步骤顺序 | components/ImportEditor.tsx；components/DataPreview.tsx | BLOCKED / NOT_RUN |
-| UI-04 | 字段与金额口径 | 字段对应13项；记录粒度/月、订单边界、金额、数量单位、币种、时间格式、时区、状态 | 同列不得映射多个含义；未知留空；修改清除confirmed；订单总额每单一次；确认前按钮禁用 | components/MappingEditor.tsx；data.ts | BLOCKED / NOT_RUN |
-| UI-05 | 记录分类 | 生成月报设置→确认记录类型、金额口径、精确规则、依据与版本确认 | 实物/费用/调整/其他/待确认；金额独立；空值/重复规则校验；不得降低确认门槛 | components/ClassificationEditor.tsx；components/SalesWorkspace.tsx | BLOCKED / NOT_RUN |
-| UI-06 | 质量与范围 | 月报设置及更多分析→质量：重复候选、完整范围、重叠、取消/退货、排除原因 | 策略与scope键/默认值、版本/映射归属、来源行证据、终态含义与计数 | components/QualityWorkspace.tsx；components/QualityReport.tsx；quality.ts | BLOCKED / NOT_RUN |
-| UI-07 | 月报与任务 | 销售月报→生成、取消、历史选择、复制链接、查看依据 | 月份、run参数、幂等/禁用、完整/不完整月份、未知与零区别、刷新前进后退 | components/SalesWorkspace.tsx；pages/RetailProjectSpace.tsx；retail.ts | BLOCKED / NOT_RUN |
-| UI-08 | 商品列表 | 商品明细：搜索、筛选、排序、分页、名称与状态、详情入口 | 保留全部列/数值/精度/单位/无结果；表格可比较；返回后的筛选/页码/滚动 | components/SalesWorkspace.tsx；retail.ts | BLOCKED / NOT_RUN |
-| UI-09 | 商品依据和备注 | 商品抽屉→每日走势、异常日期、来源行、计算依据、备注与原因 | actual/reference、无标签警告、source_row_id/run/版本归属、expected_revision冲突保留草稿 | components/ProductNote.tsx；components/SalesWorkspace.tsx；overlayLayers.ts | BLOCKED / NOT_RUN |
-| UI-10 | 预测与库存 | 商品详情→七天参考、历史误差、可售库存/到货/到货日/备用/包装/确认、计算 | 预测门槛、历史日期、未确认不可计算；所有字段值/单位/上取整规则与拒绝状态 | components/SalesWorkspace.tsx；retail.ts | BLOCKED / NOT_RUN |
-| UI-11 | AI辅助 | 字段解释、问问销售助手/这件商品、示例、复合问题、核对本次月报依据 | 真实模型/模板/澄清/受限分开；evidence_id/run；等待/超时；问题草稿保留 | components/FieldAssistant.tsx；components/SalesWorkspace.tsx；productCopy.ts | BLOCKED / NOT_RUN |
-| UI-12 | 更多分析 | 更多分析→质量能力→RF/RFM与共购设置、结果、任务、来源依据 | 默认参数/阈值、数据能力、发布门槛、规则与因果限制、取消及终态 | components/QualityWorkspace.tsx；components/QualityReport.tsx；quality.ts | BLOCKED / NOT_RUN |
-| UI-13 | 导出与打印 | 导出月报→HTML、CSV、JSON、完整数据/附页选项、浏览器打印PDF | 来源版本、run、金额/币种/完整商品/审计数值、转义与公式防护、旧报告不可变 | components/SalesWorkspace.tsx；retail.ts；backend/app/retail_export.py（只保护，不修改） | BLOCKED / NOT_RUN |
-| UI-14 | 帮助与可访问性 | 各页面现有42主题、Popover/Drawer、导航抽屉、Select/Modal、焦点与关闭 | htmlType=button、Enter/空格/Tab/Escape、关闭焦点返回、库存/备注/映射草稿；1000/1100/1200/1300层级 | components/HelpHint.tsx；helpContent.ts；help.css；overlayLayers.ts | BLOCKED / NOT_RUN |
-| UI-15 | 系统状态 | 空/加载/受限/禁用/无结果/失败/取消/完成/权限异常与重试 | 文字状态不隐藏、不仅靠颜色；401/403/404/409等按当前真实行为解释 | components/States.tsx；api.ts；各任务组件 | BLOCKED / NOT_RUN |
+| UI-01 | 项目库与店铺 | /projects；新建项目、编辑店铺、搜索项目、分页、最近访问、空项目引导 | 保留名称/说明/颜色校验、250ms搜索与12项分页、切换项目清理范围 | pages/ProjectLibrary.tsx；pages/RetailProjectSpace.tsx；components/ProjectEditor.tsx | PASS（主流程） / NOT_RUN |
+| UI-02 | CSV读取与草稿 | 数据记录→导入数据→选择文件→读取设置→字段与口径；保存/继续/放弃草稿 | 文件大小/类型限制、编码/分隔符、原始行、preview_token、busy防重复和关闭限制 | components/ImportEditor.tsx；components/DataWorkspace.tsx；data.ts | PASS（主流程） / NOT_RUN |
+| UI-03 | XLSX与输入形状 | 同一导入抽屉：工作表、多表、普通逐行/购物篮长表/商品列表 | 只有同表头和顺序才合并；不制造客户/金额/时间；不改变步骤顺序 | components/ImportEditor.tsx；components/DataPreview.tsx | PASS（主流程） / NOT_RUN |
+| UI-04 | 字段与金额口径 | 字段对应13项；记录粒度/月、订单边界、金额、数量单位、币种、时间格式、时区、状态 | 同列不得映射多个含义；未知留空；修改清除confirmed；订单总额每单一次；确认前按钮禁用 | components/MappingEditor.tsx；data.ts | PASS（主流程） / NOT_RUN |
+| UI-05 | 记录分类 | 生成月报设置→确认记录类型、金额口径、精确规则、依据与版本确认 | 实物/费用/调整/其他/待确认；金额独立；空值/重复规则校验；不得降低确认门槛 | components/ClassificationEditor.tsx；components/SalesWorkspace.tsx | PASS（主流程） / NOT_RUN |
+| UI-06 | 质量与范围 | 月报设置及更多分析→质量：重复候选、完整范围、重叠、取消/退货、排除原因 | 策略与scope键/默认值、版本/映射归属、来源行证据、终态含义与计数 | components/QualityWorkspace.tsx；components/QualityReport.tsx；quality.ts | PASS（主流程） / NOT_RUN |
+| UI-07 | 月报与任务 | 销售月报→生成、取消、历史选择、复制链接、查看依据 | 月份、run参数、幂等/禁用、完整/不完整月份、未知与零区别、刷新前进后退 | components/SalesWorkspace.tsx；pages/RetailProjectSpace.tsx；retail.ts | PASS（主流程） / NOT_RUN |
+| UI-08 | 商品列表 | 商品明细：搜索、筛选、排序、分页、名称与状态、详情入口 | 保留全部列/数值/精度/单位/无结果；表格可比较；返回后的筛选/页码/滚动 | components/SalesWorkspace.tsx；retail.ts | PASS（主流程） / NOT_RUN |
+| UI-09 | 商品依据和备注 | 商品抽屉→每日走势、异常日期、来源行、计算依据、备注与原因 | actual/reference、无标签警告、source_row_id/run/版本归属、expected_revision冲突保留草稿 | components/ProductNote.tsx；components/SalesWorkspace.tsx；overlayLayers.ts | PASS（主流程） / NOT_RUN |
+| UI-10 | 预测与库存 | 商品详情→七天参考、历史误差、可售库存/到货/到货日/备用/包装/确认、计算 | 预测门槛、历史日期、未确认不可计算；所有字段值/单位/上取整规则与拒绝状态 | components/SalesWorkspace.tsx；retail.ts | PASS（主流程） / NOT_RUN |
+| UI-11 | AI辅助 | 字段解释、问问销售助手/这件商品、示例、复合问题、核对本次月报依据 | 真实模型/模板/澄清/受限分开；evidence_id/run；等待/超时；问题草稿保留 | components/FieldAssistant.tsx；components/SalesWorkspace.tsx；productCopy.ts | PASS（主流程） / NOT_RUN |
+| UI-12 | 更多分析 | 更多分析→质量能力→RF/RFM与共购设置、结果、任务、来源依据 | 默认参数/阈值、数据能力、发布门槛、规则与因果限制、取消及终态 | components/QualityWorkspace.tsx；components/QualityReport.tsx；quality.ts | PASS（主流程） / NOT_RUN |
+| UI-13 | 导出与打印 | 导出月报→HTML、CSV、JSON、完整数据/附页选项、浏览器打印PDF | 来源版本、run、金额/币种/完整商品/审计数值、转义与公式防护、旧报告不可变 | components/SalesWorkspace.tsx；retail.ts；backend/app/retail_export.py（只保护，不修改） | PASS（主流程） / NOT_RUN |
+| UI-14 | 帮助与可访问性 | 各页面现有42主题、Popover/Drawer、导航抽屉、Select/Modal、焦点与关闭 | htmlType=button、Enter/空格/Tab/Escape、关闭焦点返回、库存/备注/映射草稿；1000/1100/1200/1300层级 | components/HelpHint.tsx；helpContent.ts；help.css；overlayLayers.ts | PASS（主流程） / NOT_RUN |
+| UI-15 | 系统状态 | 空/加载/受限/禁用/无结果/失败/取消/完成/权限异常与重试 | 文字状态不隐藏、不仅靠颜色；401/403/404/409等按当前真实行为解释 | components/States.tsx；api.ts；各任务组件 | PASS（主流程） / NOT_RUN |
 
-## 5. 请求、状态及数据合同
 
-- api.ts、data.ts、retail.ts、quality.ts 的端点、请求键、超时保持；保存映射带 preview_token、mapping；修订带 expected_revision；月报带 sources/version_id/mapping_revision、classifications、month、merge_mode、duplicates、coverage 和 idempotency_key；备注带 item_id/day/reason/note/expected_revision。不得通过外观修改增加提交次数。
-- 分类编辑任何变动清除 confirmed，校验规则/依据后才能确认；字段同列禁用重复匹配，记录粒度变化的现有字段重置逻辑保持。
-- 原报告 result、产品全部条目、预测记录、分类分项、排除计数及导出解析内容按同一 run 比较。只能白名单归一化新项目/version/run UUID、生成时间与幂等键；金额、数量、来源哈希、月份、状态不允许归一化忽略。
-- 记录 query、页码、排序、滚动、月份和备注/库存草稿；不调整业务组件 key、挂载层级或重挂载条件。
-- 帮助为本地确定性内容，42主题；不调用 AI。overlayLayers 商品1000、助手1100、依据1200、帮助1300，必须保留，包含曾先打开依据的顺序。
-- AI 自然语言不逐字比对，核对数值、evidence/run/来源、ai_used、真实推理与回退分类。至少一次当前 CPU 问答尚未执行。
+## 5. 本轮实际执行与未覆盖范围
 
-`verification/ui_redesign/code_contract_baseline.json` 保存原始 Git blob 哈希、backend 树清单哈希，用于后续审查不可修改的 API/业务/依赖/帮助合同；不能凭静态哈希替代行为测试。
+|测试组|实际结果|证据（TASK下）|
+|---|---|---|
+|静态/类型/构建|PASS，tsc+Vite|logs/baseline_build.log；evidence/baseline_build_manifest.json|
+|后端专项|76 passed +6 subtests，14.95秒；1个既有httpx弃用警告|logs/baseline_pytest.log|
+|CSV完整真实浏览器|9组PASS，页面未捕获错误0；导入/确认/分类/月报/商品异常备注/库存/真实CPU AI/导出打印/质量/RF/RFM/共购|baseline/evidence/clean/browser_results.json、requests.json及对应API回读和PDF|
+|XLSX真实浏览器|3组PASS，新项目完整导入并生成/JSON金额核对|baseline-xlsx/evidence/clean/browser_results.json|
+|交互补充|6组PASS：历史切换/刷新/back/forward/复制URL、月汇总受限、商品搜索排序筛选返回、帮助键盘焦点、映射草稿、404与隔离网络故障恢复|baseline/evidence/guards/results.json；logs/baseline_guards_retry.log|
+|同报告截图|20/20 PASS结构检查；1440/1280/768/390，各月报/商品表/详情/分类正常/分类空规则错误；无页面横溢出|baseline/evidence/before_v2/results.json、同名png/txt|
+|帮助内容合同|3PASS|verification/ui_redesign/help_contract.txt|
+|输入独立核算|7PASS|verification/ui_redesign/frozen_input_check.json|
 
-## 6. 样式与风险清点（静态源码事实）
+pytest实际命令：`PYTHONPATH=backend:scripts .venv/bin/python -B -m pytest -q scripts/test_sales_v2.py scripts/test_record_classification.py scripts/test_task_safety.py scripts/test_ai_contract.py scripts/test_field_assistant.py scripts/test_user_facing_copy.py --basetemp TASK/tmp/pytest-base`。环境AIC_STATE_DIR/AIC_STORAGE_DIR指向TASK/unit，线程上限和缓存见启动脚本。
 
-- main.tsx 已有 ConfigProvider + AntD App 上下文；token：青绿 #087f73、正文14、控件40、圆角8。不升级 AntD，不切换成其他组件库。
-- styles.css 涵盖侧栏、项目、导入、质量；retail.css 为销售页并含 .workspace 白底覆盖；analysis.css/help.css 独立。多处 minified 单行，不进行顺带大规模格式化。
-- Shell 侧栏216、topbar68、main 左右38；项目标题在 retail.css 覆盖为26；项目库标题34。是否显得松散需本轮截图确认，不能只凭 CSS 认定页面缺陷。
-- 月报已使用分隔线而非全站高阴影卡片；不得机械去卡片。指标有三种彩色左边线；可以在样板比较中评估收敛为统一强调色。
-- ClassificationEditor 默认及规则采用内联宽度/边框；后续若改用明确class应只替换展示props，不移动控件、不改onChange/默认值/校验。
-- SalesChart 实际为 Canvas + ResizeObserver + 可展开原始点数据（不是图表库/SVG）；保留所有 points/null/date/坐标/点击语义，样板优先只动容器样式。
-- HelpHint、Drawer、Select 等 portal 在根节点之外。不能仅在 .sales-workspace 作用域改完就宣布弹层一致；需主题公开token、明确class与现有z-index验收。
-- 旧 CSS 有 .ant-drawer-body padding !important 等规则；本轮不得继续叠加 !important 或全局通配符强压，先核对实际计算样式。
+真实浏览器为现有Playwright Chromium headless shell1234，独立profile在TASK；不是Mock。脚本位于 scripts/ui_redesign/，RETAIL_TEST_ROOT含data软链接至模拟包、RETAIL_BASE_URL指定隔离端口、PLAYWRIGHT_MODULE指定现有模块，浏览器/库/fontconfig使用现有browser-runtime，全部可变输出在TASK。请求保存JSON业务字段，不保存认证头。
 
-## 7. 本轮实际检查与既有问题
+**NOT_RUN细项**：逐一42个帮助主题全覆盖、真实浏览器原生200%缩放（机器只有headless shell）、项目编辑/多页项目分页、错误编码/多工作表组合/所有草稿恢复、所有金额/缺字段组合的UI、浏览器409/取消/超时/权限状态全组合、>20商品跨页、全部AI歧义/回退组合。专项单测包含部分规则保护，不能当作这些UI已经执行。三页样板后补充受影响部分，方向批准后全站阶段继续矩阵验收。
 
-- `node --test scripts/test_ux_guidance.mjs`：3 PASS / 0 FAIL / 0 skipped，Node v24.14.0；日志 `verification/ui_redesign/help_contract.txt`。这是原帮助内容合同，不是浏览器可用性验证。
-- 输入全量及六个月独立核算：7 PASS，见上。当前已执行测试合计10 PASS，0 FAIL；远端与浏览器检查另行 BLOCKED，改后测试 NOT_RUN。
-- 旧全 scripts Ruff 132项问题见原交接记录；本轮没有执行，不能称已复现或已修复。新回归数量当前不可判断。
-- 无本轮逐页页面、桌面/窄屏截图、HAR、AI/导出、实际构建体积或 PDF；**不得用历史文件充数**。
+测试修正：guards首次因getByText同时匹配SVG title与说明文字失败，改为语义说明定位后6组全部通过，原日志保留。第一版分类截图fixture未清除既有规则，正常态误含空规则；修正fixture后before_v2重新20张，旧before保留而不作为对照。均不是产品业务错误。
 
-## 8. 恢复后必须补齐的基线
+## 6. 页面视觉问题与保护合同
 
-在未改 UI 的 main 上完成：完整导入CSV/XLSX→字段/分类→检查→月报→商品/异常/备注/库存→真实AI→HTML/CSV/JSON/PDF；单月/多月/月汇总、历史URL状态、RF/RFM/共购及关键失败。固定输入及参数保存请求与回读结果。
+实际查看本轮1440商品/分类、390详情、768月报以及此前1440月报/详情、390月报截图：①项目标题到工作区冗余垂直间距；②指标三种彩线没有不同风险含义；③数值列左齐难比较；④分类规则无持续可见标签且纵向堆叠；⑤768指标单位被拆开；⑥详情标题、参考值和帮助并列拥挤。没有发现支持全站充满机器人/渐变的证据，品牌/导航/表格保留。
 
-截图清单：销售月报、商品列表、商品详情、字段/分类表单，1440/1280/768/390px及200%缩放；正常与至少受限/错误一例；每张记录 source SHA、构建hash、项目/version/run、月份、视口和浏览器版本。改后按相同输入/报告/视口逐张复核。
+请求与业务合同：api.ts/data.ts/retail.ts/quality.ts端点、请求键、超时和confirm条件不改；记录expected_revision、来源version/hash、金额/数量/币种/排除计数/预测/库存结果。只允许新建实体UUID/创建时间/幂等键白名单归一化，不能忽略业务字段。SalesChart Canvas的points/null/日期/坐标不改。旧报告不可变。
 
-独立 commit 保存本文件实际基线及 UI_REDESIGN_DIRECTION 后才能做样板。三类样板通过后等待用户审美确认；不得把三页或自动化检查当作全站交付。
+样式风险：main.tsx ConfigProvider+App已存在；styles.css有minified全局规则，retail.css覆盖workspace；analysis/help独立。只用公开token、明确class、局部CSS；不升级依赖/重写状态层。classification仅替换展示属性/补标签，保留控件key/value/onChange/顺序/默认值。HelpHint与42主题不变，z-index商品1000/助手1100/依据1200/帮助1300保持。
+
+既有问题：本轮768指标单位换行需视觉修复；data chunk警告；旧Ruff132问题仅历史记录未重跑。没有把它们算作新增回归。没有修改后端/算法/导出模板。
+
+## 7. 下一检查点
+
+本报告和方向研究必须独立提交，再做三类样板；同冻结run/视口前后对比并回归。样板通过后提供新端口预览，等待用户审美确认，不合并main、不替换原演示、不推广全站、不宣称最终交付。
