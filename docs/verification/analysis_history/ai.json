@@ -115,7 +115,7 @@
     },
     "classification": {
       "version": "record-classification-v1",
-      "sha256": "fac8af2a78e59deeb8779ef0c39c616557826873660bcf8ddf4a8509a3b4cbf6",
+      "sha256": "5cee5ba5c0fab8a84e77fcce8f862b39d1b104c6344b22e5fd2bf1b9bc45ed5a",
       "counts": {
         "physical_product": 17641
       },
@@ -256,8 +256,8 @@
       }
     ]
   },
-  "run_id": "8ca7f92d-ac18-48c3-8b53-d822f5e23a5c",
+  "run_id": "a83a094e-8105-49a3-8686-2cacb6902552",
   "model": "qwen2.5-1.5b-instruct-q4_k_m",
   "prompt_version": "sales-explain-v6",
-  "evidence_id": "8ca7f92d-ac18-48c3-8b53-d822f5e23a5c:fac8af2a78e59deeb8779ef0c39c616557826873660bcf8ddf4a8509a3b4cbf6"
+  "evidence_id": "a83a094e-8105-49a3-8686-2cacb6902552:5cee5ba5c0fab8a84e77fcce8f862b39d1b104c6344b22e5fd2bf1b9bc45ed5a"
 }

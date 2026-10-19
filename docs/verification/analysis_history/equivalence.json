@@ -1,5 +1,5 @@
 {
-  "source_sha": "d4c7d3dde9b64e79175afdb65f01934e7740d684",
+  "source_sha": "ac751c2 plus pending-display working tree",
   "baseline_sha": "0cca4e4f777d0bcc76c1fe17b2680dbc41f87174",
   "cases": [
     {
@@ -137,5 +137,10 @@
     "request capture timestamp",
     "new project name timestamp"
   ],
-  "status": "PASS"
+  "status": "PASS",
+  "source_frontend_sha256_normalized_lf": {
+    "frontend/src/components/AnalysisHistory.tsx": "076f9a32efd1dbcbcc82bf8283495bd8a0bfe5740ab4d612ce9ca96fe7482c49",
+    "frontend/src/components/QualityReport.tsx": "e2dcd2f691e372a4fb1185ce4f5a4a78272cfbdc7a8c0e447569fd15ce4b6b1a",
+    "frontend/src/analysis.css": "a652b3ae4467194155db85026e9792d7db8c4b77887895719824bc2f906546af"
+  }
 }

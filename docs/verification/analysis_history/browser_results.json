@@ -1,61 +1,61 @@
 {
   "status": "PASS",
   "project": {
-    "id": "0f245b7b-248b-4f91-85cc-fb47d8c30da8",
-    "name": "UI基线｜青禾模拟 1792426133574",
+    "id": "2ce20211-f233-4680-8036-3d954d5f3ba7",
+    "name": "UI基线｜青禾模拟 1792426912625",
     "description": "完全模拟数据，仅用于功能测试和视频演示；非真实商户研究。",
     "color": "teal",
-    "created_at": "2026-10-19T16:08:53.723532+00:00",
-    "updated_at": "2026-10-19T16:08:53.723547+00:00",
+    "created_at": "2026-10-19T16:21:52.775117+00:00",
+    "updated_at": "2026-10-19T16:21:52.775133+00:00",
     "revision": 1
   },
-  "version_id": "c2ce8cad-cb9a-4615-8d46-f860976f9c47",
-  "run_id": "8ca7f92d-ac18-48c3-8b53-d822f5e23a5c",
+  "version_id": "15600ad2-0ad5-44ca-ad04-97f36d502c1a",
+  "run_id": "a83a094e-8105-49a3-8686-2cacb6902552",
   "results": [
     {
       "id": "01_create_upload_map",
       "status": "PASS",
-      "url": "http://127.0.0.1:18106/projects/0f245b7b-248b-4f91-85cc-fb47d8c30da8"
+      "url": "http://127.0.0.1:18106/projects/2ce20211-f233-4680-8036-3d954d5f3ba7"
     },
     {
       "id": "02_classification_monthly",
       "status": "PASS",
-      "url": "http://127.0.0.1:18106/projects/0f245b7b-248b-4f91-85cc-fb47d8c30da8?run=8ca7f92d-ac18-48c3-8b53-d822f5e23a5c"
+      "url": "http://127.0.0.1:18106/projects/2ce20211-f233-4680-8036-3d954d5f3ba7?run=a83a094e-8105-49a3-8686-2cacb6902552"
     },
     {
       "id": "03_products_anomaly_note",
       "status": "PASS",
-      "url": "http://127.0.0.1:18106/projects/0f245b7b-248b-4f91-85cc-fb47d8c30da8/products?run=8ca7f92d-ac18-48c3-8b53-d822f5e23a5c"
+      "url": "http://127.0.0.1:18106/projects/2ce20211-f233-4680-8036-3d954d5f3ba7/products?run=a83a094e-8105-49a3-8686-2cacb6902552"
     },
     {
       "id": "04_forecast_inventory",
       "status": "PASS",
-      "url": "http://127.0.0.1:18106/projects/0f245b7b-248b-4f91-85cc-fb47d8c30da8/products?run=8ca7f92d-ac18-48c3-8b53-d822f5e23a5c"
+      "url": "http://127.0.0.1:18106/projects/2ce20211-f233-4680-8036-3d954d5f3ba7/products?run=a83a094e-8105-49a3-8686-2cacb6902552"
     },
     {
       "id": "05_cpu_ai_exports",
       "status": "PASS",
-      "url": "http://127.0.0.1:18106/projects/0f245b7b-248b-4f91-85cc-fb47d8c30da8?run=8ca7f92d-ac18-48c3-8b53-d822f5e23a5c"
+      "url": "http://127.0.0.1:18106/projects/2ce20211-f233-4680-8036-3d954d5f3ba7?run=a83a094e-8105-49a3-8686-2cacb6902552"
     },
     {
       "id": "06_quality_views",
       "status": "PASS",
-      "url": "http://127.0.0.1:18106/projects/0f245b7b-248b-4f91-85cc-fb47d8c30da8/quality"
+      "url": "http://127.0.0.1:18106/projects/2ce20211-f233-4680-8036-3d954d5f3ba7/quality"
     },
     {
       "id": "07_RF",
       "status": "PASS",
-      "url": "http://127.0.0.1:18106/projects/0f245b7b-248b-4f91-85cc-fb47d8c30da8/quality"
+      "url": "http://127.0.0.1:18106/projects/2ce20211-f233-4680-8036-3d954d5f3ba7/quality"
     },
     {
       "id": "07_RFM",
       "status": "PASS",
-      "url": "http://127.0.0.1:18106/projects/0f245b7b-248b-4f91-85cc-fb47d8c30da8/quality"
+      "url": "http://127.0.0.1:18106/projects/2ce20211-f233-4680-8036-3d954d5f3ba7/quality"
     },
     {
       "id": "07_共购",
       "status": "PASS",
-      "url": "http://127.0.0.1:18106/projects/0f245b7b-248b-4f91-85cc-fb47d8c30da8/quality"
+      "url": "http://127.0.0.1:18106/projects/2ce20211-f233-4680-8036-3d954d5f3ba7/quality"
     }
   ],
   "errs": []

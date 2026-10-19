@@ -16,7 +16,7 @@
 - 8组专项PASS：1440/1280/768/390面板及下拉范围、5条分群/2条共购逐个切换并读取对应run响应/界面、Enter/方向键/Escape与焦点、7份历史结果完整一致、打开切换无写请求、无脚本错误。
 - 9组完整CSV真实浏览器PASS：新建/上传/字段/分类/月报、商品异常/来源/备注、库存、真实CPU AI（ai_used=true且证据匹配）、HTML/CSV/JSON/打印PDF、质量及RF/RFM/共购均发布。
 - 17项确定性对账PASS：冻结月报完整结果与导出、fresh summary/products/forecast/anomaly/quality/notices/库存、14次写请求字段及次数一致。66,434.40CNY/10,640件；七天177、库存10+到货7/备用3/包装6得到168。冻结result SHA256 221fc60b179b6e930f0871a04134afb3a34724029f3b3e8a5835cc67df989f2c。
-- 新项目0f245b7b-248b-4f91-85cc-fb47d8c30da8、数据版本c2ce8cad-cb9a-4615-8d46-f860976f9c47、销售run8ca7f92d-ac18-48c3-8b53-d822f5e23a5c。输入青禾完全模拟CSV SHA256 e34d6cf870876e2baff8af00e45a74e70cea5a5a228f603fad21f30258425923；不是商户试用或经营收益证据。
+- 新项目2ce20211-f233-4680-8036-3d954d5f3ba7、数据版本15600ad2-0ad5-44ca-ad04-97f36d502c1a、销售runa83a094e-8105-49a3-8686-2cacb6902552。输入青禾完全模拟CSV SHA256 e34d6cf870876e2baff8af00e45a74e70cea5a5a228f603fad21f30258425923；不是商户试用或经营收益证据。
 
 命令：`node --test scripts/ui_redesign/test_presentation_contract.cjs scripts/ui_redesign/test_report_guidance.cjs scripts/ui_redesign/test_whole_presentation.cjs scripts/test_ux_guidance.mjs`；`npm run build -- --configLoader runner`；`node scripts/ui_redesign/browser_analysis_history.cjs`、`node scripts/ui_redesign/browser_e2e.cjs`。浏览器带RETAIL_TEST_ROOT/RETAIL_BASE_URL/RETAIL_HISTORY_PHASE和既有Playwright/fontconfig运行时；HOME/TMP/XDG/npm缓存全部个人隔离目录。原始脚本/环境/日志在个人updates/analysis_history_20261020_01，D盘同名任务tools/logs/evidence。
 
@@ -33,6 +33,10 @@
 
 ## 发布与回退
 
-不改共享AIC_Project、库或服务。独立个人18106与本机18115；旧18114/47e6252保留回退。正常main推送后从实际fetch SHA再次干净检出、构建和重跑17组浏览器及17对账，最终发布证明为本任务release/evidence/release_receipt.json，不能用本候选测试或进度文件提前认定。保留SQLite在线备份，integrity=ok/FK0及SHA在isolation.json，恢复已在独立库检查。
+不改共享AIC_Project、库或服务。独立个人18106与本机18115；旧18114/47e6252保留回退。正常main推送后从实际fetch SHA再次干净检出、构建和重跑17组浏览器及17对账，最终发布证明为本任务release2/evidence/release_receipt.json，不能用本候选测试或进度文件提前认定。保留SQLite在线备份，integrity=ok/FK0及SHA在isolation.json，恢复已在独立库检查。
 
 没有C盘主动项目写入或批准例外；缓存/临时/profile与下载截图均D盘或远端个人目录，既有认证只读使用、严格主机校验。无法保证系统与Codex后台绝对零写入。回退直接使用旧18114，或仅停止本任务re-analysis-history；无需还原业务数据库。
+
+## 新记录刚提交的补充检查
+
+最终复查补充：列表尚未刷新时，已提交且与当前选择一致的detail先作为显示记录纳入下拉，列表刷新后按同一ID去重，防止短暂露出内部UUID或“还没有记录”。不改变API/任务/状态。真实RF/RFM/共购提交均在两次浏览器绘制后检查历史区域已显示且不含新run UUID；增强原E2E断言，8专项+9完整流程、18Node/构建、17对账再次PASS。最终干净复验改用release2，最初release/ac751c2及candidate_ac751c2证据只为历史阶段。
