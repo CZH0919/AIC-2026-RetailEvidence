@@ -87,3 +87,6 @@
   .retail-product-drawer .sales-detail-metrics { display: grid; gap: 8px; }
   .retail-product-drawer .sales-inventory { padding: 12px; }
 }
+
+/* Keep evidence prose readable within the table's existing horizontal scroll. */
+.sales-workspace .sales-row-reason { min-width: 300px; }
