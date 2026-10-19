@@ -18,7 +18,7 @@ SQLite 在线备份API形成 TASK/backups/demo_consistent.sqlite3，SHA256 `ed80
 
 源码全历史bundle TASK/backups/source_before.bundle，SHA256 `61152233bad99a1593cff5d6f644df32e2fb40b5381abe381f8507d6fa4d7417`。必要模拟storage仅46,435,951字节，未复制模型/无关真实数据。恢复方法：在新任务目录用sqlite3 backup API从该备份恢复至独立state，复制对应模拟storage，git从bundle检出160a90c，设置独立STATE/STORAGE/STATIC路径和空闲回环端口。验证见 verification/ui_redesign/baseline_setup.json。
 
-构建实际执行 `npm run build -- --configLoader runner`（包含tsc -b），PASS；dist总1,289,070 bytes。既有data chunk约1MB触发500kB警告，记录为既有构建提示，不通过删功能降体积。
+构建实际执行 `npm run build -- --configLoader runner`（包含tsc --noEmit），PASS；dist总1,289,070 bytes。既有data chunk约1MB触发500kB警告，记录为既有构建提示，不通过删功能降体积。
 
 ## 3. 冻结数据、报告与确定性基线
 
