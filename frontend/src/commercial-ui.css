@@ -18,6 +18,7 @@
 .sales-metrics { gap: 0; padding: 0; margin: 0 0 16px; background: #f5f7f7; border: 1px solid #e2e7e7; border-radius: 8px; }
 .sales-metrics > div { border: 0; padding: 16px 20px; min-width: 0; }
 .sales-metrics > div + div { border-left: 1px solid #dde2e5; }
+.sales-metrics > div:nth-child(2), .sales-metrics > div:nth-child(3) { border-color: #dde2e5; }
 .sales-metrics span { font-size: 14px; color: #53616f; line-height: 22px; margin-bottom: 8px; }
 .sales-metrics strong { font-size: 28px; line-height: 36px; font-weight: 650; font-variant-numeric: tabular-nums; overflow-wrap: normal; }
 .sales-metrics small { display: inline-block; font-size: 14px; margin-left: 8px; white-space: nowrap; }
@@ -57,4 +58,32 @@
   .sales-metrics small { display: inline-block; margin-left: 8px; }
   .sales-filter > .ant-input-search { flex: 1 0 100%; }
   .sales-focus-reasons strong { max-width: none; }
+}
+
+/* Form rules and the product detail portal are scoped explicitly. */
+.classification-editor { border: 1px solid #dde2e5; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: #fff; }
+.classification-editor h4 { font-size: 16px; line-height: 24px; margin: 0 0 8px; }
+.classification-editor p { line-height: 1.7; margin-block: 8px 12px; overflow-wrap: anywhere; }
+.classification-editor > label:not(.ant-checkbox-wrapper) { display: grid; gap: 8px; margin-top: 8px; font-size: 14px; }
+.classification-editor > .help-hint { margin-block: 8px; }
+.classification-rule { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 16px; margin-top: 12px; border: 1px solid #dde2e5; border-radius: 6px; background: #f8f9fa; }
+.classification-rule h5 { grid-column: 1 / -1; font-size: 14px; line-height: 22px; margin: 0; font-weight: 600; }
+.classification-rule label { display: flex; flex-direction: column; gap: 6px; min-width: 0; font-size: 14px; color: #1f2933; }
+.classification-rule-basis { grid-column: 1 / -1; }
+.classification-rule-remove { justify-self: start; grid-column: 1 / -1; }
+.classification-editor > .ant-checkbox-wrapper { margin-top: 16px; line-height: 1.7; }
+.retail-settings-drawer .sales-settings > label { font-size: 14px; }
+.retail-product-drawer .sales-detail-metrics { background: #f5f7f7; border: 1px solid #dde2e5; border-radius: 8px; padding: 16px; gap: 8px 24px; margin-bottom: 20px; }
+.retail-product-drawer .sales-detail-metrics p { margin: 0; font-variant-numeric: tabular-nums; line-height: 24px; }
+.retail-product-drawer h3 { font-size: 18px; line-height: 26px; margin: 0 0 12px; }
+.retail-product-drawer .sales-detail-section { padding: 20px 0; margin-top: 20px; }
+.retail-product-drawer .sales-forecast-value { display: block; color: #087f73; font-size: 26px; line-height: 1.45; margin: 12px 0 8px; font-variant-numeric: tabular-nums; }
+.retail-product-drawer .sales-inventory { margin-top: 16px; padding: 16px; background: #f8f9fa; border: 1px solid #dde2e5; border-radius: 8px; }
+.retail-product-drawer .sales-inventory label { font-size: 14px; }
+.retail-product-drawer .ant-table-cell { font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) {
+  .classification-editor { padding: 12px; }
+  .classification-rule { grid-template-columns: minmax(0, 1fr); padding: 12px; }
+  .retail-product-drawer .sales-detail-metrics { display: grid; gap: 8px; }
+  .retail-product-drawer .sales-inventory { padding: 12px; }
 }
