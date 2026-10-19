@@ -32,7 +32,7 @@ export function ProjectLibrary() {
   }, [query, page, refresh, reload])
 
   return <>
-    <div className="page-heading"><div><h1>分析项目</h1><HelpHint topic="UX01" /><p>将交易数据组织成独立项目，让每一次分析都有清晰的依据。</p></div>
+    <div className="page-heading"><div><h1>分析项目</h1><HelpHint topic="UX01" context="将交易数据组织成独立项目，让每一次分析都有清晰的依据。" /></div>
       <Button type="primary" size="large" icon={<PlusOutlined />} onClick={createProject}>新建项目</Button>
     </div>
     <section className="library-panel" aria-labelledby="library-title">
@@ -45,7 +45,7 @@ export function ProjectLibrary() {
           {result.items.map(project => <li key={project.id}>
             <Link className="project-row" to={`/projects/${project.id}`}>
               <div className="project-row-main"><span className={`project-icon ${project.color}`}><FolderOutlined /></span>
-                <div><h3>{project.name}</h3><p>{project.description || '为这个项目记录一个清晰的分析目标。'}</p></div></div>
+                <div><h3>{project.name}</h3><p>{project.description}</p></div></div>
               <time dateTime={project.updated_at}>{formatDate(project.updated_at)}</time><ArrowRightOutlined className="row-arrow" />
             </Link>
           </li>)}
@@ -54,10 +54,10 @@ export function ProjectLibrary() {
       </> : query ? <EmptyState title="没有找到匹配的项目" description="试试其他名称，或清空搜索查看全部项目。" action={<Button onClick={() => setSearch('')}>清空搜索</Button>} />
         : <EmptyState title="从一个项目，开始探索" description="为不同业务问题建立独立空间，保存数据与分析结果。" action={<Button type="primary" size="large" onClick={createProject}>新建第一个项目</Button>} />}
     </section>
-    <section className="workflow" aria-label="分析流程">
+    <details className="workspace-disclosure library-guide"><summary>首次使用：三步开始分析</summary><section className="workflow" aria-label="分析流程">
       <div><span className="step-number">1</span><FolderOutlined /><div><h3>建立项目</h3><p>为特定业务问题创建独立项目，<br />让数据与分析更有条理。</p></div></div>
       <div><span className="step-number">2</span><DatabaseOutlined /><div><h3>准备交易数据</h3><p>整理交易记录与字段含义，<br />建立可靠的分析基础。</p></div></div>
       <div><span className="step-number">3</span><BarChartOutlined /><div><h3>探索分析</h3><p>从数据中发现规律，<br />支持更好的业务决策。</p></div></div>
-    </section>
+    </section></details>
   </>
 }
