@@ -4,6 +4,8 @@ const read=(f,old)=>old?cp.execFileSync('git',['show',baseline+':'+f],{cwd:root,
 // Explicitly allow only the reviewed alignment, portal classes and visible rule labels.
 // Compare the rest of both whole components, including all business code and handlers.
 const disclosurePresentationPairs = [
+["import { useNavigate, useSearchParams } from 'react-router-dom'", "import { Link, useNavigate, useSearchParams } from 'react-router-dom'"],
+["<div className=\"sales-bottom\"><Button icon={<MessageOutlined />} onClick={() => setAi(true)}>问问销售助手</Button></div>", "<div className=\"sales-bottom\"><Button icon={<MessageOutlined />} onClick={() => setAi(true)}>问问销售助手</Button><Link to={`${root}/quality`}>更多分析</Link></div>"],
   [
     "import { HelpHint } from './HelpHint'\nimport { splitReportNotices } from '../reportGuidance'",
     "import { HelpHint } from './HelpHint'"
@@ -45,4 +47,7 @@ function normalize(t){for (const [changed, original] of disclosurePresentationPa
  .replace(/<span>(匹配范围|匹配值|记录类型|金额口径|分类依据)<\/span>/g,'')
  .replace(/<label>|<\/label>/g,'').replace(/\s+/g,' ').trim();}
 for(const n of ['ClassificationEditor','SalesWorkspace'])test(n+' whole source respects presentation-only allowlist',()=>{const f='frontend/src/components/'+n+'.tsx';assert.equal(normalize(read(f,false)),normalize(read(f,true)));});
-test('backend, dependency locks, routes, APIs, help, charts and overlay layers are untouched',()=>{const files=['backend','frontend/package.json','frontend/package-lock.json','frontend/src/App.tsx','frontend/src/pages/RetailProjectSpace.tsx','frontend/src/api.ts','frontend/src/data.ts','frontend/src/retail.ts','frontend/src/quality.ts','frontend/src/components/HelpHint.tsx','frontend/src/helpContent.ts','frontend/src/overlayLayers.ts','frontend/src/components/SalesChart.tsx'];assert.equal(cp.execFileSync('git',['diff',baseline,'--',...files],{cwd:root,encoding:'utf8'}),'');});
+test('backend, dependency locks, route definitions, APIs, help, charts and overlay layers are untouched',()=>{const files=['backend','frontend/package.json','frontend/package-lock.json','frontend/src/App.tsx','frontend/src/api.ts','frontend/src/data.ts','frontend/src/retail.ts','frontend/src/quality.ts','frontend/src/components/HelpHint.tsx','frontend/src/helpContent.ts','frontend/src/overlayLayers.ts','frontend/src/components/SalesChart.tsx'];assert.equal(cp.execFileSync('git',['diff',baseline,'--',...files],{cwd:root,encoding:'utf8'}),'');});
+
+// The only allowed project-shell change is making the existing analysis link unconditional.
+test("project shell differs only by the always-visible analysis navigation link",()=>{const f="frontend/src/pages/RetailProjectSpace.tsx";const before="{path.endsWith('/quality') && <NavLink to={`/projects/${project.id}/quality`}>更多分析</NavLink>}";const after="<NavLink to={`/projects/${project.id}/quality`}>更多分析</NavLink>";const original=read(f,true);assert.equal(original.split(before).length,2);assert.equal(read(f,false),original.replace(before,after));});

@@ -5,7 +5,7 @@ import { assistantModeLabel } from '../productCopy'
 import { useEffect, useState } from 'react'
 import { Alert, App, Button, Checkbox, Drawer, Input, InputNumber, Select, Segmented, Spin, Table, Tag } from 'antd'
 import { DownloadOutlined, FileSearchOutlined, MessageOutlined, PlusOutlined, RightOutlined, SendOutlined, StopOutlined } from '@ant-design/icons'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { dataApi } from '../data'
 import type { Version } from '../data'
 import { salesApi } from '../retail'
@@ -176,7 +176,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
         {actions.map((a, i) => <article className="sales-action" key={a.id}><span className="sales-action-index">{i + 1}</span><div><h4>{a.title}</h4><p>{a.text}</p><details className="sales-action-evidence sales-explanation"><summary>建议依据</summary><p>{a.reason} · {a.review}</p></details><div className="sales-action-tools"><Button type="link" onClick={() => setDetailId(a.item_id)}>查看商品和依据</Button><Select aria-label={`处理状态 ${a.title}`} value={records[`action:${a.id}`]?.value.status ?? 'pending'} style={{ width: 105 }} options={[{ value: 'pending', label: '待处理' }, { value: 'done', label: '已处理' }, { value: 'declined', label: '暂不采用' }]} onChange={status => void perform(async () => { const old = records[`action:${a.id}`]; const saved = await salesApi.action(projectId, current!.id, a.id, status, old?.value.note ?? '', old?.revision ?? 0); setRecords(r => ({ ...r, [`action:${a.id}`]: saved })) })} /><Button size="small" onClick={() => { setActionEdit(a.id); setNote(records[`action:${a.id}`]?.value.note ?? '') }}>备注</Button></div>{records[`action:${a.id}`]?.value.note && <p className="sales-note">{records[`action:${a.id}`].value.note}</p>}</div></article>)}
         {!actions.length && <p className="sales-caveat">暂时没有足够依据提出特别行动，继续记录销售情况。</p>}
       </section>
-      <div className="sales-bottom"><Button icon={<MessageOutlined />} onClick={() => setAi(true)}>问问销售助手</Button><Link to={`${root}/quality`}>更多分析</Link></div>
+      <div className="sales-bottom"><Button icon={<MessageOutlined />} onClick={() => setAi(true)}>问问销售助手</Button></div>
     </>}
     {report && productsMode && <section className="sales-band"><HelpHint topic="UX29" />
       <div className="sales-filter">
