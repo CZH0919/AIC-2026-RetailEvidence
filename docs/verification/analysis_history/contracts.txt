@@ -1,0 +1,26 @@
+✔ Every high-risk audited concept has a unique, contextual help definition (1.324894ms)
+✔ Short triggers remain discoverable; each definition has a usable example and no raw HTML (1.552705ms)
+✔ Accounting, stock-date and AI unknown-data safeguards are explicitly explained (0.44466ms)
+✔ ClassificationEditor whole source respects presentation-only allowlist (6.183306ms)
+✔ SalesWorkspace whole source respects presentation-only allowlist (6.466903ms)
+✔ backend, dependency locks, route definitions, APIs, help, charts and overlay layers are untouched (8.436748ms)
+✔ project shell differs only by the always-visible analysis navigation link (2.410172ms)
+✔ only the two known background explanations move to help (1.902423ms)
+✔ unknown or changed wording fails visibly rather than being silently hidden (0.259689ms)
+✔ empty notices, original order and repeat warnings are preserved (0.271739ms)
+✔ frontend/src/pages/ProjectLibrary.tsx preserves every non-display line (6.281079ms)
+✔ frontend/src/components/States.tsx preserves every non-display line (2.269558ms)
+✔ frontend/src/components/FieldAssistant.tsx preserves every non-display line (2.912884ms)
+✔ frontend/src/components/ImportEditor.tsx preserves every non-display line (2.984253ms)
+✔ frontend/src/components/DataPreview.tsx preserves every non-display line (2.489598ms)
+✔ frontend/src/components/DataWorkspace.tsx preserves every non-display line (2.667377ms)
+✔ frontend/src/components/QualityWorkspace.tsx preserves every non-display line (3.377099ms)
+✔ frontend/src/components/QualityReport.tsx preserves every non-display line (3.125157ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 112.410669

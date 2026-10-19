@@ -1,0 +1,43 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "id": "layout_and_popup_1440",
+      "status": "PASS"
+    },
+    {
+      "id": "layout_and_popup_1280",
+      "status": "PASS"
+    },
+    {
+      "id": "layout_and_popup_768",
+      "status": "PASS"
+    },
+    {
+      "id": "layout_and_popup_390",
+      "status": "PASS"
+    },
+    {
+      "id": "clustering_all_histories_select_and_readback",
+      "status": "PASS",
+      "count": 5
+    },
+    {
+      "id": "association_all_histories_select_and_readback",
+      "status": "PASS",
+      "count": 2
+    },
+    {
+      "id": "history_keyboard_enter_arrows_escape_focus",
+      "status": "PASS"
+    },
+    {
+      "id": "immutable_all_analysis_results_and_no_writes",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "writes": [],
+  "base": "http://127.0.0.1:18106",
+  "phase": "after"
+}

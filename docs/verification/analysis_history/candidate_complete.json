@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "groups": 17,
+  "runs": [
+    {
+      "script": "browser_analysis_history.cjs",
+      "exit": 0
+    },
+    {
+      "script": "browser_e2e.cjs",
+      "exit": 0
+    }
+  ]
+}

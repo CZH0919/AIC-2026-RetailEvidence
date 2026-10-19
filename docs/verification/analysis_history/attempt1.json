@@ -1,0 +1,6 @@
+{
+  "error": "locator.waitFor: Error: strict mode violation: locator('.analysis-history-popup:visible') resolved to 2 elements:\n    1) <div class=\"ant-select-dropdown ant-slide-up-leave ant-slide-up-leave-active ant-slide-up analysis-history-popup css-var-_r_0_ ant-select-css-var css-oc1rc0 ant-select-dropdown-placement-bottomLeft\">…</div> aka locator('div').filter({ hasText: '最新记录 · 2026/10/19 23:58:31 · RF · 处理完成记录 2 · 2026/10/14 18:50:28 · 处理完成记录 3 ·' }).nth(1)\n    2) <div class=\"ant-select-dropdown ant-slide-up-appear ant-slide-up-appear-prepare ant-slide-up analysis-history-popup css-var-_r_0_ ant-select-css-var css-oc1rc0 ant-select-dropdown-placement-bottomLeft\">…</div> aka locator('div').filter({ hasText: '最新记录 · 2026/10/14 18:50:37 · 处理完成记录 2 · 2026/10/14 16:49:32 · 处理完成' }).nth(1)\n\nCall log:\n  - waiting for locator('.analysis-history-popup:visible') to be visible\n\n    at /home/ubuntu/retailevidence_personal_20261009_01/updates/analysis_history_20261020_01/source/scripts/ui_redesign/browser_analysis_history.cjs:9:405",
+  "cases": [],
+  "errors": [],
+  "writes": []
+}
