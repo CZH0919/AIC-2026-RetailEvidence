@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-19T11:48:43.170313+00:00",
+  "method": "csv + Decimal; each order total checked once against its line amounts. Independent of application algorithms.",
+  "input_sha256": "e34d6cf870876e2baff8af00e45a74e70cea5a5a228f603fad21f30258425923",
+  "cases": [
+    {
+      "id": "INPUT-ALL",
+      "status": "PASS",
+      "actual": {
+        "rows": 17641,
+        "orders": 8700,
+        "customers": 240,
+        "products": 12,
+        "quantity": 66607,
+        "amount": "416263.10"
+      },
+      "order_totals_match_line_sums": true
+    },
+    {
+      "id": "INPUT-2026-04",
+      "status": "PASS",
+      "actual": {
+        "rows": 3224,
+        "orders": 1592,
+        "customers": 240,
+        "products": 12,
+        "quantity": 11373,
+        "amount": "70886.00"
+      },
+      "order_totals_match_line_sums": true
+    },
+    {
+      "id": "INPUT-2026-05",
+      "status": "PASS",
+      "actual": {
+        "rows": 3376,
+        "orders": 1661,
+        "customers": 240,
+        "products": 12,
+        "quantity": 12143,
+        "amount": "76937.50"
+      },
+      "order_totals_match_line_sums": true
+    },
+    {
+      "id": "INPUT-2026-06",
+      "status": "PASS",
+      "actual": {
+        "rows": 2758,
+        "orders": 1365,
+        "customers": 197,
+        "products": 12,
+        "quantity": 10494,
+        "amount": "65121.10"
+      },
+      "order_totals_match_line_sums": true
+    },
+    {
+      "id": "INPUT-2026-07",
+      "status": "PASS",
+      "actual": {
+        "rows": 2743,
+        "orders": 1359,
+        "customers": 160,
+        "products": 12,
+        "quantity": 10681,
+        "amount": "66481.50"
+      },
+      "order_totals_match_line_sums": true
+    },
+    {
+      "id": "INPUT-2026-08",
+      "status": "PASS",
+      "actual": {
+        "rows": 2829,
+        "orders": 1397,
+        "customers": 155,
+        "products": 12,
+        "quantity": 11276,
+        "amount": "70402.60"
+      },
+      "order_totals_match_line_sums": true
+    },
+    {
+      "id": "INPUT-2026-09",
+      "status": "PASS",
+      "actual": {
+        "rows": 2711,
+        "orders": 1326,
+        "customers": 155,
+        "products": 12,
+        "quantity": 10640,
+        "amount": "66434.40"
+      },
+      "order_totals_match_line_sums": true
+    }
+  ],
+  "scope": "Frozen input verification only. NOT a browser or report baseline."
+}

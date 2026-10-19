@@ -1,0 +1,59 @@
+{
+  "source_sha": "160a90c47b6f2a675386355cc283fb869e85334a",
+  "captured_at": "2026-10-19T11:47:55.733666+00:00",
+  "contracts": {
+    "frontend/src/api.ts": {
+      "git_blob_sha256": "83d26c3deca6da51578e50e6755db6ddab90e0c6d89219806b0881bd0fc0dc33",
+      "bytes": 1858
+    },
+    "frontend/src/data.ts": {
+      "git_blob_sha256": "7c845277ab123583fa9e4fca0447d8dbbad6770b18c1113be3f78ad0f9ca16fe",
+      "bytes": 5015
+    },
+    "frontend/src/retail.ts": {
+      "git_blob_sha256": "48c6b13d3dc6efba91202f88db85e4a9944efcdfa28a8408763ef4dc1bfc2ccc",
+      "bytes": 6268
+    },
+    "frontend/src/quality.ts": {
+      "git_blob_sha256": "1788a451339b3db979c3a607197705e20711e7414ee5d0520518411d860e5f08",
+      "bytes": 7159
+    },
+    "frontend/src/helpContent.ts": {
+      "git_blob_sha256": "6e58545e06754543f3c99d4af33a1fa6f870b6b321082011866802b9524ddd15",
+      "bytes": 44696
+    },
+    "frontend/src/overlayLayers.ts": {
+      "git_blob_sha256": "9e884bf15f3cda1295eadf0f5cf516488ab94f388b578bbb7718406f3f939f9a",
+      "bytes": 193
+    },
+    "frontend/src/components/HelpHint.tsx": {
+      "git_blob_sha256": "354c0903650a9ffee0488477699ecaa22325f9b0281a47624730938acfa7f067",
+      "bytes": 3946
+    },
+    "frontend/src/components/ProductNote.tsx": {
+      "git_blob_sha256": "56ca5819d1964ae23daa9cfae11301d0f1dea223595b6412be4aa6607830a211",
+      "bytes": 4358
+    },
+    "frontend/src/components/SalesChart.tsx": {
+      "git_blob_sha256": "c7d16ccec8ea8d5b18d9950419c53f96faa1f0514eb70cf633bfb3ad7c654ffd",
+      "bytes": 2801
+    },
+    "frontend/src/App.tsx": {
+      "git_blob_sha256": "e5a42f5b1d821905a650508f4265d54da158e459e064b5a7b52e7e38a1527ffa",
+      "bytes": 1643
+    },
+    "frontend/package.json": {
+      "git_blob_sha256": "5b35d04514b73e91ee648bcfdfe7c8ce12943e4c1b444e1269ecaa3717eb9fad",
+      "bytes": 670
+    },
+    "frontend/package-lock.json": {
+      "git_blob_sha256": "2dfb50983c1b76dd2016c72b4be1527a4166688d5f9b42feaae0ee0492312e4b",
+      "bytes": 78852
+    },
+    "backend_tree_listing": {
+      "sha256": "7519128695c308b5313c569427b5a5aedbf119e5cd0423874699aca6186445f0",
+      "tracked_entries": 33
+    }
+  },
+  "purpose": "Compare preserved business contracts against origin/main; not runtime PASS."
+}
