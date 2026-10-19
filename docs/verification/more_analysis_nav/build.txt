@@ -1,0 +1,29 @@
+
+> retailevidence-workspace@0.6.3 build
+> tsc --noEmit && vite build --configLoader runner
+
+vite v8.3.3 building client environment for production...
+transforming...
+✓ 3129 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                               0.81 kB │ gzip:   0.49 kB
+dist/assets/index-B8Hexq1W.css               49.66 kB │ gzip:   9.98 kB
+dist/assets/rolldown-runtime-CbXtAM7H.js      0.58 kB │ gzip:   0.36 kB
+dist/assets/quality-Ca8g1r34.js               2.06 kB │ gzip:   0.98 kB
+dist/assets/QualityWorkspace-s5Ai7aIG.js     55.50 kB │ gzip:  18.00 kB
+dist/assets/SalesWorkspace-VwBCOfRd.js       77.29 kB │ gzip:  25.56 kB
+dist/assets/index-hJC7aI_c.js               110.13 kB │ gzip:  35.81 kB
+dist/assets/data-B9adEAp7.js              1,008.80 kB │ gzip: 326.72 kB
+
+✓ built in 461ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+npm notice
+npm notice New major version of npm available! 11.19.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

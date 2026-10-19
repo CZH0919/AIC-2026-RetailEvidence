@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "groups": 21,
+  "runs": [
+    {
+      "script": "browser_more_analysis_nav.cjs",
+      "exit": 0
+    },
+    {
+      "script": "browser_ui_guards.cjs",
+      "exit": 0
+    },
+    {
+      "script": "browser_e2e.cjs",
+      "exit": 0
+    }
+  ]
+}
