@@ -429,6 +429,8 @@ def anomaly_series(series, dates, month, closed_dates=()):
         "version": MODEL_VERSION,
         "status": "unavailable",
         "items": {},
+        "checks": {key: {"status": "insufficient", "tested_dates": [],
+                         "message": "历史记录不足，暂时无法判断。"} for key in series},
         "reason": "需要至少 56 天完整日记录，才能检查异常销售。",
     }
     if len(dates) < 56:
@@ -506,6 +508,9 @@ def anomaly_series(series, dates, month, closed_dates=()):
             n_estimators=100, max_samples=256, contamination="auto", random_state=42, n_jobs=2
         ).fit(legacy_train)
         legacy_scores = legacy_model.score_samples(legacy_probes)
+    checked = defaultdict(list)
+    for row in meta:
+        checked[row["item_id"]].append(row["date"])
     items = defaultdict(list)
     for index, row in enumerate(meta):
         corroborated = (
@@ -548,6 +553,13 @@ def anomaly_series(series, dates, month, closed_dates=()):
             ],
             key=lambda e: (-e["strength"], -abs(e["difference"])),
         )
+    for key, tested in checked.items():
+        count = len(items.get(key, []))
+        result["checks"][key] = {
+            "status": "detected" if count else "clear", "tested_dates": tested,
+            "message": f"{count}天销量明显偏高或偏低" if count else "已检查的日期未发现明显异常",
+            "reference_label": "此前相同星期的通常销量",
+        }
     result.update(
         status="evaluated",
         reason="",

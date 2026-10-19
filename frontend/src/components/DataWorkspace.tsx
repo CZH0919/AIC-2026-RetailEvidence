@@ -1,3 +1,4 @@
+import { quantityUnit } from '../quantity'
 import { useEffect, useState } from 'react'
 import { Alert, App, Button, Drawer, Select, Tag } from 'antd'
 import { DatabaseOutlined, EditOutlined, HistoryOutlined, PlusOutlined } from '@ant-design/icons'
@@ -16,7 +17,7 @@ function Semantics({ mapping }: { mapping: Mapping }) {
   const boundary: Record<string, string> = { order_id: '相同标识为同一订单', basket_id: '相同标识为同一购物篮', row_basket: '原始每行一个购物篮', unavailable: '边界未知' }
   const status: Record<string, string> = { unspecified: '含义待核验', all_forward: '确认全部正向', uci_cancel_prefix: '订单 C 前缀表示取消', status_column: '按已确认状态列区分' }
   return <dl className="semantic-summary"><div><dt>金额口径</dt><dd>{amount[mapping.amount_mode]}</dd></div><div><dt>币种</dt><dd>{mapping.currency_constant ?? (mapping.columns.currency ? '保留原币种列' : '未指定')}</dd></div><div><dt>订单边界</dt><dd>{boundary[mapping.order_boundary]}</dd></div><div><dt>取消 / 退货</dt><dd>{status[mapping.status_rule]}</dd></div>
-    {mapping.columns.event_time && <div><dt>时间口径</dt><dd>{mapping.time_format === 'iso8601' ? 'ISO / Excel 日期' : mapping.time_format} · {mapping.timezone}</dd></div>}{mapping.columns.quantity && <div><dt>数量单位</dt><dd>{mapping.quantity_unit}</dd></div>}
+    {mapping.columns.event_time && <div><dt>时间口径</dt><dd>{mapping.time_format === 'iso8601' ? 'ISO / Excel 日期' : mapping.time_format} · {mapping.timezone}</dd></div>}{mapping.columns.quantity && <div><dt>数量单位</dt><dd>{quantityUnit(mapping.quantity_unit) || '未填写'}</dd></div>}
   </dl>
 }
 

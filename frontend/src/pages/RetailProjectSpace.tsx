@@ -29,7 +29,8 @@ function ProjectSpace({ projectId }: { projectId: string }) {
   const location = useLocation()
   const path = location.pathname
   const [storeInfo, setStoreInfo] = useState(false)
-  const salesQuery = !path.endsWith('/data') && !path.endsWith('/quality') ? location.search : ''
+  const selectedRun = new URLSearchParams(location.search).get('run')
+  const salesQuery = selectedRun ? `?${new URLSearchParams({run: selectedRun})}` : ''
   useEffect(() => {
     const controller = new AbortController()
     setLoading(true); setError(null)

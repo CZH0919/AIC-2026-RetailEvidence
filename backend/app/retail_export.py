@@ -2,8 +2,15 @@ import html
 from pathlib import Path
 from string import Template
 
+from .sales_actions import action_view
+from .quantity_display import quantity_unit, quantity_text
+
 
 def render_report(report, project_name, all_attention=False):
+    from .sales_signals import signal_view
+    from .sales_focus import focus_view
+    report = focus_view(signal_view(report))
+    report = report if report.get('recommendation_version') else action_view(report)
     def esc(value):
         return html.escape(str(value))
 
@@ -11,21 +18,21 @@ def render_report(report, project_name, all_attention=False):
     products = {p["id"]: p for p in report["products"]}
     ids = report["highlights"]
     product_rows = "".join(
-        f"<tr><td>{esc(products[k]['name'])}</td><td>{products[k]['quantity']:g}</td>"
-        f"<td>{esc(products[k]['reason'])}</td></tr>"
+        f"<tr><td>{esc(products[k]['name'])}</td><td>{products[k]['quantity']:g} {esc(quantity_unit(summary['unit']))}</td>"
+        f"<td>{esc(quantity_text(products[k].get('focus_reason') or products[k]['reason']))}</td></tr>"
         for k in ids
     )
     actions = "".join(
         f"<li><strong>{esc(a['title'])}</strong>"
         f"<p>{esc(a['text'].split(' 另有 ', 1)[0])}</p>"
-        f"<small>{esc(a['reason'])} · {esc(a['review'])}</small></li>"
+        f"<small>{esc(quantity_text(a['reason']))} · {esc(a['review'])}</small></li>"
         for a in report["actions"]
     )
     extra = ""
     if all_attention:
         rows = "".join(
-            f"<tr><td>{esc(products[k]['name'])}</td><td>{products[k]['quantity']:g}</td>"
-            f"<td>{esc(products[k]['reason'])}</td></tr>"
+            f"<tr><td>{esc(products[k]['name'])}</td><td>{products[k]['quantity']:g} {esc(quantity_unit(summary['unit']))}</td>"
+            f"<td>{esc(quantity_text(products[k]['reason']))}</td></tr>"
             for k in report["attention_ids"]
         )
         extra = (
@@ -76,7 +83,7 @@ def render_report(report, project_name, all_attention=False):
     return template.substitute(
         title=f"{esc(project_name)} · {esc(report['month'])} 销售月报",
         amount=amount,
-        quantity=f"{summary['quantity']:g} {esc(summary['unit'])}",
+        quantity=f"{summary['quantity']:g} {esc(quantity_unit(summary['unit']))}",
         products=summary["products"],
         chart=chart + drivers,
         product_rows=product_rows,

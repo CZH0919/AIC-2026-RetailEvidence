@@ -1,3 +1,4 @@
+import { UNKNOWN_QUANTITY_UNIT } from '../quantity'
 import { SalesTableHelp } from './SalesTableHelp'
 import { useEffect, useState } from 'react'
 import { Alert, Button, DatePicker, Drawer, Select, Spin, Steps, Table } from 'antd'
@@ -90,7 +91,6 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
     if (!fields.columns.item_id) throw new Error('请选择商品名称或编号所在列。')
     if (!fields.columns.quantity) throw new Error('请选择销量所在列。')
     if (fields.record_kind !== 'monthly_summary' && !fields.columns.event_time) throw new Error('请选择日期列。整月汇总表没有日期时，点击“没有日期，按月汇总分析”。')
-    if (!fields.quantity_unit.trim()) throw new Error('请填写销量单位，例如件、包或公斤。')
     if (fields.amount_mode === 'line_amount' && !fields.columns.line_amount) throw new Error('请选择销售额所在列，或选择只分析销量。')
     if (fields.amount_mode === 'quantity_unit_price' && !fields.columns.unit_price) throw new Error('请选择单价所在列，或选择只分析销量。')
     if (fields.amount_mode !== 'none' && !fields.columns.currency && !fields.currency_constant) throw new Error('请选择销售额币种。')
@@ -102,7 +102,7 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
       let info = sourceInfo
       if (!existing) {
         if (!draft || !mapping) return
-        const fields = { ...mapping, summary_month: mapping.record_kind === 'monthly_summary' ? month : mapping.summary_month, confirmed: true }
+        const fields = { ...mapping, quantity_unit: mapping.quantity_unit.trim() || UNKNOWN_QUANTITY_UNIT, summary_month: mapping.record_kind === 'monthly_summary' ? month : mapping.summary_month, confirmed: true }
         validate(fields)
         const key = JSON.stringify(fields)
         let version = saved

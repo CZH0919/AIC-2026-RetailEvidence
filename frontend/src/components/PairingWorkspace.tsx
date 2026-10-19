@@ -1,160 +1,98 @@
 import { useEffect, useState } from 'react'
-import { Alert, Button, Input, Select } from 'antd'
+import { Alert, Button, Dropdown, Input, Spin } from 'antd'
+import { MoreOutlined } from '@ant-design/icons'
 import { useSearchParams } from 'react-router-dom'
-import { dataApi } from '../data'
-import type { Version, VersionDetail } from '../data'
-import { associationDefaults, cleanDefaults, finished, qualityApi, scopeDefaults } from '../quality'
+import type { Version } from '../data'
 import type { AssociationReport, QualityReport, QualityRun } from '../quality'
-import { EmptyState, ErrorState, LoadingState } from './States'
+import { EmptyState, LoadingState } from './States'
 import { SalesImportWizard } from './SalesImportWizard'
+import { salesApi } from '../retail'
+import type { SalesRun } from '../retail'
+import type { useAutomaticAnalyses } from './useAutomaticAnalyses'
+import { useSalesReports } from './useSalesReports'
+import { ReportPicker, ReportHistory, HistoricalReportNotice } from './ReportPicker'
+import { monthLabel } from '../reportSelection'
 
 const count = (value: number) => value.toLocaleString('zh-CN')
 const percent = (value: number) => `${(value * 100).toFixed(1)}%`
 const items = (value: string) => value.split(' | ').filter(Boolean)
 
 export default function PairingWorkspace({ projectId }: { projectId: string }) {
-  const [versions, setVersions] = useState<Version[]>([])
-  const [loading, setLoading] = useState(true), [error, setError] = useState(''), [retry, setRetry] = useState(0)
-  const [params, setParams] = useSearchParams()
-  const [uploading, setUploading] = useState(false)
-  useEffect(() => {
-    let active = true
-    setLoading(true); setError('')
-    dataApi.versions(projectId).then(data => { if (active) setVersions(data.items) })
-      .catch(e => { if (active) setError(e.message) }).finally(() => { if (active) setLoading(false) })
-    return () => { active = false }
-  }, [projectId, retry])
+  const selection = useSalesReports(projectId, 'overview')
+  const {versions, runs, current, loading, switching} = selection
+  const [params] = useSearchParams()
+  const [uploading, setUploading] = useState(false), [history, setHistory] = useState(false)
   if (loading) return <LoadingState />
-  if (error) return <ErrorState message={error} onRetry={() => setRetry(v => v + 1)} />
-  const version = versions.find(v => v.id === params.get('pairingSource')) ?? versions[0]
+  const sources = versions.filter(v => current?.result?.sources.some(s => s.version_id === v.id))
+  const version = sources.find(v => v.id === params.get('pairingSource')) ?? sources.at(-1)
+  const choose = async (id: string) => { if (await selection.choose(id)) setHistory(false) }
   return <div className="pairing-workspace">
-    <header className="pairing-header"><div><h2>搭配建议</h2><p>看看哪些商品经常一起买，帮助安排摆放和组合销售。</p></div>
-      {version && <label className="pairing-source">使用的表格<Select aria-label="搭配分析数据" value={version.id} options={versions.map(v => ({ value: v.id, label: v.filename }))} onChange={id => { const next = new URLSearchParams(params); next.set('pairingSource', id); setParams(next) }} /></label>}
+    <header className="pairing-header"><div><h2>搭配建议</h2><p>看看所选月份哪些商品经常一起买。</p></div>
+      <div className="report-pairing-toolbar"><ReportPicker runs={runs} current={current} disabled={!!switching} onChoose={id => void choose(id)} />
+      <Dropdown trigger={['click']} menu={{items: [{key: 'history', label: '历史报告'}], onClick: () => setHistory(true)}}><Button type="text" icon={<MoreOutlined />} aria-label="更多操作">更多</Button></Dropdown></div>
     </header>
-    {version ? <PairingAnalysis key={`${projectId}:${version.id}`} projectId={projectId} version={version} onUpload={() => setUploading(true)} /> : <EmptyState title="先上传订单明细" description="表格需要记录每笔订单里买了哪些商品。" action={<Button type="primary" onClick={() => setUploading(true)}>上传订单明细</Button>} />}
-    {uploading && <SalesImportWizard projectId={projectId} versions={versions} onClose={() => { setUploading(false); setRetry(v => v + 1) }} onDone={run => {
-      setUploading(false); setRetry(v => v + 1)
-      const id = run.result?.sources.at(-1)?.version_id
-      if (id) { const next = new URLSearchParams(params); next.set('pairingSource', id); setParams(next) }
-    }} />}
+    {selection.error && <Alert type="error" title={selection.error} action={<Button onClick={() => void selection.retry()}>重试</Button>} />}
+    <HistoricalReportNotice runs={runs} current={current} disabled={!!switching} onChoose={id => void choose(id)} />
+    {switching ? <div className="report-switching" role="status"><Spin /><span>正在加载 {switching}</span></div> : current?.result && version ? <>
+      <div className="pairing-context"><span>销售月份：{monthLabel(current.result.month)}</span>
+      {sources.length > 1 && <span>使用月报中的 {sources.length} 份销售表</span>}</div>
+      <PairingAnalysis key={`${projectId}:${current.id}:${version.id}:${params.get('pairingRun') ?? ''}`} salesRun={current} projectId={projectId} version={version} automatic={selection.automatic} onUpload={() => setUploading(true)} />
+    </> : !selection.error && <EmptyState title="先生成销售月报" description="上传销售表后，再查看对应月份的搭配建议。" action={<Button type="primary" onClick={() => setUploading(true)}>上传销售表</Button>} />}
+    <ReportHistory open={history} onClose={() => setHistory(false)} runs={runs} current={current} versions={versions} disabled={!!switching} onChoose={id => void choose(id)} />
+    {uploading && <SalesImportWizard projectId={projectId} versions={versions} onClose={() => { setUploading(false); void selection.reload() }} onDone={run => { setUploading(false); void selection.reload(run.id) }} />}
   </div>
 }
 
-function PairingAnalysis({ projectId, version, onUpload }: { projectId: string; version: Version; onUpload: () => void }) {
-  const [source, setSource] = useState<VersionDetail | null>(null)
-  const [current, setCurrent] = useState<QualityRun | null>(null), [prepared, setPrepared] = useState<QualityRun | null>(null)
-  const [basis, setBasis] = useState<QualityReport | null>(null)
-  const [task, setTask] = useState<{ phase: 'prepare' | 'analyze'; run: QualityRun; key: string } | null>(null)
-  const [loading, setLoading] = useState(true), [error, setError] = useState(''), [retry, setRetry] = useState(0), [busy, setBusy] = useState(false), [pollRetry, setPollRetry] = useState(0)
+function PairingAnalysis({ projectId, version, onUpload, salesRun, automatic }: { salesRun: SalesRun; projectId: string; version: Version; onUpload: () => void; automatic: ReturnType<typeof useAutomaticAnalyses> }) {
+  const [current, setCurrent] = useState<QualityRun | null>(null), [basis, setBasis] = useState<QualityReport | null>(null)
+  const [loading, setLoading] = useState(true), [error, setError] = useState(''), [retry, setRetry] = useState(0)
+  const step = automatic.data?.steps.association
   useEffect(() => {
     let active = true
-    setLoading(true); setError('')
-    async function load() {
-      const [detail, analyses, checks] = await Promise.all([dataApi.version(projectId, version.id), qualityApi.analysisRuns(projectId, version.id, 'association'), qualityApi.runs(projectId, version.id)])
-      const check = checks.items.find(r => ['succeeded', 'completed_with_warnings', 'not_applicable'].includes(r.status))
-      const [run, ready] = await Promise.all([analyses.items[0] ? qualityApi.run(projectId, analyses.items[0].id) : null, check ? qualityApi.run(projectId, check.id) : null])
-      const parent = run?.quality_run_id && run.quality_run_id !== ready?.id ? await qualityApi.run(projectId, run.quality_run_id) : ready
-      if (active) {
-        setSource(detail); setCurrent(run); setPrepared(ready); setBasis(parent?.result as QualityReport | null)
-        if (run && !finished.has(run.status)) setTask({ phase: 'analyze', run, key: crypto.randomUUID() })
-      }
-    }
-    load().catch(e => { if (active) setError(e.message) }).finally(() => { if (active) setLoading(false) })
+    setError('')
+    salesApi.pairings(projectId, salesRun.id, version.id, null).then(result => {
+      if (active) { setCurrent(result.current); setBasis(result.basis) }
+    }).catch(() => { if (active) setError('暂时无法读取搭配结果，请重试。') })
+      .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [projectId, version.id, retry])
-  useEffect(() => {
-    if (!task) return
-    let active = true, polling = false
-    const timer = window.setInterval(async () => {
-      if (polling) return
-      polling = true
-      try {
-        const run = await qualityApi.run(projectId, task.run.id)
-        if (!active) return
-        if (task.phase === 'analyze') {
-          setCurrent(run)
-          if (finished.has(run.status)) setTask(null)
-        } else if (finished.has(run.status)) {
-          const report = run.result as QualityReport | null
-          setPrepared(run); setBasis(report)
-          if (report?.capabilities?.association?.allowed && report.context.mapping_revision === source?.mapping.revision) {
-            const analysis = await qualityApi.associate(projectId, run.id, associationDefaults(), task.key)
-            if (active) { setCurrent(analysis); setTask({ ...task, phase: 'analyze', run: analysis }) }
-          } else {
-            setTask(null)
-            if (!report) setError(`订单整理未完成：${run.message}`)
-          }
-        }
-      } catch (e) { if (active) { setError((e as Error).message); window.clearInterval(timer) } }
-      finally { polling = false }
-    }, 1800)
-    return () => { active = false; window.clearInterval(timer) }
-  }, [projectId, task?.run.id, task?.phase, source?.mapping.revision, pollRetry])
-  const mapping = source?.mapping.config
-  const summaryTable = mapping?.record_kind === 'monthly_summary' || mapping?.record_kind === 'daily_summary'
-  const missingOrders = mapping?.order_boundary === 'unavailable' || (!mapping?.columns.order_id && mapping?.order_boundary !== 'row_basket')
-  const unsupported = summaryTable ? '这份表只有商品的汇总销量，没有每笔订单的商品明细，无法判断哪些商品经常一起买。'
-    : missingOrders ? '这份表没有标明哪些商品属于同一笔订单，无法分析商品搭配。'
-    : !mapping?.columns.item_id ? '还没有指定商品名称或编号所在列，无法分析商品搭配。' : ''
-  const readyReport = prepared?.result as QualityReport | null
-  const matching = readyReport?.context.mapping_revision === source?.mapping.revision
-  const blocked = !!readyReport && matching && !readyReport.capabilities.association?.allowed
-  const blockedReason = readyReport && blocked ? readyReport.summary.complete_baskets < 200
-    ? `能用于分析的订单只有 ${count(readyReport.summary.complete_baskets)} 笔，至少需要 200 笔。可以上传更多订单明细。`
-    : readyReport.summary.unique_items < 2 ? '订单里至少需要两种商品，才能分析搭配。'
-    : readyReport.capabilities.association.reasons.join('；').replace('购物篮或商品规模超出分析范围，请缩小业务筛选范围。', '订单或商品较多，请分成较小的表格后分析。') : ''
+  }, [projectId, salesRun.id, version.id, step?.status, step?.run_id, retry])
+  const month = salesRun.result!.month
+  const end = new Date(Number(month.slice(0, 4)), Number(month.slice(5)), 0).getDate()
   const report = current?.result as AssociationReport | null
-  const stale = !!report && report.context.mapping_revision !== source?.mapping.revision
-  const running = !!task
-  async function analyze() {
-    if (!source || unsupported || blocked || busy || running) return
-    setBusy(true); setError('')
-    const key = crypto.randomUUID()
-    try {
-      if (prepared && readyReport?.capabilities.association?.allowed && matching) {
-        const run = await qualityApi.associate(projectId, prepared.id, associationDefaults(), key)
-        setCurrent(run); setBasis(readyReport); setTask({ phase: 'analyze', run, key })
-      } else {
-        const policy = await qualityApi.policy(projectId, version.id, source.mapping.revision, cleanDefaults)
-        const run = await qualityApi.submit(projectId, version.id, policy.id, scopeDefaults, crypto.randomUUID())
-        setTask({ phase: 'prepare', run, key })
-      }
-    } catch (e) { setError((e as Error).message) }
-    finally { setBusy(false) }
-  }
+  const running = !step || !['ready', 'no_result', 'skipped', 'failed'].includes(step.status)
   if (loading) return <LoadingState />
-  if (!source) return <ErrorState message={error || '暂时无法读取这份表格。'} onRetry={() => setRetry(v => v + 1)} />
-  const scope = basis?.scope
-  const range = scope?.date_start || scope?.date_end ? `${scope.date_start ?? '最早记录'} 至 ${scope.date_end ?? '最新记录'}` : '所选文件中的全部订单'
   return <>
-    {!unsupported && <div className="pairing-context"><span>使用订单：{range}{!!scope?.countries.length && ` · ${scope.countries.join('、')}`}{!!scope?.item_ids.length && ` · ${scope.item_ids.length} 款指定商品`}</span>
-      {!blocked && <Button size="small" loading={busy} disabled={running} onClick={() => void analyze()}>{current ? '重新分析' : '分析搭配'}</Button>}
-    </div>}
-    {error && <Alert type="error" showIcon message={error} action={<Button size="small" onClick={() => { setError(''); task ? setPollRetry(v => v + 1) : setRetry(v => v + 1) }}>重试</Button>} />}
-    {unsupported || blocked ? <EmptyState compact title="这份表暂时不能分析搭配" description={unsupported || blockedReason} action={<div><div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}><Button type="primary" onClick={onUpload}>上传订单明细</Button><Button href={`/projects/${projectId}`}>返回销售总览</Button></div><p>订单明细需要包含订单编号和商品名称；同一笔订单的商品使用相同的订单编号。</p></div>} />
-      : running ? <div role="status" className="pairing-status"><h3>{task.phase === 'prepare' ? '正在整理订单' : '正在查找常见商品搭配'}</h3><p>请稍候，完成后会自动显示结果。</p></div>
-      : stale ? <EmptyState compact title="表格内容已调整" description="点击“重新分析”，更新搭配建议。" />
+    <div className="pairing-context"><span>使用订单：{month}-01 至 {month}-{end}</span></div>
+    {(error || automatic.error) && <Alert type="error" showIcon message={error || automatic.error} action={<Button size="small" onClick={() => setRetry(n => n + 1)}>重试</Button>} />}
+    {running ? <div role="status" className="pairing-status"><Spin /><h3>{step?.status === 'running' ? '正在查找常见商品搭配' : '正在自动整理订单'}</h3><p>完成后会自动显示结果，无需另外点击分析。</p></div>
+      : step?.status === 'skipped' ? <EmptyState compact title="当前数据暂不能分析搭配" description={step.message} action={<Button type="primary" onClick={onUpload}>上传订单明细</Button>} />
+      : step?.status === 'failed' ? <EmptyState compact title="搭配分析未完成" description={step.message} action={<Button onClick={automatic.retry}>重试分析</Button>} />
       : report?.summary.publishable && report.top_rules.some(rule => rule.lift > 1) ? <PairingResults key={current!.id} report={report} />
-      : <EmptyState compact title={report ? '暂时没找到常见搭配' : current ? '搭配分析未完成' : '查看哪些商品经常一起买'} description={report ? '这批订单中，暂时没发现明显的共同购买规律。' : current ? current.message : '点击“分析搭配”，程序会整理订单并查找经常一起购买的商品。'} />}
-    {!!report && !stale && !running && !unsupported && <details className="pairing-method"><summary>分析方法与详细结果</summary>
+      : <EmptyState compact title="暂时没找到常见搭配" description="这批订单中，暂时没发现明显的共同购买规律。" />}
+    {!!report && !running && step?.status !== 'skipped' && <details className="pairing-method"><summary>分析方法与详细结果</summary>
       <p>使用 FP-growth 查找同一订单中出现的商品组合，再按共同购买次数、购买比例和关联强度筛选。</p>
       <p>本次有 {count(report.summary.baskets)} 笔订单，其中 {count(report.summary.train_baskets)} 笔用于发现搭配，其余用于检查结果。页面中的比例来自发现搭配的订单。</p>
-      <p>筛选条件：共同购买至少 {report.analysis.min_count} 次，支持度至少 {percent(report.analysis.min_support)}，置信度至少 {percent(report.analysis.min_confidence)}。{report.evaluation_notice ? '先核对完整结果中的共同次数、热门影响和另一批订单中的表现，再展示有依据的组合。' : '从已有结果的前 50 条中展示关联强度大于 1 的组合。'}默认先看 5 组。</p>
+      <p>共同购买至少 {report.analysis.min_count} 次，支持度至少 {percent(report.analysis.min_support)}，置信度至少 {percent(report.analysis.min_confidence)}。默认先看5组。</p>
       {report.evaluation_notice && <p>{report.evaluation_notice}</p>}
-      {report.evaluations.filter(e => e.split === 'test').map(e => <p key={e.split}>测试订单中的推荐命中率：{e.hit_rate_at_5 === null ? '无结果' : percent(e.hit_rate_at_5)}；只推荐热门商品时的命中率：{e.popularity_hit_rate_at_5 === null ? '无结果' : percent(e.popularity_hit_rate_at_5)}。</p>)}
-      {!!report.summary.reasons.length && <p>{report.summary.reasons.join('；')}</p>}
-      <p>分析时间：{new Date(current!.finished_at ?? current!.created_at).toLocaleString('zh-CN')}。</p>
+      {!!basis?.scope.date_start && <p>只使用 {basis.scope.date_start} 至 {basis.scope.date_end} 的订单。</p>}
     </details>}
   </>
 }
 
 function PairingResults({ report }: { report: AssociationReport }) {
+  const [params] = useSearchParams()
+  let focused: string[] = []
+  try { const value: unknown = JSON.parse(params.get('pairingItems') ?? '[]'); if (Array.isArray(value) && value.every(v => typeof v === 'string')) focused = value } catch { /* optional link context */ }
   const [all, setAll] = useState(false), [query, setQuery] = useState('')
   const seen = new Set<string>()
   const rules = report.top_rules.filter(rule => {
     const key = [...items(rule.antecedents), ...items(rule.consequents)].sort().join('\u0000')
     if (seen.has(key) || rule.lift <= 1) return false
     seen.add(key); return true
+  })
+  if (focused.length) rules.sort((a, b) => {
+    const matches = (r: typeof a) => [...items(r.antecedents), ...items(r.consequents)].sort().join('\u0000') === [...focused].sort().join('\u0000')
+    return Number(matches(b)) - Number(matches(a))
   })
   const filtered = rules.filter(r => `${r.antecedents} ${r.consequents}`.toLowerCase().includes(query.toLowerCase().trim()))
   const visible = all ? filtered : rules.slice(0, 5)

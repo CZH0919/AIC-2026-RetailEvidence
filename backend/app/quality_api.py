@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import defer
 
 from .data_api import dump, require_project, scoped
 from .import_formats import DataIssue
@@ -224,7 +225,7 @@ def install_quality_routes(app):
     ):
         with app.state.sessions() as session:
             require_project(session, project_id)
-            query = select(AnalysisRun).where(AnalysisRun.project_id == str(project_id))
+            query = select(AnalysisRun).options(defer(AnalysisRun.result, raiseload=True)).where(AnalysisRun.project_id == str(project_id))
             if kind:
                 if kind not in TASK_SPECS:
                     raise DataIssue("请选择有效的处理类型。", "invalid_kind")

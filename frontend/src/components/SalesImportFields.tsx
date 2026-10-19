@@ -1,3 +1,4 @@
+import { quantityUnit, UNKNOWN_QUANTITY_UNIT } from '../quantity'
 import { Button, Input, Select } from 'antd'
 import type { Mapping, Preview } from '../data'
 import { MappingEditor } from './MappingEditor'
@@ -24,7 +25,7 @@ export function SalesImportFields({ preview, value, onChange }: { preview: Previ
       {noDateChoice ? <div className="sales-upload-field"><span>销售日期</span><div className="sales-upload-no-date">这份表没有可选的日期列。</div></div> : column('event_time', '销售日期', true)}
       {!value.columns.event_time && <Button type="link" size="small" className="sales-upload-month-link" onClick={() => setKind('monthly_summary')}>没有日期，按月汇总分析</Button>}
     </div>}
-      <label className="sales-upload-field"><span>销量单位</span><Input aria-label="销售表销量单位" value={value.quantity_unit} placeholder="例如：件、包、公斤" onChange={e => update({ quantity_unit: e.target.value })} /></label>
+      <label className="sales-upload-field"><span>销量单位（选填）</span><Input aria-label="销售表销量单位" value={quantityUnit(value.quantity_unit)} placeholder="例如：件、包、公斤；不清楚可留空" onChange={e => update({ quantity_unit: e.target.value || UNKNOWN_QUANTITY_UNIT })} /></label>
       <label className="sales-upload-field"><span>销售额怎么算</span><Select aria-label="销售额怎么算" value={value.amount_mode} options={[{ value: 'line_amount', label: '使用表格中的销售额' }, { value: 'quantity_unit_price', label: '销量 × 单价' }, { value: 'none', label: '没有销售额，只分析销量' }, ...(value.amount_mode === 'order_amount' ? [{ value: 'order_amount', label: '订单总额，每单计算一次' }] : [])]} onChange={amount_mode => update({ amount_mode })} /></label>
       {value.amount_mode === 'line_amount' && column('line_amount', '销售额', true)}
       {value.amount_mode === 'quantity_unit_price' && column('unit_price', '单价', true)}

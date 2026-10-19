@@ -1,3 +1,4 @@
+import { quantityUnit } from '../quantity'
 import { Button, Table } from 'antd'
 import { DownloadOutlined } from '@ant-design/icons'
 import type { SalesReport } from '../retail'
@@ -33,9 +34,9 @@ export function SalesReportExplanation({ report, onDownload }: {
   report: SalesReport; onDownload: (file: string) => void;
 }) {
   // The report generator leaves the daily chart empty only for monthly summaries.
-  const monthly = report.chart.length === 0 && report.products.length > 0
-  const forecastCount = report.products.filter(product => product.forecast).length
-  const anomalyCount = report.products.filter(product => product.anomalies.length > 0).length
+  const monthly = report.chart.length === 0 && report.summary.products > 0
+  const forecastCount = report.workspace_counts?.forecast ?? report.products.filter(product => product.forecast).length
+  const anomalyCount = report.workspace_counts?.anomaly ?? report.products.filter(product => product.anomalies.length > 0).length
   const incompleteDaily = !report.summary.complete_month || !report.parameters.complete_coverage
   const excluded = report.quality.reasons.filter(reason => reason.count > 0)
   const compareMonth = new Date(`${report.month}-01T00:00:00Z`)
@@ -95,7 +96,7 @@ export function SalesReportExplanation({ report, onDownload }: {
       <summary>技术详情与下载</summary>
       <div className="report-technical-content">
         <h4>重点商品怎么选</h4>
-        <p>{monthly ? '比较本月和上月的商品销量' : '比较月底最后七天和前七天的商品销量'}，变化达到 25% 且数量至少相差 3 {report.summary.unit}时，标为明显增加或减少。重点商品还包括有销量异常提醒的商品{report.change_drivers && '和销售额贡献较高的商品，兼顾变化影响与不同关注事项'}，首页最多展示五款。</p>
+        <p>{monthly ? '比较本月和上月的商品销量' : '比较月底最后七天和前七天的商品销量'}，变化达到 25% 且数量至少相差 3 {quantityUnit(report.summary.unit)}时，标为明显增加或减少。重点商品还包括有销量异常提醒的商品{report.change_drivers && '和销售额贡献较高的商品，兼顾变化影响与不同关注事项'}，首页最多展示五款。</p>
         <h4>预测方法与误差</h4>
         {report.forecast.metrics.length > 0 ? <>
           <p>{report.change_drivers ? '按历史成交情况比较不同销量参考，并检查最后几个时间段的表现。' : '对比梯度提升树、上一周销量、过去四周平均销量。'}本次主要采用：{methods[report.forecast.selected_method ?? ''] ?? report.forecast.selected_method ?? '未选择'}。</p>

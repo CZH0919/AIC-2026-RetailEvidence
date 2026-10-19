@@ -135,6 +135,7 @@
 .overview-action > div { flex: 1; min-width: 0; }
 .overview-action h4 { font-size: 14px; font-weight: 600; line-height: 1.6; overflow-wrap: anywhere; margin: 0; }
 .overview-action p { font-size: 12px; color: #62736a; line-height: 1.75; margin: 6px 0; }
+.overview-action p.overview-action-advice { color: #263f35; font-size: 13px; }
 .overview-action .ant-btn-link { padding-inline: 0; font-size: 12px; }
 .overview-action-details { margin-top: 4px; font-size: 12px; color: #62736a; }
 .overview-action-details summary { cursor: pointer; }
@@ -368,3 +369,11 @@
 .sales-assistant-questions p { margin: 0 0 2px; color: #62736a; font-size: 12px; }
 .sales-assistant-questions .ant-btn { height: auto; min-height: 36px; white-space: normal; text-align: left; justify-content: flex-start; padding: 8px 12px; }
 .product-detail-next { font-size: 13px; line-height: 1.8; color: #52675b; }
+
+.report-month-picker{display:inline-flex;align-items:center;gap:10px;white-space:nowrap;color:#657b87;font-size:13px}
+.report-pairing-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.report-history-notice{margin:0 0 20px}
+.report-history-intro{color:#657b87;margin:0 0 20px;line-height:1.8}
+.report-history-files{overflow-wrap:anywhere;font-size:12px;line-height:1.7}
+.report-switching{display:flex;align-items:center;justify-content:center;gap:14px;min-height:300px;color:#607883}
+@media(max-width:600px){.report-month-picker{width:100%;justify-content:space-between}.report-history-notice .ant-alert-action{margin-top:8px}.report-history-notice{flex-wrap:wrap}.report-pairing-toolbar{width:100%}}

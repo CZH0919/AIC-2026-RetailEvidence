@@ -239,6 +239,8 @@ def process_clustering(job, progress):
             "candidates": "cluster_candidates.csv",
         },
     }
+    from .customer_opportunities import build
+    report['customer_opportunities'] = build(frame, report, output)
     write_json(output / "cluster_report.json", report)
     progress("publishing", 96)
     return report

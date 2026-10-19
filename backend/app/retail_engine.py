@@ -16,7 +16,8 @@ from .data_api import digest, write_json
 from .import_formats import DataIssue
 from .product_insights import enrich_products, item_semantics, product_clusters, rank_focus
 from .quality import normalize
-from .sales_actions import build_actions
+from .sales_actions import ACTION_VERSION, build_actions
+from .sales_signals import unexplained_gaps, comparison, signal_view
 from .sales_mining import MODEL_VERSION, anomaly_series, calendar, forecast_series
 
 REASONS = {
@@ -72,11 +73,6 @@ def reason_for(row, config):
     ):
         return "invalid_quantity"
     return "included"
-
-
-def action_for(product):
-    actions = build_actions([product])
-    return actions[0] if actions else None
 
 
 def process_retail(job, progress):
@@ -302,6 +298,11 @@ def process_retail(job, progress):
         for d in closed
     ):
         raise DataIssue("标为停业的日期存在销售记录，请核对。", "closed_date_conflict")
+    unexplained = []
+    if complete and kind != "monthly_summary":
+        unexplained = unexplained_gaps(observed, params["coverage_start"],
+                                      min(params["coverage_end"], month_end.isoformat()), closed)
+        missing.update(unexplained)
     available = sorted({d[:7] for d in observed})
     totals = {}
     for m in [month, previous_month]:
@@ -424,6 +425,7 @@ def process_retail(job, progress):
             else []
         )
         flags, change, reason = [], None, ""
+        monthly_comparison = None
         if (
             complete_month
             and kind != "monthly_summary"
@@ -443,6 +445,9 @@ def process_retail(job, progress):
         ):
             prior_buckets = [b for d, b in by_item[key] if d.startswith(previous_month)]
             prior = float(sum((b["quantity"] for b in prior_buckets), Decimal(0)))
+            monthly_comparison = comparison(month, quantity, prior if prior_buckets else None)
+            if not comparative:
+                monthly_comparison["status"] = "missing_records"
             if prior_buckets and prior > 0:
                 change = (quantity - prior) / prior
                 if abs(change) >= 0.25 and abs(quantity - prior) >= 3:
@@ -468,6 +473,8 @@ def process_retail(job, progress):
                 "quantity": quantity,
                 "amount": amount,
                 "change": change,
+                "comparison": monthly_comparison,
+                "anomaly_check": anomaly.get("checks", {}).get(key),
                 "flags": flags,
                 "reason": reason,
                 "daily": daily_values,
@@ -486,7 +493,7 @@ def process_retail(job, progress):
         month,
         previous_month,
         comparative and mapping["amount_mode"] in {"line_amount", "quantity_unit_price"},
-        params,
+        {**params, "missing_dates": sorted(missing)},
     )
     for product in products:
         for event in product["anomaly_events"]:
@@ -505,7 +512,6 @@ def process_retail(job, progress):
         product_clusters(products) if not params.get("check_only") else {"status": "unavailable"}
     )
     attention, highlights = rank_focus(products)
-    actions = build_actions(products)
     chart = []
     if kind != "monthly_summary":
         for day in month_days:
@@ -559,6 +565,7 @@ def process_retail(job, progress):
         "available_months": available,
         "parameters": params,
         "source_ranges": ranges,
+        "coverage": {"unexplained_dates": unexplained},
         "sources": [
             {
                 k: s[k]
@@ -586,13 +593,14 @@ def process_retail(job, progress):
         }
         if totals[month]["amount"] is not None and mapping["amount_mode"] != "order_amount"
         else None,
-        "actions": actions,
+        "action_version": ACTION_VERSION,
+        "actions": build_actions(products, parameters=params, summary=summary, month=month),
         "forecast": {
             k: v
             for k, v in forecast.items()
             if k not in {"predictions", "backtests", "item_unavailability"}
         },
-        "anomaly": {k: v for k, v in anomaly.items() if k != "items"},
+        "anomaly": {k: v for k, v in anomaly.items() if k not in {"items", "checks"}},
         "quality": {
             "input_rows": input_rows,
             "included_rows": included_rows,
@@ -611,6 +619,10 @@ def process_retail(job, progress):
         report["notices"].append("完全重复候选仍按原记录保留，请在数据检查时核对。")
     if missing:
         report["notices"].append("单独标注的记录缺失日期保留未知，相关预测和跨期比较可能不可用。")
+    from .sales_focus import focus_view
+    report = focus_view(signal_view(report), output)
+    products = report["products"]
+    report["actions"] = build_actions(products, parameters=params, summary=report["summary"], month=month)
     progress("writing_results", 90)
     with (output / "sales_products.csv").open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.DictWriter(
@@ -659,4 +671,7 @@ def process_retail(job, progress):
         writer.writeheader()
         writer.writerows(records)
     write_json(output / "sales_report.json", report)
+    from .sales_views import write_views
+
+    write_views(output, report)
     return report

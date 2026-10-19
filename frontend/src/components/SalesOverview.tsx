@@ -1,3 +1,5 @@
+import { changePercent } from './ProductSignals'
+import { quantityUnit, quantityText } from '../quantity'
 import { Button, Select } from 'antd'
 import { MessageOutlined } from '@ant-design/icons'
 import type { SalesAction, SalesReport, SavedRecord } from '../retail'
@@ -9,26 +11,32 @@ function comparison(current: number | null, previous: number | null | undefined)
   if (current === null || previous == null) return '暂无上月对比'
   if (previous === 0) return '上月为 0'
   const change = (current - previous) / previous * 100
-  return change === 0 ? '与上月持平' : `比上月${change > 0 ? '增加' : '减少'} ${Math.abs(change).toFixed(1)}%`
+  return change === 0 ? '与上月持平' : `比上月${change > 0 ? '增加' : '减少'} ${changePercent(change / 100)}%`
 }
 
-export function SalesOverview({ report, chartScope, onChartScope, records, onProduct, onAllProducts, onActionGroup, onActionStatus, onActionNote, onAsk }: {
+export function SalesOverview({ report, chartScope, onChartScope, records, onProduct, onAllProducts, onActionOpen, onActionStatus, onActionNote, onAsk }: {
   report: SalesReport
   chartScope: string
   onChartScope: (scope: string) => void
   records: Record<string, SavedRecord>
   onProduct: (id: string) => void
   onAllProducts: () => void
-  onActionGroup: (action: SalesAction) => void
+  onActionOpen: (action: SalesAction) => void
   onActionStatus: (action: SalesAction, status: string) => void
   onActionNote: (action: SalesAction) => void
   onAsk: () => void
 }) {
   const { summary } = report
+  const unit = quantityUnit(summary.unit)
   const amountChart = summary.amount !== null && report.chart.some(point => point.amount !== null)
   const chart = chartScope === 'previous' && report.previous_chart?.length ? report.previous_chart : report.chart
   const highlights = report.highlights.map(id => report.products.find(product => product.id === id)).filter(product => product !== undefined).slice(0, 5)
   const actions = report.actions.slice(0, 3)
+  const previousActions = (report.previous_actions ?? []).filter(action => {
+    const record = records[`action:${action.id}`]?.value
+    return record && (record.note || (record.status && record.status !== 'pending'))
+  })
+  const statusNames: Record<string, string> = {pending: '待处理', done: '已处理', declined: '暂不采用'}
 
   return <div className="sales-overview">
     <section className="overview-metrics" aria-label="本月销售概况">
@@ -39,13 +47,13 @@ export function SalesOverview({ report, chartScope, onChartScope, records, onPro
       </div>
       <div>
         <span>销量</span>
-        <strong>{number(summary.quantity)}</strong>
-        <p>{comparison(summary.quantity, summary.previous?.quantity)}<small>{summary.unit}</small></p>
+        <strong>{number(summary.quantity)}{unit && <small>{unit}</small>}</strong>
+        <p>{comparison(summary.quantity, summary.previous?.quantity)}</p>
       </div>
     </section>
 
     <section className="overview-trend">
-      <div className="overview-section-heading"><h3>销售趋势 <small className="overview-muted">{amountChart ? `销售额 · ${summary.currency ?? ''}` : `销量 · ${summary.unit}`}</small></h3>
+      <div className="overview-section-heading"><h3>销售趋势 <small className="overview-muted">{amountChart ? `销售额 · ${summary.currency ?? ''}` : `销量${unit ? ` · ${unit}` : ''}`}</small></h3>
         {!!report.previous_chart?.length && <div className="overview-chart-switch" aria-label="比较月份">
           <Button size="small" type={chartScope === 'current' ? 'primary' : 'text'} onClick={() => onChartScope('current')}>本月</Button>
           <Button size="small" type={chartScope === 'previous' ? 'primary' : 'text'} onClick={() => onChartScope('previous')}>上月</Button>
@@ -62,33 +70,31 @@ export function SalesOverview({ report, chartScope, onChartScope, records, onPro
     <div className="overview-bottom-grid">
       <section className="overview-panel">
         <div className="overview-section-heading"><h3>重点商品</h3><Button type="link" size="small" onClick={onAllProducts}>查看全部</Button></div>
-        {highlights.length > 0 && <p className="overview-muted">先看这 {highlights.length} 款，点击商品查看趋势和原因。</p>}
+        {highlights.length > 0 && <p className="overview-muted">按销售贡献和明显变化选出这 {highlights.length} 款，点击查看详情。</p>}
         <ul className="overview-products">
           {highlights.map(product => <li key={product.id}>
             <Button type="link" className="overview-product-name" onClick={() => onProduct(product.id)}>{product.name}</Button>
-            <div className="overview-product-stats"><span>销量 <strong>{number(product.quantity)}</strong></span>{product.amount !== null && <span>销售额 <strong>{number(product.amount)}</strong> {summary.currency}</span>}</div>
-            <div className="overview-product-hints">
-              {!!product.profile && <span>{product.focus_reason}</span>}
-              {product.flags.includes('growth') && <span className="overview-positive">{product.daily.length ? '月底' : '本月'}销量增加</span>}
-              {product.flags.includes('decline') && <span>{product.daily.length ? '月底' : '本月'}销量减少</span>}
-              {product.anomalies.length > 0 && <span>销量异常：{product.anomalies.length} 天</span>}
-            </div>
+            <div className="overview-product-stats"><span>销量 <strong>{number(product.quantity)}</strong>{unit && ` ${unit}`}</span>{product.amount !== null && <span>销售额 <strong>{number(product.amount)}</strong> {summary.currency}</span>}</div>
+            {product.focus && <div className="overview-product-hints"><strong>{product.focus.label}</strong><span>{product.focus.reason}</span></div>}
           </li>)}
         </ul>
-        {!highlights.length && <p className="overview-muted">本次没有重点提醒，可查看全部商品。</p>}
+        {!highlights.length && <p className="overview-muted">本次没有足够依据选出重点商品，可查看全部商品。</p>}
       </section>
 
       <section className="overview-panel">
         <div className="overview-section-heading"><h3>接下来先做</h3><span className="overview-muted">{actions.length} 项行动</span></div>
+        {actions.length > 0 && <p className="overview-muted">按影响范围和依据选出最值得尝试的行动，相同做法只保留一条。</p>}
         {actions.map((action, index) => <article className="overview-action" key={action.id}>
           <span className="overview-action-number">{index + 1}</span>
           <div>
+            {action.category && <span className="overview-muted">{action.category}</span>}
             <h4>{action.title}</h4>
-            <p>{action.text.replace(/\s*另有.*$/, '')}</p>
-            <Button type="link" size="small" onClick={() => onActionGroup(action)}>查看相关记录（{action.related_items?.length ?? 1}）</Button>
+            <p className="overview-action-advice">{action.text}</p>
+            <p>{quantityText(action.reason)}</p>
+            <Button type="link" size="small" onClick={() => onActionOpen(action)}>{action.button_label ?? `查看 ${action.item_name ?? '商品'}`}</Button>
             <details className="overview-action-details">
-              <summary>依据与处理记录</summary>
-              <p>{action.reason}</p><p className="overview-muted">{action.review}</p>
+              <summary>备注与处理状态</summary>
+              <p className="overview-muted">{action.review}</p>
               <div className="sales-action-tools">
                 <Select aria-label={`处理状态 ${action.title}`} value={records[`action:${action.id}`]?.value.status ?? 'pending'} style={{ width: 105 }} options={[{ value: 'pending', label: '待处理' }, { value: 'done', label: '已处理' }, { value: 'declined', label: '暂不采用' }]} onChange={status => onActionStatus(action, status)} />
                 <Button size="small" onClick={() => onActionNote(action)}>备注</Button>
@@ -97,7 +103,14 @@ export function SalesOverview({ report, chartScope, onChartScope, records, onPro
             </details>
           </div>
         </article>)}
-        {!actions.length && <p className="overview-muted">本次没有特别行动建议，继续查看销售变化。</p>}
+        {!actions.length && <p className="overview-muted">本次没有足够依据推荐具体行动，可先查看重点商品和销售趋势。</p>}
+        {previousActions.length > 0 && <details className="overview-action-details">
+          <summary>此前建议的处理记录（{previousActions.length}）</summary>
+          {previousActions.map(action => <div key={action.id}>
+            <p><strong>{action.title}</strong> · {statusNames[records[`action:${action.id}`].value.status ?? 'pending'] ?? '待处理'}</p>
+            {records[`action:${action.id}`].value.note && <p className="sales-note">{records[`action:${action.id}`].value.note}</p>}
+          </div>)}
+        </details>}
       </section>
     </div>
     <footer className="overview-footer"><Button type="text" icon={<MessageOutlined />} onClick={onAsk}>有疑问？问问销售助手</Button></footer>

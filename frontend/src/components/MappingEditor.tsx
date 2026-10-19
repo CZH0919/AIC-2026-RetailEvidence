@@ -1,3 +1,4 @@
+import { quantityUnit, UNKNOWN_QUANTITY_UNIT } from '../quantity'
 import { useState } from 'react'
 import { Alert, Button, Checkbox, Input, Select } from 'antd'
 import type { Mapping, Preview } from '../data'
@@ -29,7 +30,7 @@ export function MappingEditor({ preview, value, onChange }: { preview: Preview; 
       {select('order_boundary', '订单边界', [['order_id', '相同标识为同一订单'], ['basket_id', '相同标识为同一购物篮'], ['row_basket', '原始每行是一个购物篮'], ['unavailable', '无法确认订单边界']])}
       {select('amount_mode', '金额口径', [['none', '不使用金额'], ['line_amount', '使用行金额'], ['quantity_unit_price', '使用数量 × 单价'], ['order_amount', '使用订单总额，每单计一次']])}
       {value.amount_mode !== 'none' && !value.columns.currency && <label className="data-field"><span>固定币种</span><Input aria-label="固定币种" maxLength={3} placeholder="例如 GBP / CNY" value={value.currency_constant ?? ''} onChange={e => update({ currency_constant: e.target.value.toUpperCase() || null })} /></label>}
-      {value.columns.quantity && <label className="data-field"><span>数量单位</span><Input aria-label="数量单位" maxLength={64} placeholder="例如 件、包或原始商品单位" value={value.quantity_unit} onChange={e => update({ quantity_unit: e.target.value })} /></label>}
+      {value.columns.quantity && <label className="data-field"><span>销量单位（选填）</span><Input aria-label="数量单位" maxLength={64} placeholder="例如：件、包、公斤；不清楚可留空" value={quantityUnit(value.quantity_unit)} onChange={e => update({ quantity_unit: e.target.value || UNKNOWN_QUANTITY_UNIT })} /></label>}
       {value.columns.event_time && <>{select('time_format', '时间格式', [['iso8601', 'ISO 日期 / Excel 日期'], ['%Y-%m-%d', '年-月-日'], ['%Y/%m/%d', '年/月/日'], ['%Y-%m-%d %H:%M:%S', '年-月-日 时:分:秒'], ['%d/%m/%Y %H:%M', '日/月/年 时:分'], ['%m/%d/%Y %H:%M', '月/日/年 时:分'], ['%d/%m/%Y', '日/月/年'], ['%m/%d/%Y', '月/日/年']])}
         {select('timezone', '时间所属时区', [['Europe/London', '伦敦'], ['Asia/Shanghai', '中国标准时间'], ['UTC', 'UTC'], ['America/New_York', '纽约'], ['Europe/Berlin', '柏林'], ['Asia/Tokyo', '东京']])}</>}
       {select('status_rule', '取消与退货含义', [['unspecified', '含义未知，保留待核验'], ['all_forward', '确认全部为正向记录'], ['uci_cancel_prefix', '订单 C 前缀表示取消（UCI）'], ['status_column', '由状态列明确区分']])}

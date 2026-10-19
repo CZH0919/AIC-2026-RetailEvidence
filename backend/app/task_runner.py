@@ -10,7 +10,7 @@ import sys
 import time
 
 import psutil
-from sqlalchemy import select
+from sqlalchemy import select, case
 
 from .data_api import digest, dump, write_json
 from .locks import FileLease
@@ -122,11 +122,15 @@ class TaskRunner:
                 if not recovered:
                     self.recovery()
                     recovered = True
+                from .sales_automation import advance
+                await asyncio.to_thread(advance, self.sessions)
                 with self.sessions() as session:
                     identity = session.scalar(
                         select(AnalysisRun.id)
                         .where(AnalysisRun.status == "queued")
-                        .order_by(AnalysisRun.created_at, AnalysisRun.id)
+                        .order_by(case((AnalysisRun.kind == "sales", 0),
+                                       (AnalysisRun.parameters.contains('"automatic_parent"'), 2), else_=1),
+                                  AnalysisRun.created_at, AnalysisRun.id)
                         .limit(1)
                     )
                 if identity:
@@ -239,6 +243,18 @@ class TaskRunner:
                             "scope": parameters["scope"],
                             "context": context,
                         }
+                        if parameters.get("automatic_parent"):
+                            from .retail_api import resolve_sources
+                            parent = session.get(AnalysisRun, parameters["automatic_parent"]["sales_run_id"])
+                            if not parent or parent.project_id != run.project_id or parent.status not in PUBLISHED:
+                                raise ValueError("Automatic analysis parent is unavailable")
+                            sales = json.loads(parent.parameters)["sales"]
+                            job["automatic_input"] = {
+                                "sources": resolve_sources(session, self.storage, run.project_id, sales["sources"]),
+                                "hashes": sales["source_hashes"],
+                                "audit": str(self.storage / "runs" / run.project_id / parent.id / "sales_row_audit.csv"),
+                                "metadata": parameters["automatic_parent"],
+                            }
                     elif run.kind in {"clustering", "association"}:
                         from .analysis_inputs import resolve_analysis_input
                         from .quality_schemas import AnalysisParameters
