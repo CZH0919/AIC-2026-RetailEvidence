@@ -87,3 +87,8 @@ export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_TH
 ## 0.6.3 全站文案核查
 
 本轮16区域、35主操作组、42帮助、12固定AI问题和6受控模型故障实际重跑。32项（5P0/19P1/8P2）完成处理，保留业务限制和全部质量详情；76 Python执行案例+6subtests、帮助3内容测试、受影响范围Ruff与构建PASS。全scripts132条继承格式问题单列FAIL，真人与长时预算未验证。见[原始审计](docs/USER_FACING_COPY_AUDIT.md)、[改造及前后对比](docs/USER_FACING_COPY_CHANGES.md)、[本轮验收](docs/USER_FACING_COPY_ACCEPTANCE.md)、[后续规范](docs/USER_FACING_COPY_STYLE_GUIDE.md)。
+
+
+### 商业UI样板反馈修订（未发布）
+
+月报通用说明收进现有帮助，分类金额、关注原因与行动依据按需展开；动态风险、人工确认与原始证据保留。仍在特性分支审美确认阶段，应用版本0.6.3不变。详见[本轮修订及验收](docs/UI_REDESIGN_COPY_REFINEMENT.md)。

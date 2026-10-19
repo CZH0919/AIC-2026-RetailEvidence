@@ -61,3 +61,8 @@
 本机隧道已实测：基线 http://127.0.0.1:18110 ，样板 http://127.0.0.1:18111 。相同固定run入口见BEFORE_AFTER。它们只对当前Windows本机有效，非公开评委链接。
 
 TASK/start_baseline.sh、start_candidate.sh分别对应本任务服务，受控最终干净检出可能使用start_verified.sh，实际运行路径/提交以 /assets/ui-release.json 和最终收据为准。查看tmux list-sessions/对应log，避免重复启动。回滚仅停本任务re-ui-preview，直接查看18110原版或以160a90c构建重开独立预览；无需恢复业务数据库。不要停止/改写共享正式服务。最终交付后再回读隧道manifest确认SHA。
+
+
+## 用户样板反馈：说明按需展开（2026-10-19）
+
+本轮针对常驻解释过多的反馈已实施并复测，详见[说明收纳修订及真实截图](UI_REDESIGN_COPY_REFINEMENT.md)。9项前端检查和16组浏览器检查通过。仅两条固定说明转入帮助，动态风险直接显示；其余表格与依据可点击展开。仍未获得全站视觉批准，main及共享正式部署不变。

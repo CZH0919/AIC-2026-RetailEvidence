@@ -18,8 +18,8 @@ export function ClassificationEditor({source, sourceLabel, value, onChange}:{sou
   const problems = classificationProblems(value)
   const rule = (index:number, patch:Partial<ClassificationRule>) => onChange({...value, confirmed:false, rules:value.rules.map((r,i)=>i===index?{...r,...patch}:r)})
   return <section className="classification-editor">
-    <h4>确认记录类型 · 字段版本 {source.mapping_revision}</h4><p className="classification-source">{sourceLabel ?? `数据 ${source.version_id.slice(0,8)}`} · M{source.mapping_revision}</p><HelpHint topic="UX16" />
-    <p>销量、商品列表与备货只包含已确认实物。金额是否计入需另行确认；不清楚的记录请保留待确认。修改后须重新检查并生成新月报，旧报告保留。</p>
+    <h4>确认记录类型 · 字段版本 {source.mapping_revision}</h4><p className="classification-source">{sourceLabel ?? `数据 ${source.version_id.slice(0,8)}`} · M{source.mapping_revision}</p><HelpHint topic="UX16" context="销量、商品列表与备货只包含已确认实物。金额是否计入需另行确认；不清楚的记录请保留待确认。修改后须重新检查并生成新月报，旧报告保留。" />
+    <p>不清楚的记录保留“待确认”。</p>
     <label>其余记录类型<Select aria-label="其余记录类型" style={{width:'100%'}} value={value.default_kind} options={kinds} onChange={v=>onChange({...value, default_kind:v,confirmed:false})}/></label>
     <HelpHint topic="UX17" /><label>其余记录金额口径<Select aria-label="其余记录金额口径" style={{width:'100%'}} value={value.default_amount_treatment} options={amounts} onChange={v=>onChange({...value, default_amount_treatment:v,confirmed:false})}/></label>
     <HelpHint topic="UX18" />{problems.length > 0 && <Alert type="warning" showIcon title="请先补全分类规则" description={problems.slice(0,10).map(p => <p key={p}>{p}</p>)} />}{value.rules.map((r,i)=><div key={i} className="classification-rule">

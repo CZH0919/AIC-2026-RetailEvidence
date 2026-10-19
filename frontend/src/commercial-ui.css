@@ -90,3 +90,15 @@
 
 /* Keep evidence prose readable within the table's existing horizontal scroll. */
 .sales-workspace .sales-row-reason { min-width: 300px; }
+
+/* Progressive disclosure: retain facts and actions, reduce repeated helper prose. */
+.sales-financial-details { padding: 12px 0; border-bottom: 1px solid #dde2e5; }
+.sales-financial-details > summary { font-size: 14px; font-weight: 500; }
+.sales-financial-details > h3 { margin: 16px 0 8px; font-size: 16px; }
+.sales-financial-details > p { font-size: 14px; line-height: 1.7; }
+.sales-explanation { margin-top: 8px; }
+.sales-explanation > summary, .sales-financial-details > summary { cursor: pointer; color: #087f73; line-height: 24px; padding-block: 4px; width: fit-content; max-width: 100%; }
+.sales-explanation > summary:hover, .sales-financial-details > summary:hover { text-decoration: underline; }
+.sales-explanation > summary:focus-visible, .sales-financial-details > summary:focus-visible { outline: 2px solid #087f73; outline-offset: 3px; border-radius: 2px; }
+.sales-explanation p { font-size: 14px; line-height: 1.7; color: #53616f; margin-block: 8px; }
+.sales-current-warning { padding: 8px 12px; border-left: 3px solid #a66a00; background: #fff8e6; color: #684500; }
