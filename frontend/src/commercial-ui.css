@@ -1,0 +1,60 @@
+/* Commercial UI prototype: shared tokens and three sales views.
+   No business state, requests, chart inputs or overlay layers are changed. */
+.project-heading { margin-bottom: 20px; gap: 16px; }
+.project-heading h1 { font-size: 22px; line-height: 1.45; font-weight: 650; }
+.project-heading p { font-size: 14px; color: #53616f; line-height: 1.6; }
+.back-link { margin-bottom: 16px; font-size: 14px; }
+.project-tabs { margin-bottom: 16px; }
+.project-tabs a { padding-bottom: 12px; }
+.sales-workspace { color: #1f2933; padding-bottom: 8px; }
+.sales-workspace > .help-topic-row { margin: 0; gap: 12px; }
+.sales-toolbar { padding: 12px 0 16px; gap: 12px; }
+.sales-toolbar h2 { font-size: 20px; line-height: 28px; }
+.sales-toolbar > div { align-items: center; }
+.sales-workspace > section.sales-band { padding: 20px 0; }
+.sales-workspace > section.sales-band > h3 { font-size: 16px; margin: 0 0 8px; }
+.sales-section-heading { justify-content: flex-start; gap: 8px 16px; margin-bottom: 16px; }
+.sales-section-heading h3 { font-size: 18px; line-height: 26px; margin-right: auto; }
+.sales-metrics { gap: 0; padding: 0; margin: 0 0 16px; background: #f5f7f7; border: 1px solid #e2e7e7; border-radius: 8px; }
+.sales-metrics > div { border: 0; padding: 16px 20px; min-width: 0; }
+.sales-metrics > div + div { border-left: 1px solid #dde2e5; }
+.sales-metrics span { font-size: 14px; color: #53616f; line-height: 22px; margin-bottom: 8px; }
+.sales-metrics strong { font-size: 28px; line-height: 36px; font-weight: 650; font-variant-numeric: tabular-nums; overflow-wrap: normal; }
+.sales-metrics small { display: inline-block; font-size: 14px; margin-left: 8px; white-space: nowrap; }
+.sales-summary { margin: 8px 0 12px; }
+.sales-caveat, .sales-row-reason, .sales-focus-reasons p { font-size: 14px; color: #53616f; }
+.sales-workspace .ant-table-cell { font-variant-numeric: tabular-nums; }
+.sales-workspace .ant-table-thead > tr > th { background: #f5f6f7; font-weight: 600; }
+.sales-workspace .ant-table-tbody > tr > td { padding-block: 12px; }
+.sales-item-name { font-weight: 500; }
+.sales-filter { align-items: center; gap: 12px; padding: 0 0 16px; }
+.sales-action { gap: 12px; padding: 20px 0; }
+.sales-action-index { color: #53616f; font-size: 16px; line-height: 24px; }
+.sales-action h4 { font-size: 16px; line-height: 24px; }
+.sales-action small { color: #53616f; font-size: 14px; }
+.sales-action-tools .ant-btn-link { padding-inline: 0; }
+.sales-focus-reasons { padding-top: 4px; }
+.sales-focus-reasons strong { min-width: 100px; font-weight: 600; }
+.sales-band > details.sales-band { padding: 16px 0; margin-top: 12px; }
+.sales-bottom { padding-top: 16px; border-top: 1px solid #dde2e5; }
+@media (max-width: 1000px) {
+  .sales-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sales-metrics > div:first-child { grid-column: 1 / -1; border-bottom: 1px solid #dde2e5; }
+  .sales-metrics > div:nth-child(2) { border-left: 0; }
+}
+@media (max-width: 640px) {
+  .project-heading { gap: 12px; }
+  .project-heading > .ant-btn { margin-left: 0; }
+  .project-heading h1 { font-size: 20px; }
+  .project-heading p { font-size: 14px; }
+  .sales-workspace > section.sales-band { padding: 20px 0; }
+  .sales-toolbar > div { width: 100%; }
+  .sales-toolbar > div > .ant-select { width: 100%; flex: 1 0 100%; }
+  .sales-section-heading { gap: 8px; }
+  .sales-section-heading h3 { flex: 1 0 100%; font-size: 18px; }
+  .sales-metrics > div { padding: 14px 16px; }
+  .sales-metrics strong { font-size: 26px; line-height: 34px; }
+  .sales-metrics small { display: inline-block; margin-left: 8px; }
+  .sales-filter > .ant-input-search { flex: 1 0 100%; }
+  .sales-focus-reasons strong { max-width: none; }
+}
