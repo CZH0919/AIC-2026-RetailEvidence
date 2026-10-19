@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "id": "csv_invalid_file_encoding_and_separator_recovery",
+      "status": "PASS",
+      "kind": "real-ui"
+    },
+    {
+      "id": "draft_discard_does_not_touch_saved_versions",
+      "status": "PASS",
+      "kind": "real-ui"
+    },
+    {
+      "id": "xlsx_mismatched_sheets_then_valid_preview",
+      "status": "PASS",
+      "kind": "real-ui"
+    },
+    {
+      "id": "all_export_options_and_print_appendix",
+      "status": "PASS",
+      "kind": "real-ui"
+    },
+    {
+      "id": "isolated_ai_failure_and_template_states_leave_report_unchanged",
+      "status": "PASS",
+      "kind": "isolated-fault-injection"
+    }
+  ],
+  "errors": [],
+  "project": "0e8358eb-43c0-4e3f-a12e-bc6080490012"
+}

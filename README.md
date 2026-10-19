@@ -10,9 +10,11 @@
 
 AI 只解释冻结证据，数字由程序填写。没有库存不能算进货量，没有成本不算利润；七天销量参考不等于整月采购量。公开批发数据验收不代表小店真实经营收益。
 
-## 商业化 UI 样板（独立分支，待视觉确认）
+## 商业化 UI（2026-10-19）
 
-feature/commercial-ui-refresh 保留0.6.3业务与历史报告，先完成真实基线再做月报、商品/详情、业务分类三类样板。尚未推广全站或替换原演示。见[基线](docs/UI_REDESIGN_BASELINE.md)、[方向](docs/UI_REDESIGN_DIRECTION.md)、[验收及未覆盖项](docs/UI_REDESIGN_ACCEPTANCE.md)、[实际前后对照与入口](docs/UI_REDESIGN_BEFORE_AFTER.md)。
+用户已确认样板及说明收纳方向；现已统一项目库、导入/映射、月报、商品抽屉、质量与RF/RFM/共购。减少常驻小字，原帮助、风险与全部操作保留；计算、历史报告及导出内容不改，应用仍0.6.3。50组浏览器、17项展示合同、76pytest+6subtests及17项结果/请求对账通过，最终main干净检出收据独立保存。
+
+[基线](docs/UI_REDESIGN_BASELINE.md) · [官方参考及方向](docs/UI_REDESIGN_DIRECTION.md) · [实际验收与未覆盖项](docs/UI_REDESIGN_ACCEPTANCE.md) · [真实前后截图及独立预览](docs/UI_REDESIGN_BEFORE_AFTER.md)。现有演示和共享正式服务未替换。
 
 ## 站内操作提示与使用说明
 
@@ -89,6 +91,6 @@ export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_TH
 本轮16区域、35主操作组、42帮助、12固定AI问题和6受控模型故障实际重跑。32项（5P0/19P1/8P2）完成处理，保留业务限制和全部质量详情；76 Python执行案例+6subtests、帮助3内容测试、受影响范围Ruff与构建PASS。全scripts132条继承格式问题单列FAIL，真人与长时预算未验证。见[原始审计](docs/USER_FACING_COPY_AUDIT.md)、[改造及前后对比](docs/USER_FACING_COPY_CHANGES.md)、[本轮验收](docs/USER_FACING_COPY_ACCEPTANCE.md)、[后续规范](docs/USER_FACING_COPY_STYLE_GUIDE.md)。
 
 
-### 商业UI样板反馈修订（未发布）
+### 说明按需展开
 
-月报通用说明收进现有帮助，分类金额、关注原因与行动依据按需展开；动态风险、人工确认与原始证据保留。仍在特性分支审美确认阶段，应用版本0.6.3不变。详见[本轮修订及验收](docs/UI_REDESIGN_COPY_REFINEMENT.md)。
+月报通用说明收进现有帮助，分类金额、关注原因与行动依据按需展开；动态风险、人工确认与原始证据保留。用户已批准并推广全站，应用版本0.6.3不变。详见[本轮修订及验收](docs/UI_REDESIGN_COPY_REFINEMENT.md)。

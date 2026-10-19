@@ -1,12 +1,9 @@
-# 2026-10-19 样板反馈修订完成，等待审美确认
+# 商业化 UI 全站推广
 
-- 在feature/commercial-ui-refresh基于a35ba1b减少常驻说明：仅两条固定说明移入UX27帮助，分类金额/关注原因/行动依据按需展开，分类长解释进入UX16帮助；未知和动态风险不折叠。
-- 主要开发在远端updates/ui_refresh_20261019_01/copy-refinement/source；在线备份独立SQLite，state/storage/profile均独立；共享正式源码、数据库和服务未动。
-- 本轮构建/类型检查PASS、Node9 PASS、真实浏览器16组PASS（6针对性+6页面保护+4样板），包含一个明确标记的隔离告警注入；正常流程和下载连接真实后端。固定result与下载JSON逐字段不变，金额66434.40、数量10640、订单1326。
-- 保存1440/390本轮前后截图，docs/UI_REDESIGN_COPY_REFINEMENT.md记录变更和测试。第一轮定位失败保留copy-density-attempt1，不伪造首次全通过。
-- 尚未合并main、尚未全站推广，等待用户确认三类样板；原生缩放/PDF逐页及全站组合仍未执行。本轮CPU AI尚未重测，不用前轮结果冒充。
-- 下一步D盘同步审核、特性分支commit/push/fetch，更新本任务预览版本收据；不得替换共享正式服务。
+用户已确认40ad样板及说明收纳方向。主开发远端个人updates/ui_refresh_20261019_01/whole-site/source；Windows D盘负责Git/文档/证据。共享AIC_Project及其数据库/服务不改。
 
+已提交6df42a8基线、bb5b539样式、c0ab33a展示、e924adc测试；8组件+CSS，后端/API/算法/路由/依赖未改。17Node、类型构建、76pytest+6subtests、50浏览器组和17项对账PASS；28对新截图、200%实际Chrome及默认2页/附页3页PDF已检查。候选18103启动metadata仍40ad，不能当最终SHA；必须从实际GitHub main新检出复测，见外部release_receipt。
 
-## 用户确认后全站扩展
-- 2026-10-19 已确认方向，whole-site/source 与独立 18103 服务。28 张新增页面基线 PASS；已保留定位失败证据。尚未修改其他业务页面，准备按统一规范推广，未合并 main。
+本地D evidence/whole-site、whole-finish、whole-extra与远端对应目录保存真实记录/失败尝试；Git只放合成数据截图和小收据。CSV规范根whole-site/csv，避免与XLSX混同。
+
+下一步：完成发布前扫描→正常推送特性分支和main（最新main仍160a90c）→fetch核SHA→全新final-main/source构建/在线备份隔离状态→独立18104与本机18113→最终端到端复验和收据。现有18101/本机18111批准样板及18100基线不换。无C盘批准例外，无sudo；OS/Codex后台写入无法承诺零。未做真实商户研究，未穷尽所有帮助/任务/权限/商品分页组合，详细NOT_RUN见验收。

@@ -47,9 +47,28 @@
 |![错误前](ui_redesign_images/before_v2_390_classification_error.png)|![错误后](ui_redesign_images/after_v2_390_classification_error.png)|
 |![768前](ui_redesign_images/before_v2_768_report.png)|![768后](ui_redesign_images/after_v2_768_report.png)|
 
-样板已完成工程回归，**审美尚未批准**。请重点判断青绿/中性表面比例、密度、字号、表格与规则表单是否适合日常使用。确认后再推广到项目库、导入/映射、质量与更多分析等其余页面；此处不把三页样板称为全站完成。
+样板已完成工程回归，**样板方向已获用户确认**；以上保留原样板对照，下面记录已按同方向完成的全站推广。
 
 
 ## 用户样板反馈：说明按需展开（2026-10-19）
 
-本轮针对常驻解释过多的反馈已实施并复测，详见[说明收纳修订及真实截图](UI_REDESIGN_COPY_REFINEMENT.md)。9项前端检查和16组浏览器检查通过。仅两条固定说明转入帮助，动态风险直接显示；其余表格与依据可点击展开。仍未获得全站视觉批准，main及共享正式部署不变。
+本轮针对常驻解释过多的反馈已实施并复测，详见[说明收纳修订及真实截图](UI_REDESIGN_COPY_REFINEMENT.md)。9项前端检查和16组浏览器检查通过。仅两条固定说明转入帮助，动态风险直接显示；其余表格与依据可点击展开。该段为样板反馈历史；用户随后已批准继续全站，当前结果见下方及最新验收。
+
+## 全站推广（用户确认后，2026-10-19）
+
+同一40ad批准版本作为剩余页面改前，c0ab33a产品为改后。空态/项目/上传/解析/映射/数据/质量28对截图逐张复核，固定项目与版本不变，项目编辑与草稿只使用隔离fixture。完整原图和viewport记录在TASK/evidence/whole-site/whole-before、whole-after；仓库选8对。实际全站入口为最终收据对应的[独立全站月报](http://127.0.0.1:18113/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e)，与原18111样板分别保留。
+
+项目库用紧凑行列表；上传保持步骤和按钮，说明靠近原帮助；映射标签与帮助对齐；已保存原始预览和字段AI按需展开；质量/RF/RFM/共购数值分组、右对齐，范围与过程按需展开，真实错误和限制直接显示。
+
+|页面/视口|改前|改后|
+|---|---|---|
+|library / 1440|![前](ui_redesign_images/whole_before_1440_library.png)|![后](ui_redesign_images/whole_after_1440_library.png)|
+|library / 390|![前](ui_redesign_images/whole_before_390_library.png)|![后](ui_redesign_images/whole_after_390_library.png)|
+|upload / 1440|![前](ui_redesign_images/whole_before_1440_upload.png)|![后](ui_redesign_images/whole_after_1440_upload.png)|
+|upload / 390|![前](ui_redesign_images/whole_before_390_upload.png)|![后](ui_redesign_images/whole_after_390_upload.png)|
+|mapping / 1440|![前](ui_redesign_images/whole_before_1440_mapping.png)|![后](ui_redesign_images/whole_after_1440_mapping.png)|
+|mapping / 390|![前](ui_redesign_images/whole_before_390_mapping.png)|![后](ui_redesign_images/whole_after_390_mapping.png)|
+|data / 1440|![前](ui_redesign_images/whole_before_1440_data.png)|![后](ui_redesign_images/whole_after_1440_data.png)|
+|quality / 390|![前](ui_redesign_images/whole_before_390_quality.png)|![后](ui_redesign_images/whole_after_390_quality.png)|
+
+没有改变导航或算法；全部原始明细、业务分类、备注、帮助、客户分群及共购可达。原生200%、PDF逐页检查和50浏览器组结果见[本轮验收](UI_REDESIGN_ACCEPTANCE.md)。

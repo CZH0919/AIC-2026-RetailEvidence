@@ -1,0 +1,10 @@
+PASS quiet_default_and_help_keyboard_1440
+PASS financial_and_action_evidence_disclosure_1440
+PASS quiet_default_and_help_keyboard_390
+PASS financial_and_action_evidence_disclosure_390
+PASS unknown_warning_remains_visible
+EXPORT_ACCESSIBLE_NAME - button "download 导出月报":
+  - img "download"
+  - text: 导出月报
+PASS real_exports_and_frozen_result_unchanged
+COPY_DENSITY_PASS 6

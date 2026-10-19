@@ -1,68 +1,72 @@
-# 商业化 UI 三类样板验收
+# 商业化 UI 全站验收
 
-日期2026-10-19。**本文件为三类真实样板的工程验收，视觉方向待用户确认；全站推广/合并main/替换旧演示尚未执行。** 这是开发可用性自查，不是真实商户研究。
+2026-10-19，开发可用性自查。用户已确认三类样板及减少常驻小字的方向，并授权推广全站。没有将模型操作称为真实商户研究。
 
-## 版本和实际环境
+## 版本、范围与收据
 
-- 已核main：160a90c47b6f2a675386355cc283fb869e85334a，0.6.3/schema5/sales-v2.2.0。
-- 基线与研究独立提交：7038658a9f200ec9e62b56ff08ab5d02549484e7，先于任何UI修改。
-- 样板批次：ac3ba2e共享样式；eedefff样板布局；491c10f保护测试兼容修正；7b61d848fb5438c49422a2b5687354d1825697f9最终CSS样板。版本号保持0.6.3，以SHA识别候选，不打稳定tag。
-- 分支feature/commercial-ui-refresh。最终文档提交不改变该样板frontend/backend树；远端分支SHA和干净检出复测收据由交付后实际fetch/验证生成（TASK/evidence/final_verification.json），不能仅凭文档文字判断成功。
-- TASK=/home/ubuntu/retailevidence_personal_20261009_01/updates/ui_refresh_20261019_01。baseline/source和candidate/source、state/storage/profile完全隔离；Web回环18100/18101，CPU AI18102。未改共享正式源码/库/服务或旧演示。
-- Node24.21.0/Python3.12、既有venv及Playwright Chromium headless_shell1234。所有可变输出TASK；Windows仅D盘Git/文档/证据/隧道，StrictHostKeyChecking=yes，无主动C写入或获批例外。
+- 基线 main：160a90c47b6f2a675386355cc283fb869e85334a；样板批准版本40ad43cdbb2d2b03b293761257661fcb0b497d38。
+- 先提交基线/官方研究7038658，再做样板；全站补充28张改前截图及批准记录独立提交6df42a8，再提交共享样式bb5b539、8组件展示c0ab33af14c666e375055c0f6bb7a331d29888a9、测试e924adc及后续测试截图修正/文档。产品文件此后未改。
+- 分支feature/commercial-ui-refresh；应用仍0.6.3/schema5/sales-v2.2.0。本轮不改业务版本、后端、API、数据库、路由、算法、模型提示、依赖或导出模板。
+- TASK为个人隔离 updates/ui_refresh_20261019_01；baseline18100、已批准样板18101、全站候选18103各自state/storage；模型18102。AIC_Project及共享服务完全不参与写入。
+- 本文记录候选实际测试。候选启动脚本的AIC_SOURCE_COMMIT仍40ad，不能将该运行元数据误当成产品修改不存在；产品按精确文件哈希和展示允许清单对应c0ab33a。发布后必须从实际origin/main干净检出再测，运行元数据、构建文件哈希与最终SHA由TASK/final-main/evidence/release_receipt.json及Windows evidence/final-main/记录；未取得该收据不能认定最终发布完成。
+- Windows所有主动输出D盘；缓存/profile/TMP在D或远端个人目录。无C盘批准例外，无全局配置/系统安装/sudo。无法保证操作系统或Codex后台零写入。
 
-## 已执行的功能检查
+## 数据与确定性结果
 
-所有用例使用同SHA模拟CSV/XLSX，CNY；数据来源和独立Decimal基线见BASELINE。下表不同粒度不相加成一个“总通过数”。
+青禾便利店完全模拟包01_完整交易明细_2026-04至09.csv，SHA256 e34d6cf870876e2baff8af00e45a74e70cea5a5a228f603fad21f30258425923；17,641行、8,700订单、240模拟客户、12商品。另有同源XLSX及合成GB18030/双工作表错误边界文件。不是实际商户数据或收益证明。
 
-|编号/源码版本|执行内容|结果|证据|
-|---|---|---|---|
-|B01/160a90c|原版tsc+Vite、76后端专项+6子测试、CSV9组、XLSX3组、guards6组|PASS|baseline_*.json及BASELINE|
-|T01/7b61d84|npm run build -- --configLoader runner，tsc --noEmit+Vite|PASS|candidate_build.txt、candidate_build_manifest.json|
-|T02/7b61d84|node --test scripts/ui_redesign/test_presentation_contract.cjs scripts/test_ux_guidance.mjs|6 PASS、0FAIL/0skip|candidate_contract.txt|
-|T03/491c10f（之后只改CSS）|同六个pytest文件同参数、独立unit库|76 PASS+6子测试，12.97s，既有httpx警告1|candidate_pytest.txt|
-|T04/491c10f（之后只改CSS）|CSV新建→上传→13映射+口径确认→分类/范围→检查/月报→商品异常来源/备注回读→库存计算→真实CPU AI→HTML/CSV/JSON/PDF→质量/RF/RFM/共购|9组PASS，未捕获错误0|candidate_csv.json；TASK/candidate/evidence/clean|
-|T05/491c10f（之后只改CSS）|独立XLSX新项目，实际生成月报并导出JSON回读|3组PASS|candidate_xlsx.json|
-|T06/7b61d84|历史8/9月切换/刷新/back/forward/复制URL、月汇总受限、商品搜索/无结果/排序筛选/详情返回、帮助Enter/Space/Tab/Escape/焦点、映射草稿保留、404和隔离网络故障恢复|6组PASS|candidate_guards.json|
-|T07/491c10f（之后只改CSS）|1440/390 × 初次/预先打开依据，商品→计算依据→帮助→Esc逐层、库存/备注/问题草稿、真实问答、导出回读|4组合PASS，焦点与elementFromPoint命中均正确|candidate_drawers.json；TASK/logs/candidate_drawers.log|
-|T08/7b61d84|1440/768/390分类可见标签、下拉不越界、帮助不清空字段、不自动确认/提交、未检查生成禁用|3组PASS|candidate_prototype.json|
-|T09/7b61d84|720×500 CSS视口，等效1440×1000桌面200%布局空间，无页面溢出|PASS（等效布局）；原生浏览器200% NOT_RUN|candidate_prototype.json，不能把DPR或小视口称为原生缩放|
-|T10/7b61d84|1440/1280/768/390 × 月报/商品/详情/分类正常/分类错误，同报告截图与页面溢出|20/20 PASS结构；逐张视觉复核，局部宽表可横滚|after_screenshots.json、screenshot_manifest.json；BEFORE_AFTER|
-|T11/491c10f，7b61d84未改JS/业务|同冻结run完整JSON+七种导出解析+HTML，独立新run业务子树/库存/请求字段和次数|17 PASS|equivalence.json；最终干净检出会再核对冻结result|
+固定项目8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a，版本079c4221-28b1-460c-9df2-be174312d824，run35cf3631-064c-4a90-a845-b06485eb9a3e（2026-09）。新CSV完整流程项目689c6594-396e-4c17-91cb-fef7dbf19089、版本86ec2cc2-5a56-4f48-b46d-9408de893366、run29815fdb-7c67-4cf0-81f5-963014ca45d4。XLSX使用独立新项目，原始ID见whole_xlsx.json。
 
-专项命令同BASELINE第5节。浏览器脚本在scripts/ui_redesign；原抽屉脚本scripts/browser_sales_drawers.cjs。RETAIL_TEST_ROOT指定独立root（必须含data模拟包路径），RETAIL_BASE_URL指定回环端口，PLAYWRIGHT_MODULE/BROWSERS_PATH/LD_LIBRARY_PATH/fontconfig沿用既有安装，TMP/XDG/HOME均TASK。不要在共享生产目录执行写入脚本。
+9月66,434.40 CNY /10,640件/1,326单/12实物商品；8月70,402.60/11,276。P006七天177、MAE42.25；库存10、到货7、备用3、包装6，结果168。RF、RFM和共购publishable=true。真实CPU问答ai_used=true、mode=model_inference、evidence_id匹配冻结run/分类。
 
-**关键实际值**：9月金额66,434.40，销量10,640，订单1326，12实物商品；8月70,402.60/11,276。P006七天参考177、历史MAE42.25，库存10/到货7/备用3/包装6对应168。AI ai_used=true/mode=model_inference，evidence_id与run+classification SHA一致。共购及RF/RFM publishable=true。数字为模拟数据测试结果，不代表经营收益。
+17项对账PASS：冻结完整result、7种JSON/CSV/manifest、HTML；新报告summary/products/forecast/anomaly/quality/notices完整子树；预测/库存；14次POST/PUT请求的路径、业务字段、次数。仅新实体UUID、捕获时间、项目名创建时间戳可归一化，业务数字与确认字段不能忽略。冻结result SHA256为221fc60b179b6e930f0871a04134afb3a34724029f3b3e8a5835cc67df989f2c。见[机器对账](verification/ui_redesign/whole_equivalence.json)。
 
-新CSV项目0a73b36c-3ea9-4cb5-891d-80dde2f86254，run78f14f3f-73d3-46d7-b456-eba79864dff7；固定前后报告仍为项目8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/run35cf3631-064c-4a90-a845-b06485eb9a3e。
+## 实际检查结果
 
-请求比较：原/新各14次POST/PUT，路径、字段、次数一致；只白名单归一化新实体UUID、捕获时间和项目名生成时间戳。所有金额/销量/币种/日期/规则/确认/参数均保留。冻结同run不归一化，完整result规范化SHA256为221fc60b179b6e930f0871a04134afb3a34724029f3b3e8a5835cc67df989f2c。
+不同粒度不相加为一个总测试数。下列浏览器组共50 PASS、0最终FAIL/0BLOCKED；不表示所有可能组合已执行。中间定位失败和重试保留在TASK中。
 
-## 视觉变化与保护
+|测试/命令|实际验证|结果与证据|
+|---|---|---|
+|npm run build -- --configLoader runner|TypeScript类型检查及Vite构建|PASS；whole_build.txt|
+|node --test scripts/ui_redesign/test_presentation_contract.cjs scripts/ui_redesign/test_report_guidance.cjs scripts/ui_redesign/test_whole_presentation.cjs scripts/test_ux_guidance.mjs|17项，包括以40ad为基线的49项精确展示编辑白名单，重建完整8组件比较；路由/业务键/校验/后端不变|17 PASS；whole_contracts.txt|
+|.venv/bin/python -B -m pytest -p no:cacheprovider scripts/test_sales_v2.py scripts/test_record_classification.py scripts/test_task_safety.py scripts/test_ai_contract.py scripts/test_field_assistant.py scripts/test_user_facing_copy.py -q|独立unit库，单任务/分类/历史报告/AI合同等|76 PASS+6subtests，12.58s；whole_pytest.txt；既有httpx弃用警告1|
+|browser_e2e.cjs|新建、CSV真实上传、13字段及口径、分类/范围、月报、商品/异常/原始行、备注回读、库存168、真实CPU AI、HTML/CSV/JSON/PDF、质量、RF/RFM/共购|9组PASS；whole_csv.json；规范原证据whole-site/csv/evidence/clean|
+|browser_xlsx.cjs|真实XLSX导入、月报、JSON下载回读|3组PASS；whole_xlsx.json|
+|browser_ui_guards.cjs|8/9月切换刷新/前进后退/复制run地址、月汇总无日趋势、商品搜索排序筛选无结果/返回、帮助/草稿、真实无效报告及隔离网络故障重试|6组PASS；whole_browser_suite.json及TASK日志|
+|browser_prototype.cjs|1440/768/390分类标签、下拉边界、未确认禁用、帮助不提交/不丢草稿、720布局|4组PASS；whole_browser_prototype.txt；720仅布局等效，真正缩放见下|
+|browser_copy_density.cjs|1440/390固定说明进入帮助、按需展开、键盘、不触发POST、未知风险直接显示及导出值一致|6组PASS；whole_browser_copy_density.txt|
+|browser_whole_interactions.cjs|项目必填/编辑PATCH回读/搜索分页、原始预览/版本、真实草稿保存继续、字段AI展开不丢输入、质量五视图/范围/过程、真实双会话备注409保留草稿、三会话只读|6组PASS；whole_whole-interactions_results.json；其中21种帮助逐项Enter/Tab/Esc/焦点/不提交|
+|browser_native_zoom.cjs|独立完整Chromium用chrome.tabs.setZoom/getZoom=2，1440外窗/720CSS视口/DPR2；项目/月报/帮助/商品/字段/质量7状态|7组PASS；whole_native_zoom.json；真实缩放非CSS或DPR模拟|
+|browser_edge_ui.cjs|TXT拒绝、错误编码422→GB18030恢复、错误分隔符恢复、真实放弃草稿DELETE回读、多表头不一致422→正确工作表、全部导出选项与附页打印、隔离AI503/超时/模板状态|5组PASS；whole_edge-ui_results.json。AI错误为隔离故障注入，不冒充真实模型成功|
+|scripts/browser_sales_drawers.cjs|1440/390 × 首次/先开依据，商品/依据/帮助实际层级、命中测试、焦点、库存/备注/问题草稿、真实AI及导出|4组PASS；whole_after_18103.json|
 
-修改仅四个产品文件：main.tsx主题/样式导入；commercial-ui.css明确作用域；SalesWorkspace.tsx数值align与两抽屉class；ClassificationEditor.tsx可见标签、规则标题/class取代内联边框。控件key/value/onChange/顺序/校验/确认/默认值保持，后端、API、路由、算法、模型提示、依赖、图表和帮助合同零差异。
+浏览器环境：RETAIL_TEST_ROOT显式个人测试根；RETAIL_BASE_URL=http://127.0.0.1:18103；PLAYWRIGHT_MODULE/BROWSERS_PATH/LD_LIBRARY_PATH/fontconfig指向已有个人runtime，HOME/TMP/XDG全部个人目录，OMP/BLAS线程2。正常流程不使用Mock。CSV与XLSX必须用不同RETAIL_TEST_ROOT，脚本run_import_regression.py已固化顺序与分目录，避免同名证据覆盖。
 
-减少页头空白，品牌青绿替代无关蓝链接，同类指标去无语义红黄线并组合为中性表面；数字右齐/等宽、单位不拆，768宽度指标重排；商品表保留全列，说明列最小宽度以避免窄屏行高过大；分类双列在390变单列，标签持续可见；商品详情分组与七天参考留出间距。风险、金额口径分项和解释原位保留。无新增字体/图片CDN/库/装饰资源。
+## 视觉、打印和体积
 
-最终样板dist 1,295,090 bytes，原1,289,070，增加6,020 bytes（约0.47%）；没有新增依赖。既有约1MB data chunk警告保留，未降低阈值。所有新语义文本仍静态确定性帮助，不额外调用AI。
+- 补充全站28张前+28张后，覆盖项目/编辑/空态/上传/解析/映射/已保存数据/质量及RF/RFM/共购，1440/1280/768/390；原样板另有20对和说明收纳4张。对比全部缩略图并查看关键原图/质量长页分段；未以截图文件存在替代人工查看。
+- 真正200%截图第一次被Playwright裁成半个视口、抽屉动画未完成。保留初次图片，改用CDP原生视口捕获并等待绘制稳定后重跑7项，完整1440×913截图再视觉检查。此为证据采集修正，未改产品或放宽断言。
+- 宽表在明确容器横滚，页面主体无意外横滚；语义风险文字和金额、单位、零与未知区分保留。下拉/帮助/商品/依据叠层可点击，未添加全局z-index覆盖。
+- 真实浏览器HTML打印默认PDF2页、全关注商品附页PDF3页；在Windows用已安装pypdfium2渲染逐页查看并提取中文文本，金额/数量/12商品核对。默认第2页和附页末页有现有留白，导出样式不在本次修改范围。
+- 构建无新增依赖/字体/CDN/动画。体积以最终收据逐文件清单比较；约1MB data chunk的既有Vite警告保留，未降低阈值。测试用完整Chrome与12个缺失浏览器库仅下载/解包到个人目录，无sudo或系统安装，与产品依赖无关。
 
-## 失败记录、限制和待办
+## 保护矩阵、问题和未运行项
 
-- 首次SSH超时已解除，历史失败收据保留。
-- 首次guards文字定位同时命中SVG title和说明，修正定位后通过；初次分类截图fixture残留规则，before_v2重拍。
-- 初次新保护测试假定TypeScript旧JS API，现有TS7仅原生工具包；改成无外部依赖、严格展示允许清单后6PASS。未升级/安装依赖、未放宽业务断言。
-- 首次共享样式浏览器导航抢在新服务启动前失败；health就绪后6组通过，启动竞态日志保留。没有删失败日志、伪称这些首次成功。
-- **未解决新增功能回归：已覆盖检查中0；未覆盖项仍NOT_RUN。** 未逐一测试42帮助主题、所有草稿/错误编码/工作表组合、>20商品分页、浏览器409/任务取消/超时/权限/AI回退全组合、极长名/超大金额全组合、原生桌面200%及PDF逐页视觉检查。不得因此称全站最终验收通过。
-- 现有环境没有完整Chrome和PDF渲染工具；没有为了验收安装系统依赖或改C盘。实际浏览器打印PDF已执行，但PDF逐页中文/分页视觉复核仍NOT_RUN；导出HTML及JSON/CSV值已核对。方向确认后补齐完整矩阵。
-- 用户审美确认 PENDING；全站推广/合并main/稳定发布 NOT_RUN；正式部署/公开服务 NOT_APPLICABLE于此检查点。原演示不变。
+[逐项保护矩阵](UI_REDESIGN_PROTECTION_MATRIX.csv)关联15能力组、具体入口/字段及证据。新解释采用原生details或既有HelpHint，子内容持续挂载，不改组件key/请求/确认条件。8组件加CSS的本次改动与已批准销售页/分类样板分批提交。
 
-## 预览与回滚
+已覆盖检查未发现新增未解决功能回归。初次合同白名单重建、异步分页/抽屉关闭定位、帮助定位背景inert、原生Chrome缺库/短Unix socket路径、截图裁切和第一次CSV/XLSX同名证据覆盖均有原记录；修正测试工具后重跑，不删除断言/冻结输入。规范CSV已独立完整重跑，原混合目录仅XLSX结果可用，不能用其覆盖后的requests充作CSV请求证据。
 
-本机隧道已实测：基线 http://127.0.0.1:18110 ，样板 http://127.0.0.1:18111 。相同固定run入口见BEFORE_AFTER。它们只对当前Windows本机有效，非公开评委链接。
+|范围|状态|说明|
+|---|---|---|
+|>20商品实际翻第2页、极长商品名/超大金额全部组合|NOT_RUN|本包12商品；项目分页已实际通过，不混同商品分页|
+|42帮助主题每个都在全部视口执行所有键盘组合|NOT_RUN|21主题本轮系统检查，其他重点帮助在既有销售/抽屉套件中覆盖；静态内容合同覆盖全部，不能声称浏览器穷尽|
+|真实排队/超时/取消/重启恢复每种浏览器状态、完整权限异常矩阵|NOT_RUN|本轮真实任务完成/错误恢复和后端任务测试通过；未进行共享服务重启或无界压测；故障注入单列|
+|本轮全项目Ruff|NOT_RUN|未改Python产品；历史全scripts132格式问题见文案验收，不能标为本轮PASS|
+|真实商户或独立非开发者研究|NOT_RUN|本轮为开发自查|
+|替换现有演示/共享正式部署/公网开放|NOT_APPLICABLE|用户要求另行批准；本轮仅独立预览与仓库代码|
 
-TASK/start_baseline.sh、start_candidate.sh分别对应本任务服务，受控最终干净检出可能使用start_verified.sh，实际运行路径/提交以 /assets/ui-release.json 和最终收据为准。查看tmux list-sessions/对应log，避免重复启动。回滚仅停本任务re-ui-preview，直接查看18110原版或以160a90c构建重开独立预览；无需恢复业务数据库。不要停止/改写共享正式服务。最终交付后再回读隧道manifest确认SHA。
+## 发布、查看和回滚
 
+最终从GitHub实际main重新fetch、干净检出构建并做完整CSV/AI/导出及关键烟测；收据明确最终SHA、构建哈希、run ID、测试状态和端口。独立全站预览拟用本机18113→服务器127.0.0.1:18104，必须以实际收据/HTTP构建标识为准，未启动时不得声称可用。固定项目/run同上。
 
-## 用户样板反馈：说明按需展开（2026-10-19）
-
-本轮针对常驻解释过多的反馈已实施并复测，详见[说明收纳修订及真实截图](UI_REDESIGN_COPY_REFINEMENT.md)。9项前端检查和16组浏览器检查通过。仅两条固定说明转入帮助，动态风险直接显示；其余表格与依据可点击展开。仍未获得全站视觉批准，main及共享正式部署不变。
+旧的已批准样板本机18111→18101和原版18110→18100保持。回滚直接访问原入口，或仅停止新建re-ui-final并用已验证40ad构建另开独立端口；不需要还原业务数据库，不停止队友服务。源码变更需要Git revert普通提交，禁止强推或重写历史。

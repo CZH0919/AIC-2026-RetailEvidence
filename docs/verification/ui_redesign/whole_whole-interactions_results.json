@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "id": "project_search_pagination_edit_validation",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18103/projects"
+    },
+    {
+      "id": "saved_preview_history_and_help",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18103/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/data"
+    },
+    {
+      "id": "draft_disclosure_keeps_question_mapping_and_confirmation",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18103/projects/3ca4307c-1147-4706-9251-9d39a8193387/data"
+    },
+    {
+      "id": "quality_views_metadata_events_and_help",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18103/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/quality"
+    },
+    {
+      "id": "real_note_409_preserves_unsaved_text",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18103/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/products?run=35cf3631-064c-4a90-a845-b06485eb9a3e"
+    },
+    {
+      "id": "three_sessions_read_frozen_report",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18103/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e"
+    }
+  ],
+  "errors": [],
+  "helpIds": [
+    "UX01",
+    "UX43",
+    "UX06",
+    "UX08",
+    "UX07",
+    "UX09",
+    "UX10",
+    "UX11",
+    "UX12",
+    "UX13",
+    "UX14",
+    "UX05",
+    "UX24",
+    "UX25",
+    "UX23",
+    "UX26",
+    "UX45",
+    "UX39",
+    "UX40",
+    "UX41",
+    "UX42"
+  ]
+}
