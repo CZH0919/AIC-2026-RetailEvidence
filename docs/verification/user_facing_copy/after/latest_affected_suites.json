@@ -1,0 +1,16 @@
+[
+  {
+    "suite": "copy_ai_questions",
+    "exit": 0,
+    "seconds": 40.42832350730896,
+    "sha": "ae6b4d134e71d8c2079a04c760b00a5445ebec28",
+    "at": "2026-10-12T12:12:17.648376+00:00"
+  },
+  {
+    "suite": "ux_candidate_journey",
+    "exit": 0,
+    "seconds": 47.683212757110596,
+    "sha": "ae6b4d134e71d8c2079a04c760b00a5445ebec28",
+    "at": "2026-10-12T12:13:05.333279+00:00"
+  }
+]

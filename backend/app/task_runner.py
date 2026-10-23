@@ -10,7 +10,7 @@ import sys
 import time
 
 import psutil
-from sqlalchemy import select, case
+from sqlalchemy import select
 
 from .data_api import digest, dump, write_json
 from .locks import FileLease
@@ -56,7 +56,7 @@ START_MESSAGES = {
 DONE_MESSAGES = {
     "sales": "本月销售分析已完成。",
     "quality": "质量检查已完成，请查看各项分析的适用条件。",
-    "clustering": "客户分群已完成，请查看群体画像和诊断。",
+    "clustering": "客户分群已完成，请查看购买习惯与分组质量。",
     "association": "商品共购分析已完成，请查看规则和评测结果。",
 }
 
@@ -122,15 +122,11 @@ class TaskRunner:
                 if not recovered:
                     self.recovery()
                     recovered = True
-                from .sales_automation import advance
-                await asyncio.to_thread(advance, self.sessions)
                 with self.sessions() as session:
                     identity = session.scalar(
                         select(AnalysisRun.id)
                         .where(AnalysisRun.status == "queued")
-                        .order_by(case((AnalysisRun.kind == "sales", 0),
-                                       (AnalysisRun.parameters.contains('"automatic_parent"'), 2), else_=1),
-                                  AnalysisRun.created_at, AnalysisRun.id)
+                        .order_by(AnalysisRun.created_at, AnalysisRun.id)
                         .limit(1)
                     )
                 if identity:
@@ -243,18 +239,6 @@ class TaskRunner:
                             "scope": parameters["scope"],
                             "context": context,
                         }
-                        if parameters.get("automatic_parent"):
-                            from .retail_api import resolve_sources
-                            parent = session.get(AnalysisRun, parameters["automatic_parent"]["sales_run_id"])
-                            if not parent or parent.project_id != run.project_id or parent.status not in PUBLISHED:
-                                raise ValueError("Automatic analysis parent is unavailable")
-                            sales = json.loads(parent.parameters)["sales"]
-                            job["automatic_input"] = {
-                                "sources": resolve_sources(session, self.storage, run.project_id, sales["sources"]),
-                                "hashes": sales["source_hashes"],
-                                "audit": str(self.storage / "runs" / run.project_id / parent.id / "sales_row_audit.csv"),
-                                "metadata": parameters["automatic_parent"],
-                            }
                     elif run.kind in {"clustering", "association"}:
                         from .analysis_inputs import resolve_analysis_input
                         from .quality_schemas import AnalysisParameters
@@ -302,7 +286,8 @@ class TaskRunner:
                         "policy_sha256": policy.config_sha256,
                         "parameters": parameters,
                         "code_sha256": self.code_hash,
-                        "application_version": "0.5.0",
+                        "application_version": "0.7.1",
+                        "source_commit": os.environ.get("AIC_SOURCE_COMMIT"),
                         "python": platform.python_version(),
                         "dependencies": {
                             name: importlib.metadata.version(name)

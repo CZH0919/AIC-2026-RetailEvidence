@@ -1,0 +1,4 @@
+Real monthly report loaded
+Item note saved; stale revision rejected
+AI panel answered; ai_used=true
+{"project":"e1711757-601a-4e9a-a05f-037d7e6909e6","run_id":"2b78c6a3-98f1-4d46-b308-4651224f5d96","month":"2011-10","actual_products":2863,"attention_total":1865,"highlights":5,"actions":3,"desktopCanvas":{"width":1148,"height":210,"colored":5446},"mobileCanvas":{"width":350,"height":210,"colored":4043},"mobileDimensions":{"width":390,"body":390},"source_records":{"item_id":"23084","date":"2011-10-03","count":3,"shown":3},"item_note_revision":1,"item_note_conflict_checked":true,"ai_used":true,"unknown_inventory_blocked":true,"errors":[]}

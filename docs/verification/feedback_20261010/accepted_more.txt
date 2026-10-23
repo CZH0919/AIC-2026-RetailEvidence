@@ -1,0 +1,1 @@
+{"status":"PASS","project_id":"e1711757-601a-4e9a-a05f-037d7e6909e6","run_id":"2b78c6a3-98f1-4d46-b308-4651224f5d96","cancelled_run_id":"3e45a248-681c-4455-bd3c-f5e6b7de499f","pagination_preserved":"2","scroll_before":300,"scroll_after_return":true,"search_preserved":true,"sort_exercised":true,"mapping_cancel_return":true,"old_report_immutable":true}

@@ -3,10 +3,12 @@ import type { Project, ProjectInput, ProjectList } from './types'
 export class ApiError extends Error {
   code: string
   fields: Record<string, string>
-  constructor(message: string, code = 'network_error', fields: Record<string, string> = {}) {
+  status?: number
+  constructor(message: string, code = 'network_error', fields: Record<string, string> = {}, status?: number) {
     super(message)
     this.code = code
     this.fields = fields
+    this.status = status
   }
 }
 
@@ -16,7 +18,8 @@ export async function request<T>(path: string, options: RequestInit = {}, timeou
     response = await fetch(`/api${path}`, {
       ...options,
       signal: options.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(timeout)]) : AbortSignal.timeout(timeout),
-      headers: { 'Content-Type': 'application/json', ...options.headers },
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'RetailEvidence', ...options.headers },
     })
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') throw error
@@ -24,7 +27,8 @@ export async function request<T>(path: string, options: RequestInit = {}, timeou
   }
   const body = await response.json().catch(() => null)
   if (!response.ok) {
-    throw new ApiError(body?.error?.message ?? '请求未能完成，请稍后重试。', body?.error?.code, body?.error?.fields)
+    if (response.status === 401 && !path.startsWith('/auth/')) window.dispatchEvent(new Event('account-session-expired'))
+    throw new ApiError(body?.error?.message ?? '请求未能完成，请稍后重试。', body?.error?.code, body?.error?.fields, response.status)
   }
   if (body === null) throw new ApiError('暂时无法读取内容，请稍后重试。')
   return body as T
@@ -35,7 +39,6 @@ export const api = {
     request<ProjectList>(`/projects?${new URLSearchParams({ q, offset: String(offset), limit: '12' })}`, { signal }),
   get: (id: string, signal?: AbortSignal) => request<Project>(`/projects/${encodeURIComponent(id)}`, { signal }),
   create: (input: ProjectInput) => request<Project>('/projects', { method: 'POST', body: JSON.stringify(input) }),
-  remove: (id: string, revision: number) => request<{ id: string; deleted: boolean }>(`/projects/${encodeURIComponent(id)}?revision=${revision}`, { method: 'DELETE' }),
   update: (id: string, input: ProjectInput, revision: number) => request<Project>(`/projects/${encodeURIComponent(id)}`, {
     method: 'PATCH', body: JSON.stringify({ ...input, revision }),
   }),

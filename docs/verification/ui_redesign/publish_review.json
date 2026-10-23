@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "files_checked": 112,
+  "commits_checked": 12,
+  "credential_matches": [],
+  "prohibited_assets": [],
+  "files_over_1MB": [],
+  "scope": "new branch history and pending files; original main retained unchanged",
+  "note": "pattern scan plus manual changed-file review, not proof that all possible secrets are absent"
+}

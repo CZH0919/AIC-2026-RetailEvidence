@@ -1,0 +1,62 @@
+{
+  "executed_at": "2026-10-12T12:25:31.067840+00:00",
+  "source_files_checked": 89,
+  "formal_source_changes_since_baseline": [
+    "README.md",
+    "requirements.txt",
+    "backend/app/association.py",
+    "backend/app/clustering.py",
+    "backend/app/data_schemas.py",
+    "backend/app/main.py",
+    "backend/app/quality.py",
+    "backend/app/retail_api.py",
+    "backend/app/retail_engine.py",
+    "backend/app/retail_export.py",
+    "backend/app/retail_schemas.py",
+    "backend/app/sales_mining.py",
+    "docs/代码结构与接手说明.md",
+    "frontend/src/App.tsx",
+    "frontend/src/api.ts",
+    "frontend/src/quality.ts",
+    "frontend/src/retail.css",
+    "frontend/src/retail.ts",
+    "frontend/src/styles.css",
+    "frontend/src/components/MappingEditor.tsx",
+    "frontend/src/components/QualityWorkspace.tsx",
+    "frontend/src/components/SalesWorkspace.tsx",
+    "frontend/src/components/Shell.tsx",
+    "frontend/src/pages/ProjectLibrary.tsx",
+    "frontend/src/pages/RetailProjectSpace.tsx"
+  ],
+  "formal_database_schema": 5,
+  "formal_table_counts": {
+    "analysis_runs": 28,
+    "cleaning_policies": 9,
+    "dataset_versions": 10,
+    "import_drafts": 13,
+    "mapping_versions": 10,
+    "projects": 5,
+    "run_events": 84,
+    "sales_records": 6
+  },
+  "formal_database_tables_changed_since_backup": [
+    "analysis_runs",
+    "cleaning_policies",
+    "dataset_versions",
+    "import_drafts",
+    "mapping_versions",
+    "projects",
+    "run_events",
+    "sales_records"
+  ],
+  "handoff_snapshot_comparison": {
+    "sha256": "20ccdf9a032aa6a2ee32eac8fb46228b8f3c917b4a76148cff32602658d1113e",
+    "bytes": 578117,
+    "matched_source_files": 89,
+    "different_from_current_baseline": [],
+    "not_matched": []
+  },
+  "ss": "State  Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess                                \nLISTEN 0      2048       127.0.0.1:18091      0.0.0.0:*    users:((\"uvicorn\",pid=29988,fd=10))   \nLISTEN 0      5          127.0.0.1:18090      0.0.0.0:*    users:((\"python3\",pid=10783,fd=3))    \nLISTEN 0      512        127.0.0.1:18089      0.0.0.0:*    users:((\"llama-server\",pid=8816,fd=3))\nLISTEN 0      2048       127.0.0.1:18088      0.0.0.0:*    users:((\"uvicorn\",pid=29978,fd=10))   \nLISTEN 0      4096      127.0.0.54:53         0.0.0.0:*                                          \nLISTEN 0      4096   127.0.0.53%lo:53         0.0.0.0:*                                          \nLISTEN 0      4096         0.0.0.0:22         0.0.0.0:*                                          \nLISTEN 0      4096            [::]:22            [::]:*                                          \n",
+  "tmux": "re-copy-ai: 1 windows (created Mon Oct 12 18:58:50 2026)\nre-copy-fault-model: 1 windows (created Mon Oct 12 19:03:44 2026)\nre-copy-fault-web: 1 windows (created Mon Oct 12 20:11:35 2026)\nre-copy-web: 1 windows (created Mon Oct 12 20:11:34 2026)\n",
+  "formal_deployment_performed": false
+}

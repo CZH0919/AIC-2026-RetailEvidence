@@ -1,0 +1,510 @@
+跳转到主要内容
+数证智析
+RetailEvidence Studio
+项目库
+最近访问
+UX读取与缺字段 1791802789863
+使用指南
+工作区
+/
+项目库
+/
+项目空间
+返回店铺列表
+UX读取与缺字段 1791802789863
+
+公开数据派生UX自查，分类假定，非真实商户
+
+编辑店铺
+销售月报
+商品明细
+数据记录
+营业数据记录
+正在看哪一版？
+生成月报
+上传新数据
+继续未完成的导入
+chinese_gbk.csv
+继 续
+放弃
+为这个项目添加第一份数据
+
+支持交易明细、购物篮和公开数据集。先查看内容，再确认字段，无需提前调整列名。
+
+选择数据来源
+01 保留原始文件
+02 确认业务含义
+03 独立保存版本
+数据有边界，结论有依据。
+导入数据
+选择文件
+读取设置
+3
+字段与口径
+public_detail_sample.xlsx
+5,000 行
+原始数据预览
+前 20 条 · 共 5,000 行
+InvoiceNo
+无缺失
+	StockCode
+无缺失
+	Description
+9 个缺失
+	Quantity
+无缺失
+	InvoiceDate
+无缺失
+	UnitPrice
+无缺失
+	CustomerID
+1,236 个缺失
+	Country
+无缺失
+InvoiceNo
+无缺失
+	
+StockCode
+无缺失
+	
+Description
+9 个缺失
+	
+Quantity
+无缺失
+	
+InvoiceDate
+无缺失
+	
+UnitPrice
+无缺失
+	
+CustomerID
+1,236 个缺失
+	
+Country
+无缺失
+
+
+565080
+	
+20677
+	
+PINK POLKADOT BOWL
+	
+8
+	
+2011-09-01T08:25:00
+	
+1.25
+	
+13509
+	
+United Kingdom
+
+
+565080
+	
+22128
+	
+PARTY CONES CANDY ASSORTED
+	
+24
+	
+2011-09-01T08:25:00
+	
+1.25
+	
+13509
+	
+United Kingdom
+
+
+565081
+	
+21067
+	空值	
+1
+	
+2011-09-01T09:03:00
+	
+0
+	空值	
+United Kingdom
+
+
+565082
+	
+22423
+	
+REGENCY CAKESTAND 3 TIER
+	
+2
+	
+2011-09-01T09:15:00
+	
+12.75
+	
+13305
+	
+United Kingdom
+
+
+565082
+	
+15060B
+	
+FAIRY CAKE DESIGN UMBRELLA
+	
+8
+	
+2011-09-01T09:15:00
+	
+3.75
+	
+13305
+	
+United Kingdom
+
+
+565082
+	
+23245
+	
+SET OF 3 REGENCY CAKE TINS
+	
+4
+	
+2011-09-01T09:15:00
+	
+4.95
+	
+13305
+	
+United Kingdom
+
+
+565083
+	
+22609
+	
+PENS ASSORTED SPACEBALL
+	
+36
+	
+2011-09-01T09:19:00
+	
+0.19
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+22741
+	
+FUNKY DIVA PEN
+	
+48
+	
+2011-09-01T09:19:00
+	
+0.85
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+23146
+	
+TRIPLE HOOK ANTIQUE IVORY ROSE
+	
+16
+	
+2011-09-01T09:19:00
+	
+3.29
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+72351A
+	
+SET/6 TURQUOISE BUTTERFLY T-LIGHTS
+	
+24
+	
+2011-09-01T09:19:00
+	
+2.1
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+72351B
+	
+SET/6 PINK BUTTERFLY T-LIGHTS
+	
+12
+	
+2011-09-01T09:19:00
+	
+2.1
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+22652
+	
+TRAVEL SEWING KIT
+	
+10
+	
+2011-09-01T09:19:00
+	
+1.65
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+22489
+	
+PACK OF 12 TRADITIONAL CRAYONS
+	
+24
+	
+2011-09-01T09:19:00
+	
+0.42
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+22653
+	
+BUTTON BOX
+	
+20
+	
+2011-09-01T09:19:00
+	
+1.95
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+23263
+	
+SET OF 3 WOODEN HEART DECORATIONS
+	
+24
+	
+2011-09-01T09:19:00
+	
+1.25
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+21415
+	
+CLAM SHELL SMALL
+	
+24
+	
+2011-09-01T09:19:00
+	
+2.1
+	
+16187
+	
+United Kingdom
+
+
+565083
+	
+22212
+	
+FOUR HOOK WHITE LOVEBIRDS
+	
+6
+	
+2011-09-01T09:19:00
+	
+2.1
+	
+16187
+	
+United Kingdom
+
+
+565084
+	
+23309
+	
+SET OF 60 I LOVE LONDON CAKE CASES
+	
+120
+	
+2011-09-01T09:39:00
+	
+0.42
+	
+17306
+	
+United Kingdom
+
+
+565084
+	
+22970
+	
+LONDON BUS COFFEE MUG
+	
+36
+	
+2011-09-01T09:39:00
+	
+2.1
+	
+17306
+	
+United Kingdom
+
+
+565084
+	
+22988
+	
+SOLDIERS EGG CUP
+	
+144
+	
+2011-09-01T09:39:00
+	
+1.06
+	
+17306
+	
+United Kingdom
+
+保留原始值与来源行号。预览中的长文本最多显示 500 个字符，完整内容保存在数据版本中。
+
+需要帮助理解字段吗？
+
+本地 CPU AI 解释列名建议；没有发送原始记录，业务含义仍由你确认。
+
+请 AI 解释字段
+字段确认
+让每一列都有明确含义
+不确定怎么办？
+
+已按列名提出对应建议。请核对样例，并保留无法确定的字段为空。
+
+订单 / 购物篮标识
+一单如何识别？
+InvoiceNo
+样例：565080 · 565081 · 565082
+商品标识
+商品列怎么选？
+StockCode
+样例：20677 · 22128 · 21067
+商品名称
+Description
+样例：PINK POLKADOT BOWL · PARTY CONES CANDY ASSORTED · REGENCY CAKESTAND 3 TIER
+客户标识
+没有客户号？
+CustomerID
+样例：13509 · 13305 · 16187
+交易时间
+日期如何确认？
+InvoiceDate
+样例：2011-09-01T08:25:00 · 2011-09-01T09:03:00 · 2011-09-01T09:15:00
+数量
+数量用什么单位？
+Quantity
+样例：8 · 24 · 1
+单价
+金额如何选择？
+UnitPrice
+样例：1.25 · 0 · 12.75
+行金额
+不对应此字段
+保留未知，不补造字段
+订单总额
+不对应此字段
+保留未知，不补造字段
+币种
+币种怎么填？
+不对应此字段
+保留未知，不补造字段
+交易状态
+退货怎么处理？
+不对应此字段
+保留未知，不补造字段
+国家 / 地区
+Country
+样例：United Kingdom · Germany · Norway
+商品分类 / 业务记录类型
+不对应此字段
+保留未知，不补造字段
+确认业务口径
+
+这些选择决定后续如何理解数据，不会修改原始文件。
+
+每行是什么记录
+每行怎么选？
+一笔商品销售明细
+订单边界
+一单如何识别？
+相同标识为同一订单
+金额口径
+金额如何选择？
+不使用金额
+数量单位
+数量用什么单位？
+时间格式
+日期如何确认？
+时间所属时区
+取消与退货含义
+退货怎么处理？
+含义未知，保留待核验
+我已核对字段对应、订单边界及上述业务含义
+每次导入都会生成独立数据版本
+暂时关闭
+调整读取方式
+保存草稿
+确认并创建版本

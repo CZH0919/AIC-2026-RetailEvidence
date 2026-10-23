@@ -5,20 +5,20 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import func, or_, select, update
+from sqlalchemy import case, func, or_, select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from .auth import authorize_request, install_auth_routes, project_name_key
 from .data_api import install_data_routes
 from .database import create_database
 from .import_formats import DataIssue
-from .models import Project, timestamp
-from .project_deletion import install_project_deletion
+from .models import Project, ProjectOwner, timestamp
 from .quality_api import install_quality_routes
 from .retail_api import install_retail_routes
 from .schemas import ProjectInput, ProjectList, ProjectRead, ProjectUpdate, name_key
@@ -64,7 +64,15 @@ def create_app(
             await runner.stop()
             engine.dispose()
 
-    app = FastAPI(title="RetailEvidence Studio", version="0.5.0", lifespan=lifespan)
+    app = FastAPI(
+        title="RetailEvidence Studio",
+        version="0.7.1",
+        lifespan=lifespan,
+        dependencies=[Depends(authorize_request)],
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
+    )
     app.state.storage = (
         project_path(storage_root)
         if storage_root
@@ -80,6 +88,7 @@ def create_app(
         else configured_path("AIC_PUBLIC_DATA_DIR", "storage/datasets/public")
     )
     app.state.import_lock = asyncio.Lock()
+    app.state.ai_lock = asyncio.Lock()
     app.add_middleware(
         TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"]
     )
@@ -107,10 +116,14 @@ def create_app(
         for issue in exc.errors():
             field = str(issue["loc"][-1])
             messages = {
-                "name": "请填写 1–64 个字符的店铺名称。",
-                "description": "店铺说明最多 500 个字符。",
-                "color": "请选择有效的店铺标记。",
-                "revision": "店铺信息已变化，请刷新后重试。",
+                "name": "请填写 1–64 个字符的项目名称。",
+                "description": "项目说明最多 500 个字符。",
+                "color": "请选择有效的项目标记。",
+                "username": "用户名需为3–32位字母、数字、下划线或短横线。",
+                "password": "密码需为12–128个字符。",
+                "new_password": "新密码需为12–128个字符。",
+                "current_password": "请输入当前密码。",
+                "revision": "项目信息已变化，请刷新后重试。",
             }
             fields[field] = messages.get(field, "请检查输入内容。")
         return error(422, "validation_error", "请检查填写的信息。", fields)
@@ -123,7 +136,7 @@ def create_app(
     @app.exception_handler(SQLAlchemyError)
     async def database_error(_, exc):
         logger.error("Database operation failed", exc_info=exc)
-        return error(503, "storage_unavailable", "暂时无法保存或读取店铺，请稍后重试。")
+        return error(503, "storage_unavailable", "暂时无法保存或读取项目，请稍后重试。")
 
     @app.exception_handler(DataIssue)
     async def data_error(_, exc):
@@ -135,12 +148,22 @@ def create_app(
 
     @app.get("/api/projects", response_model=ProjectList)
     def list_projects(
+        request: Request,
         q: str = Query(default="", max_length=100),
         limit: int = Query(default=30, ge=1, le=100),
         offset: int = Query(default=0, ge=0),
     ):
-        condition = or_(
-            Project.name_key.contains(name_key(q.strip()), autoescape=True),
+        owned = select(ProjectOwner.project_id).where(
+            ProjectOwner.account_id == request.state.user["id"]
+        )
+        # name_key also stores the owner namespace; never search that private prefix.
+        prefix = request.state.user["id"] + ":"
+        searchable_name = case(
+            (Project.name_key.startswith(prefix), func.substr(Project.name_key, len(prefix) + 1)),
+            else_=Project.name_key,
+        )
+        condition = Project.id.in_(owned) & or_(
+            searchable_name.contains(name_key(q.strip()), autoescape=True),
             Project.description.contains(q.strip(), autoescape=True),
         )
         with app.state.sessions() as session:
@@ -155,19 +178,26 @@ def create_app(
             return {"items": items, "total": total, "limit": limit, "offset": offset}
 
     @app.post("/api/projects", response_model=ProjectRead, status_code=201)
-    def create_project(payload: ProjectInput):
-        project = Project(**payload.model_dump(), name_key=name_key(payload.name))
+    def create_project(payload: ProjectInput, request: Request):
+        project = Project(
+            **payload.model_dump(),
+            name_key=project_name_key(request.state.user["id"], name_key(payload.name)),
+        )
         with app.state.sessions() as session:
             session.add(project)
             try:
+                session.flush()
+                session.add(
+                    ProjectOwner(project_id=project.id, account_id=request.state.user["id"])
+                )
                 session.commit()
             except IntegrityError:
                 session.rollback()
                 return error(
                     409,
                     "name_exists",
-                    "已存在同名店铺，请使用一个不同的名称。",
-                    {"name": "店铺名称已被使用。"},
+                    "已存在同名项目，请使用一个不同的名称。",
+                    {"name": "项目名称已被使用。"},
                 )
             return project
 
@@ -176,14 +206,16 @@ def create_app(
         with app.state.sessions() as session:
             project = session.get(Project, str(project_id))
             if project is None:
-                raise HTTPException(404, "这个店铺不存在，请返回店铺列表重新选择。")
+                raise HTTPException(404, "这个项目不存在，请返回项目库重新选择。")
             return project
 
     @app.patch("/api/projects/{project_id}", response_model=ProjectRead)
-    def update_project(project_id: UUID, payload: ProjectUpdate):
+    def update_project(project_id: UUID, payload: ProjectUpdate, request: Request):
         values = payload.model_dump(exclude={"revision"})
         values.update(
-            name_key=name_key(payload.name), updated_at=timestamp(), revision=payload.revision + 1
+            name_key=project_name_key(request.state.user["id"], name_key(payload.name)),
+            updated_at=timestamp(),
+            revision=payload.revision + 1,
         )
         with app.state.sessions() as session:
             try:
@@ -195,20 +227,20 @@ def create_app(
                 if changed.rowcount == 0:
                     session.rollback()
                     if session.get(Project, str(project_id)) is None:
-                        raise HTTPException(404, "这个店铺不存在，请返回店铺列表重新选择。")
-                    return error(409, "revision_conflict", "其他成员已更新此店铺，请刷新后再编辑。")
+                        raise HTTPException(404, "这个项目不存在，请返回项目库重新选择。")
+                    return error(409, "revision_conflict", "其他成员已更新此项目，请刷新后再编辑。")
                 session.commit()
             except IntegrityError:
                 session.rollback()
                 return error(
                     409,
                     "name_exists",
-                    "已存在同名店铺，请使用一个不同的名称。",
-                    {"name": "店铺名称已被使用。"},
+                    "已存在同名项目，请使用一个不同的名称。",
+                    {"name": "项目名称已被使用。"},
                 )
             return session.get(Project, str(project_id))
 
-    install_project_deletion(app)
+    install_auth_routes(app)
     install_data_routes(app)
     install_quality_routes(app)
     install_retail_routes(app)

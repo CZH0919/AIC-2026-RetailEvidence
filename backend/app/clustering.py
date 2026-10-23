@@ -47,10 +47,8 @@ def _make_features(
         frequency=("order_id", "nunique"),
     ).reset_index()
     features["recency_days"] = (
-        ((reference - features["last_purchase"]).dt.total_seconds() / 86400)
-        .clip(lower=0)
-        .astype(int)
-    )
+        (reference - features["last_purchase"]).dt.total_seconds() / 86400
+    ).clip(lower=0).astype(int)
     if kind == "rfm":
         money = grouped["amount"].agg(_decimal_sum).reset_index(name="monetary")
         features = features.merge(money, on="customer_id", how="left")
@@ -116,8 +114,7 @@ def process_clustering(job, progress):
             )
             labels = model.predict(model_values)
             counts = pd.Series(labels).value_counts().sort_index()
-            transformed = model[:-1].transform(model_values)
-            silhouette = _score_candidate(transformed, labels, parameters["random_state"] + k)
+            silhouette = _score_candidate(model_values, labels, parameters["random_state"] + k)
             ari_values = []
             if n_customers >= 10:
                 for offset in range(5):
@@ -239,8 +236,6 @@ def process_clustering(job, progress):
             "candidates": "cluster_candidates.csv",
         },
     }
-    from .customer_opportunities import build
-    report['customer_opportunities'] = build(frame, report, output)
     write_json(output / "cluster_report.json", report)
     progress("publishing", 96)
     return report

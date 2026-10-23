@@ -1,0 +1,263 @@
+{
+  "answer": "本月销售额为66,434.4，销量为10,640。需要核对销售记录和库存情况，以决定是否补货。",
+  "ai_used": true,
+  "mode": "model_inference",
+  "references": [
+    "summary",
+    "classification"
+  ],
+  "evidence": {
+    "summary": {
+      "source_order_amount": null,
+      "quantity": 10640,
+      "amount": 66434.4,
+      "amount_missing_rows": 0,
+      "orders": 1326,
+      "refund_amount": null,
+      "products": 12,
+      "attention_total": 6,
+      "unit": "件（该商品最小销售包装）",
+      "currency": "CNY",
+      "previous": {
+        "source_order_amount": null,
+        "quantity": 11276,
+        "amount": 70402.6,
+        "amount_missing_rows": 0,
+        "orders": 1397,
+        "refund_amount": null
+      },
+      "complete_month": true,
+      "amount_label": "按确认分类口径的销售额（数量仅含实物，退款另计）",
+      "average_order": 50.10135746606334
+    },
+    "quality": {
+      "input_rows": 17641,
+      "included_rows": 17641,
+      "excluded_rows": 0,
+      "duplicate_candidates": 0,
+      "reasons": []
+    },
+    "forecast": {
+      "version": "sales-v2.2.0",
+      "horizon_days": 7,
+      "status": "evaluated",
+      "reason": "",
+      "eligible_items": 12,
+      "tested_items": 12,
+      "metrics": [
+        {
+          "method": "gradient_boosting",
+          "split": "validation",
+          "mae": 30.647526215996056,
+          "wape": 0.15103503679340974,
+          "samples": 36
+        },
+        {
+          "method": "last_week",
+          "split": "validation",
+          "mae": 29.5,
+          "wape": 0.14537987679671457,
+          "samples": 36
+        },
+        {
+          "method": "four_week_mean",
+          "split": "validation",
+          "mae": 21.979166666666668,
+          "wape": 0.10831622176591375,
+          "samples": 36
+        },
+        {
+          "method": "gradient_boosting",
+          "split": "test",
+          "mae": 32.040222419363886,
+          "wape": 0.15509587294569044,
+          "samples": 36
+        },
+        {
+          "method": "last_week",
+          "split": "test",
+          "mae": 40.861111111111114,
+          "wape": 0.19779480973510824,
+          "samples": 36
+        },
+        {
+          "method": "four_week_mean",
+          "split": "test",
+          "mae": 31.09722222222222,
+          "wape": 0.15053112814306843,
+          "samples": 36
+        }
+      ],
+      "cutoffs": [
+        "2026-08-20",
+        "2026-08-27",
+        "2026-09-03",
+        "2026-09-10",
+        "2026-09-17",
+        "2026-09-24"
+      ],
+      "selection_origin": "2026-08-20",
+      "historical_candidates": 12,
+      "resource_excluded_items": 0,
+      "selected_method": "four_week_mean",
+      "published_items": 12
+    },
+    "anomaly": {
+      "version": "sales-v2.2.0",
+      "status": "evaluated",
+      "reason": "",
+      "train_samples": 1080,
+      "tested_samples": 360,
+      "flagged_samples": 7,
+      "simple_rule_flags": 32,
+      "training_end": "2026-08-31",
+      "warning": "标出值得检查的销售变化，不判断缺货或促销原因，也不保证识别率。"
+    },
+    "classification": {
+      "version": "record-classification-v1",
+      "sha256": "696255acd0496f2d1254490b4a12a4ab7730514b2f1aacf82b9496ecbc7ee63e",
+      "counts": {
+        "physical_product": 17641
+      },
+      "pending_product_rows": 0,
+      "financial_breakdown": [
+        {
+          "month": "2026-04",
+          "record_kind": "physical_product",
+          "label": "实物商品",
+          "amount_treatment": "include",
+          "rows": 3224,
+          "amount": 70886,
+          "missing_amount_rows": 0
+        },
+        {
+          "month": "2026-05",
+          "record_kind": "physical_product",
+          "label": "实物商品",
+          "amount_treatment": "include",
+          "rows": 3376,
+          "amount": 76937.5,
+          "missing_amount_rows": 0
+        },
+        {
+          "month": "2026-06",
+          "record_kind": "physical_product",
+          "label": "实物商品",
+          "amount_treatment": "include",
+          "rows": 2758,
+          "amount": 65121.1,
+          "missing_amount_rows": 0
+        },
+        {
+          "month": "2026-07",
+          "record_kind": "physical_product",
+          "label": "实物商品",
+          "amount_treatment": "include",
+          "rows": 2743,
+          "amount": 66481.5,
+          "missing_amount_rows": 0
+        },
+        {
+          "month": "2026-08",
+          "record_kind": "physical_product",
+          "label": "实物商品",
+          "amount_treatment": "include",
+          "rows": 2829,
+          "amount": 70402.6,
+          "missing_amount_rows": 0
+        },
+        {
+          "month": "2026-09",
+          "record_kind": "physical_product",
+          "label": "实物商品",
+          "amount_treatment": "include",
+          "rows": 2711,
+          "amount": 66434.4,
+          "missing_amount_rows": 0
+        }
+      ]
+    },
+    "items": [
+      {
+        "id": "P006",
+        "name": "食用油500ml",
+        "quantity": 768,
+        "reason": "月底最后 7 天售出 241 件（该商品最小销售包装），前 7 天为 157 件（该商品最小销售包装）。 本月有 4 天的销量偏离历史表现，建议核对原因。",
+        "flags": [
+          "growth",
+          "anomaly"
+        ]
+      },
+      {
+        "id": "P009",
+        "name": "洗发水100ml",
+        "quantity": 962,
+        "reason": "月底最后 7 天售出 238 件（该商品最小销售包装），前 7 天为 182 件（该商品最小销售包装）。",
+        "flags": [
+          "growth"
+        ]
+      },
+      {
+        "id": "P005",
+        "name": "大米1kg",
+        "quantity": 870,
+        "reason": "月底最后 7 天售出 256 件（该商品最小销售包装），前 7 天为 197 件（该商品最小销售包装）。",
+        "flags": [
+          "growth"
+        ]
+      },
+      {
+        "id": "P008",
+        "name": "曲奇饼干小袋",
+        "quantity": 820,
+        "reason": "本月有 2 天的销量偏离历史表现，建议核对原因。",
+        "flags": [
+          "anomaly"
+        ]
+      },
+      {
+        "id": "P010",
+        "name": "香皂单块",
+        "quantity": 890,
+        "reason": "月底最后 7 天售出 240 件（该商品最小销售包装），前 7 天为 182 件（该商品最小销售包装）。",
+        "flags": [
+          "growth"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "check:P006",
+        "item_id": "P006",
+        "title": "先查一下食用油500ml的销售记录",
+        "text": "这款商品有几天卖得和平常差别比较大。先看看有没有缺货、大单或漏记，再决定下次怎么进。 另有 2 件商品有同类情况，可在待关注列表一起核对。",
+        "reason": "月底最后 7 天售出 241 件（该商品最小销售包装），前 7 天为 157 件（该商品最小销售包装）。 本月有 4 天的销量偏离历史表现，建议核对原因。",
+        "review": "下次进货前核对",
+        "evidence": "P006",
+        "related_items": [
+          "P006",
+          "P008",
+          "P001"
+        ]
+      },
+      {
+        "id": "stock:P009",
+        "item_id": "P009",
+        "title": "下次进货前看看洗发水100ml还剩多少",
+        "text": "最近卖得更多了，先核对库存和到货时间，再决定是否补一些。 另有 2 件商品有同类情况，可在待关注列表一起核对。",
+        "reason": "月底最后 7 天售出 238 件（该商品最小销售包装），前 7 天为 182 件（该商品最小销售包装）。",
+        "review": "下次进货前核对",
+        "evidence": "P009",
+        "related_items": [
+          "P009",
+          "P005",
+          "P010"
+        ]
+      }
+    ]
+  },
+  "run_id": "24570091-d4a2-47a2-9802-174ad1dc063a",
+  "model": "qwen2.5-1.5b-instruct-q4_k_m",
+  "prompt_version": "sales-explain-v6",
+  "evidence_id": "24570091-d4a2-47a2-9802-174ad1dc063a:696255acd0496f2d1254490b4a12a4ab7730514b2f1aacf82b9496ecbc7ee63e"
+}

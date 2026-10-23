@@ -1,0 +1,14 @@
+✔ Every high-risk audited concept has a unique, contextual help definition (0.847729ms)
+✔ Short triggers remain discoverable; each definition has a usable example and no raw HTML (1.223957ms)
+✔ Accounting, stock-date and AI unknown-data safeguards are explicitly explained (0.333434ms)
+✔ ClassificationEditor whole source respects presentation-only allowlist (4.554635ms)
+✔ SalesWorkspace whole source respects presentation-only allowlist (5.081338ms)
+✔ backend, dependency locks, routes, APIs, help, charts and overlay layers are untouched (2.565706ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 91.906106

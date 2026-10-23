@@ -16,8 +16,7 @@ FIELDS = {
     "currency": "币种",
     "record_status": "交易状态",
     "country": "国家 / 地区",
-    "category": "商品分类",
-    "item_type": "商品类型（可选）",
+    "category": "商品分类 / 业务记录类型",
 }
 TIME_FORMATS = {
     "iso8601": "ISO 日期 / Excel 日期",
@@ -43,7 +42,7 @@ class ParseOptions(BaseModel):
 
 class MappingInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    columns: dict[str, str | None] = Field(default_factory=dict, max_length=14)
+    columns: dict[str, str | None] = Field(default_factory=dict, max_length=13)
     order_boundary: Literal["order_id", "basket_id", "row_basket", "unavailable"]
     amount_mode: Literal["none", "line_amount", "quantity_unit_price", "order_amount"]
     currency_constant: str | None = Field(default=None, max_length=3)

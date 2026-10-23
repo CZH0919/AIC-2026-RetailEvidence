@@ -1,0 +1,79 @@
+FAIL HELP_project_keyboard locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('[data-help-content="UX01"]:visible') to be visible
+
+PASS HELP_monthly_and_export
+FAIL HELP_classification_validation locator.click: Error: strict mode violation: locator('.ant-select-dropdown:visible .ant-select-item-option-content') resolved to 3 elements:
+    1) <div class="ant-select-item-option-content">商品编号精确匹配</div> aka getByText('商品编号精确匹配').nth(1)
+    2) <div class="ant-select-item-option-content">已映射类型/分类精确匹配</div> aka getByText('已映射类型/分类精确匹配').nth(4)
+    3) <div class="ant-select-item-option-content">来源行编号精确匹配</div> aka getByText('来源行编号精确匹配')
+
+Call log:
+  - waiting for locator('.ant-select-dropdown:visible .ant-select-item-option-content')
+
+FAIL HELP_mapping_and_state locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByRole('link', { name: '数据记录', exact: true })
+    - locator resolved to <a class="" data-discover="true" href="/projects/17f4583e-14ca-4adc-849f-c70430f1591b/data">数据记录</a>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="ant-drawer-mask"></div> from <div>…</div> subtree intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="ant-drawer-mask"></div> from <div>…</div> subtree intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    58 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div class="ant-drawer-mask"></div> from <div>…</div> subtree intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+
+FAIL HELP_import_csv_xlsx locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('[data-help-id="UX06"]:visible').first()
+    - locator resolved to <button type="button" data-help-id="UX06" aria-expanded="false" aria-haspopup="dialog" aria-label="查看帮助：映射建议与未知字段" class="ant-btn css-oc1rc0 css-var-_r_0_ ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-sm help-hint">…</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="ant-drawer-mask ant-drawer-mask-motion-appear ant-drawer-mask-motion-appear-active ant-drawer-mask-motion"></div> from <div>…</div> subtree intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="ant-drawer-mask ant-drawer-mask-motion-appear ant-drawer-mask-motion-appear-active ant-drawer-mask-motion"></div> from <div>…</div> subtree intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    58 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div class="ant-drawer-mask"></div> from <div>…</div> subtree intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+
+PASS HELP_forecast_inventory_notes
+PASS HELP_ai_example_no_auto_request
+FAIL HELP_more_analysis page.waitForTimeout: Target page, context or browser has been closed
+FAIL HELP_responsive_and_guide page.setViewportSize: Target page, context or browser has been closed
+FAIL HELP_all_42_topics Visited 22: UX01,UX16,UX17,UX18,UX21,UX22,UX23,UX24,UX27,UX28,UX29,UX30,UX31,UX32,UX33,UX34,UX35,UX36,UX37,UX43,UX44,UX45
+
+22 !== 42
+
+browserContext.close: Target page, context or browser has been closed
+    at async /home/ubuntu/retailevidence_personal_20261009_01/updates/ux_guidance_20261010_01/source/scripts/ux_help_acceptance.cjs:18:1 {
+  log: []
+}

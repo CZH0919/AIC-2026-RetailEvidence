@@ -1,0 +1,251 @@
+{
+  "status": "PASS",
+  "phase": "after_v2",
+  "base": "http://127.0.0.1:18101",
+  "project": "8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a",
+  "run": "35cf3631-064c-4a90-a845-b06485eb9a3e",
+  "cases": [
+    {
+      "name": "1440_report",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "1440_products",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/products?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "1440_detail",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/products?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "1440_classification",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e&compose=1",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "1440_classification_error",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e&compose=1",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "1280_report",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "innerWidth": 1280,
+      "scrollWidth": 1280,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "1280_products",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/products?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "innerWidth": 1280,
+      "scrollWidth": 1280,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "1280_detail",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/products?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "innerWidth": 1280,
+      "scrollWidth": 1280,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "1280_classification",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e&compose=1",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "innerWidth": 1280,
+      "scrollWidth": 1280,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "1280_classification_error",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e&compose=1",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "innerWidth": 1280,
+      "scrollWidth": 1280,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "768_report",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 768,
+        "height": 1000
+      },
+      "innerWidth": 768,
+      "scrollWidth": 768,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "768_products",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/products?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 768,
+        "height": 1000
+      },
+      "innerWidth": 768,
+      "scrollWidth": 768,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "768_detail",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/products?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 768,
+        "height": 1000
+      },
+      "innerWidth": 768,
+      "scrollWidth": 768,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "768_classification",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e&compose=1",
+      "viewport": {
+        "width": 768,
+        "height": 1000
+      },
+      "innerWidth": 768,
+      "scrollWidth": 768,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "768_classification_error",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e&compose=1",
+      "viewport": {
+        "width": 768,
+        "height": 1000
+      },
+      "innerWidth": 768,
+      "scrollWidth": 768,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "390_report",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "390_products",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/products?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "390_detail",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a/products?run=35cf3631-064c-4a90-a845-b06485eb9a3e",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "390_classification",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e&compose=1",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "dpr": 1,
+      "fonts": "loaded"
+    },
+    {
+      "name": "390_classification_error",
+      "url": "http://127.0.0.1:18101/projects/8bf9d58c-9ac4-48aa-9f42-6644d4f5a64a?run=35cf3631-064c-4a90-a845-b06485eb9a3e&compose=1",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "dpr": 1,
+      "fonts": "loaded"
+    }
+  ],
+  "errors": [],
+  "actualScreenshots": true
+}

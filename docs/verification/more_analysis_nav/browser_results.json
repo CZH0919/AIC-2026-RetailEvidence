@@ -1,0 +1,62 @@
+{
+  "status": "PASS",
+  "project": {
+    "id": "f4991096-0947-4459-ae66-b054b2eddbff",
+    "name": "UI基线｜青禾模拟 1792424282995",
+    "description": "完全模拟数据，仅用于功能测试和视频演示；非真实商户研究。",
+    "color": "teal",
+    "created_at": "2026-10-19T15:38:03.147254+00:00",
+    "updated_at": "2026-10-19T15:38:03.147269+00:00",
+    "revision": 1
+  },
+  "version_id": "7bf4e3e6-659d-4336-a2e4-0c8ea0cd42f2",
+  "run_id": "24570091-d4a2-47a2-9802-174ad1dc063a",
+  "results": [
+    {
+      "id": "01_create_upload_map",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18105/projects/f4991096-0947-4459-ae66-b054b2eddbff"
+    },
+    {
+      "id": "02_classification_monthly",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18105/projects/f4991096-0947-4459-ae66-b054b2eddbff?run=24570091-d4a2-47a2-9802-174ad1dc063a"
+    },
+    {
+      "id": "03_products_anomaly_note",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18105/projects/f4991096-0947-4459-ae66-b054b2eddbff/products?run=24570091-d4a2-47a2-9802-174ad1dc063a"
+    },
+    {
+      "id": "04_forecast_inventory",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18105/projects/f4991096-0947-4459-ae66-b054b2eddbff/products?run=24570091-d4a2-47a2-9802-174ad1dc063a"
+    },
+    {
+      "id": "05_cpu_ai_exports",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18105/projects/f4991096-0947-4459-ae66-b054b2eddbff?run=24570091-d4a2-47a2-9802-174ad1dc063a"
+    },
+    {
+      "id": "06_quality_views",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18105/projects/f4991096-0947-4459-ae66-b054b2eddbff/quality"
+    },
+    {
+      "id": "07_RF",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18105/projects/f4991096-0947-4459-ae66-b054b2eddbff/quality"
+    },
+    {
+      "id": "07_RFM",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18105/projects/f4991096-0947-4459-ae66-b054b2eddbff/quality"
+    },
+    {
+      "id": "07_共购",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18105/projects/f4991096-0947-4459-ae66-b054b2eddbff/quality"
+    }
+  ],
+  "errs": []
+}

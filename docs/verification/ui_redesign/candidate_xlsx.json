@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "project": {
+    "id": "0fbf70c9-775f-476b-8505-628c503f2918",
+    "name": "UI XLSX｜青禾模拟 1792412832839",
+    "description": "完全模拟数据，仅用于功能测试和视频演示；非真实商户研究。",
+    "color": "teal",
+    "created_at": "2026-10-19T12:27:12.990877+00:00",
+    "updated_at": "2026-10-19T12:27:12.990908+00:00",
+    "revision": 1
+  },
+  "version_id": "32ebd918-b09e-40ab-b8e6-90a44aa1c955",
+  "run_id": "56e03bc5-b3cc-4f55-b886-6ab7ce95940c",
+  "results": [
+    {
+      "id": "01_create_upload_map",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18101/projects/0fbf70c9-775f-476b-8505-628c503f2918"
+    },
+    {
+      "id": "02_classification_monthly",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18101/projects/0fbf70c9-775f-476b-8505-628c503f2918?run=56e03bc5-b3cc-4f55-b886-6ab7ce95940c"
+    },
+    {
+      "id": "03_xlsx_export",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18101/projects/0fbf70c9-775f-476b-8505-628c503f2918?run=56e03bc5-b3cc-4f55-b886-6ab7ce95940c"
+    }
+  ],
+  "errs": []
+}

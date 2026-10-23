@@ -1,0 +1,47 @@
+id,priority,page,resolution,status,evidence
+UX01,P1,项目库 / 新建项目名称与说明,统一内容帮助,PASS,after/ux_help_final/results.json
+UX02,P1,导入数据 / 选择文件与空项目,统一内容帮助,PASS,after/ux_help_final/results.json
+UX03,P1,读取设置 / 文件编码、列分隔符,统一内容帮助,PASS,after/ux_help_final/results.json
+UX04,P1,读取设置 / 选择工作表,统一内容帮助,PASS,after/ux_help_final/results.json
+UX05,P0,读取设置 / 每行表示什么；字段确认 / 记录类型,统一内容帮助,PASS,after/ux_help_final/results.json
+UX06,P0,字段与口径 / 自动对应建议、确认复选框,统一内容帮助,PASS,after/ux_help_final/results.json
+UX07,P0,字段映射 / 商品标识、名称、分类,统一内容帮助,PASS,after/ux_help_final/results.json
+UX08,P0,字段映射 / 订单标识、订单边界,统一内容帮助,PASS,after/ux_help_final/results.json
+UX09,P1,字段映射 / 客户标识、国家地区,统一内容帮助,PASS,after/ux_help_final/results.json
+UX10,P0,业务口径 / 时间格式、所属时区,统一内容帮助,PASS,after/ux_help_final/results.json
+UX11,P0,字段映射 / 数量、数量单位,统一内容帮助,PASS,after/ux_help_final/results.json
+UX12,P0,字段映射 / 三类金额、金额口径,统一内容帮助,PASS,after/ux_help_final/results.json
+UX13,P0,字段映射 / 币种、固定币种；质量筛选,统一内容帮助,PASS,after/ux_help_final/results.json
+UX14,P0,字段映射 / 取消与退货含义、状态值,统一内容帮助,PASS,after/ux_help_final/results.json
+UX15,P0,字段确认 / 月汇总月份,统一内容帮助,PASS,after/ux_help_final/results.json
+UX16,P0,月报确认 / 其余记录类型、单条规则类型,统一内容帮助,PASS,after/ux_help_final/results.json
+UX17,P0,月报确认 / 其余记录金额、规则金额,统一内容帮助,PASS,after/ux_help_final/results.json
+UX18,P0,月报确认 / 匹配范围、值、分类依据,统一内容帮助,PASS,after/ux_help_final/results.json
+UX19,P1,月报确认 / 每个分类卡片标题,界面行为修复及相关帮助,PASS,after/ux_help_final/results.json
+UX20,P1,月报确认 / 新增规则、匹配值与依据,界面行为修复及相关帮助,PASS,after/ux_help_final/results.json
+UX21,P0,月报确认 / 完整记录复选框、起止与停业,统一内容帮助,PASS,after/ux_help_final/results.json
+UX22,P0,月报确认 / 多数据选择、重叠日期,统一内容帮助,PASS,after/ux_help_final/results.json
+UX23,P0,月报确认与质量 / 重复处理,统一内容帮助,PASS,after/ux_help_final/results.json
+UX24,P1,月报检查、质量结果 / 纳入排除与来源视图,统一内容帮助,PASS,after/ux_help_final/results.json
+UX25,P1,质量 / 日期地区商品币种、金额冲突确认,统一内容帮助,PASS,after/ux_help_final/results.json
+UX26,P0,质量 / 客户金额缺失策略,统一内容帮助,PASS,after/ux_help_final/results.json
+UX27,P0,销售月报 / 金额、销量、订单与平均每单,统一内容帮助,PASS,after/ux_help_final/results.json
+UX28,P1,月报 / 本月上月、无每日曲线,统一内容帮助,PASS,after/ux_help_final/results.json
+UX29,P1,月报、商品明细 / 值得留意、变化筛选,统一内容帮助,PASS,after/ux_help_final/results.json
+UX30,P0,商品详情 / 异常日期和原始记录,统一内容帮助,PASS,after/ux_help_final/results.json
+UX31,P0,商品详情 / 接下来七天、无预测,统一内容帮助,PASS,after/ux_help_final/results.json
+UX32,P2,月报依据 / MAE、WAPE、验证独立测试,统一内容帮助,PASS,after/ux_help_final/results.json
+UX33,P0,商品详情 / 可售库存确认日期,界面行为修复及相关帮助,PASS,after/ux_help_final/results.json
+UX34,P0,库存 / 可售库存、到货数量与日期,统一内容帮助,PASS,after/ux_help_final/results.json
+UX35,P0,库存 / 备用量、包装单位、计算结果,统一内容帮助,PASS,after/ux_help_final/results.json
+UX36,P1,商品详情 / 备注、日期、保存失败,界面行为修复及相关帮助,PASS,after/ux_task_paths/results.json
+UX37,P0,字段助手、销售助手 / 状态与回答,统一内容帮助,PASS,after/ux_help_final/results.json
+UX38,P1,销售助手 / 空提问框,界面行为修复及相关帮助,PASS,after/ux_help_final/results.json
+UX39,P1,更多分析 / 客户分群、R/F/M中位数,统一内容帮助,PASS,after/ux_help_final/results.json
+UX40,P2,更多分析 / 选择K、轮廓系数、ARI,统一内容帮助,PASS,after/ux_help_final/results.json
+UX41,P1,更多分析 / 共购按钮、资源限制,统一内容帮助,PASS,after/ux_help_final/results.json
+UX42,P2,共购结果 / 规则和评估,统一内容帮助,PASS,after/ux_help_final/results.json
+UX43,P1,数据记录历史、历史月报选择,统一内容帮助,PASS,after/ux_help_final/results.json
+UX44,P1,导出月报、月报依据 / 下载按钮,统一内容帮助,PASS,after/ux_help_final/results.json
+UX45,P1,月报处理、质量处理、错误状态,统一内容帮助,PASS,after/ux_help_final/results.json
+UX46,P1,左侧使用指南,界面行为修复及相关帮助,PASS,after/ux_help_final/results.json

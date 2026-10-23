@@ -1,0 +1,85 @@
+{
+  "status": "PASS",
+  "method": "chrome.tabs.setZoom and getZoom in isolated full browser",
+  "original": {
+    "innerWidth": 720,
+    "dpr": 2
+  },
+  "zoom": {
+    "zoom": 2,
+    "id": 1459821594
+  },
+  "cases": [
+    {
+      "id": "library_200",
+      "status": "PASS",
+      "geometry": {
+        "innerWidth": 720,
+        "outerWidth": 1440,
+        "dpr": 2,
+        "scrollWidth": 720
+      }
+    },
+    {
+      "id": "monthly_200",
+      "status": "PASS",
+      "geometry": {
+        "innerWidth": 720,
+        "outerWidth": 1440,
+        "dpr": 2,
+        "scrollWidth": 720
+      }
+    },
+    {
+      "id": "help_200",
+      "status": "PASS",
+      "geometry": {
+        "innerWidth": 720,
+        "outerWidth": 1440,
+        "dpr": 2,
+        "scrollWidth": 720
+      }
+    },
+    {
+      "id": "product_drawer_200",
+      "status": "PASS",
+      "geometry": {
+        "innerWidth": 720,
+        "outerWidth": 1440,
+        "dpr": 2,
+        "scrollWidth": 720
+      }
+    },
+    {
+      "id": "mapping_help_200",
+      "status": "PASS",
+      "geometry": {
+        "innerWidth": 720,
+        "outerWidth": 1440,
+        "dpr": 2,
+        "scrollWidth": 720
+      }
+    },
+    {
+      "id": "mapping_200",
+      "status": "PASS",
+      "geometry": {
+        "innerWidth": 720,
+        "outerWidth": 1440,
+        "dpr": 2,
+        "scrollWidth": 720
+      }
+    },
+    {
+      "id": "quality_200",
+      "status": "PASS",
+      "geometry": {
+        "innerWidth": 720,
+        "outerWidth": 1440,
+        "dpr": 2,
+        "scrollWidth": 720
+      }
+    }
+  ],
+  "errors": []
+}

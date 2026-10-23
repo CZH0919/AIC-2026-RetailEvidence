@@ -1,0 +1,22 @@
+[
+  {
+    "file": "demo_print.pdf",
+    "pages": 2,
+    "sha256": "6e1cc650cbbe34e8f45b42424c1ac40f7080cd273eb9ce249655c65e7ec48ad1",
+    "summary_on_first_page": true,
+    "chinese_text_present": true,
+    "source_commit": "bb8b645d19abd6422f47f6682a21a9f55b3124a6",
+    "status": "PASS",
+    "visual_review": "PASS: Codex inspected all four rendered pages, Chinese legible and summary/appendix correctly separated; not human-user acceptance"
+  },
+  {
+    "file": "full_print.pdf",
+    "pages": 2,
+    "sha256": "d723197636f5fa809304b25da93553c94733aacbb916701c1a4faf4aefa0c264",
+    "summary_on_first_page": true,
+    "chinese_text_present": true,
+    "source_commit": "bb8b645d19abd6422f47f6682a21a9f55b3124a6",
+    "status": "PASS",
+    "visual_review": "PASS: Codex inspected all four rendered pages, Chinese legible and summary/appendix correctly separated; not human-user acceptance"
+  }
+]

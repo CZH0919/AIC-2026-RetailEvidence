@@ -1,0 +1,777 @@
+{
+  "edge": {
+    "id": "dbbcb6f7-44fd-488f-a313-69f4f6f2b3e9",
+    "name": "UX读取与缺字段 1791646867124",
+    "description": "公开数据派生UX自查，分类假定，非真实商户",
+    "color": "teal",
+    "created_at": "2026-10-10T15:41:07.275700+00:00",
+    "updated_at": "2026-10-10T15:41:07.275713+00:00",
+    "revision": 1
+  },
+  "multi": {
+    "id": "28d9cc47-e371-4dba-9ceb-eb4aa97e6260",
+    "name": "UX两月追加 1791646885137",
+    "description": "公开数据派生UX自查，分类假定，非真实商户",
+    "color": "teal",
+    "created_at": "2026-10-10T15:41:25.588005+00:00",
+    "updated_at": "2026-10-10T15:41:25.588019+00:00",
+    "revision": 1
+  },
+  "first": {
+    "id": "d4e9324f-6c28-4f8d-91ec-3875d9470eb9",
+    "project_id": "28d9cc47-e371-4dba-9ceb-eb4aa97e6260",
+    "dataset_version_id": "31d42782-1d41-47df-b7ab-93606447bd25",
+    "policy_id": "da2067b1-3383-4363-9d02-153237bd0401",
+    "quality_run_id": null,
+    "kind": "sales",
+    "status": "queued",
+    "phase": "queued",
+    "progress": 0,
+    "message": "已加入处理队列。",
+    "created_at": "2026-10-10T15:41:49.167534+00:00",
+    "started_at": null,
+    "finished_at": null,
+    "error_code": null,
+    "peak_rss_bytes": 0,
+    "parameters": {
+      "sales": {
+        "sources": [
+          {
+            "version_id": "31d42782-1d41-47df-b7ab-93606447bd25",
+            "mapping_revision": 1
+          }
+        ],
+        "month": "2011-09",
+        "merge_mode": "append",
+        "duplicates": "keep",
+        "coverage_start": null,
+        "coverage_end": null,
+        "complete_coverage": false,
+        "closed_dates": [],
+        "budget_seconds": 1200,
+        "check_only": false,
+        "classifications": [
+          {
+            "version_id": "31d42782-1d41-47df-b7ab-93606447bd25",
+            "mapping_revision": 1,
+            "default_kind": "physical_product",
+            "default_amount_treatment": "include",
+            "confirmed": true,
+            "rules": [
+              {
+                "match_by": "category",
+                "value": "shipping_service",
+                "kind": "shipping_service",
+                "amount_treatment": "exclude",
+                "basis": "公开数据UX测试假定"
+              },
+              {
+                "match_by": "category",
+                "value": "manual_adjustment",
+                "kind": "manual_adjustment",
+                "amount_treatment": "exclude",
+                "basis": "公开数据UX测试假定"
+              },
+              {
+                "match_by": "category",
+                "value": "other",
+                "kind": "other",
+                "amount_treatment": "exclude",
+                "basis": "公开数据UX测试假定"
+              }
+            ]
+          }
+        ],
+        "source_hashes": {
+          "31d42782-1d41-47df-b7ab-93606447bd25": "ba7185009caae648bb780aaa0a34d83fdaa1ac2557db1b3e0e8ac00d46d6eb56"
+        },
+        "classification_sha256": "7cea98549c9cfa47827bcb51ad9d58e6d081360bd457e28db2bb01d9101aed31"
+      },
+      "timeout_seconds": 1200,
+      "memory_mb": 8192
+    },
+    "result": null
+  },
+  "second": {
+    "id": "539ca5db-a97b-4f4d-96b2-6c00bcd95a63",
+    "project_id": "28d9cc47-e371-4dba-9ceb-eb4aa97e6260",
+    "dataset_version_id": "31d42782-1d41-47df-b7ab-93606447bd25",
+    "policy_id": "da2067b1-3383-4363-9d02-153237bd0401",
+    "quality_run_id": null,
+    "kind": "sales",
+    "status": "queued",
+    "phase": "queued",
+    "progress": 0,
+    "message": "已加入处理队列。",
+    "created_at": "2026-10-10T15:42:28.766338+00:00",
+    "started_at": null,
+    "finished_at": null,
+    "error_code": null,
+    "peak_rss_bytes": 0,
+    "parameters": {
+      "sales": {
+        "sources": [
+          {
+            "version_id": "18acfa38-e2c1-4a16-926c-4240185eb8ae",
+            "mapping_revision": 1
+          },
+          {
+            "version_id": "31d42782-1d41-47df-b7ab-93606447bd25",
+            "mapping_revision": 1
+          }
+        ],
+        "month": "2011-10",
+        "merge_mode": "append",
+        "duplicates": "keep",
+        "coverage_start": "2011-09-01",
+        "coverage_end": "2011-10-31",
+        "complete_coverage": true,
+        "closed_dates": [],
+        "budget_seconds": 1200,
+        "check_only": false,
+        "classifications": [
+          {
+            "version_id": "18acfa38-e2c1-4a16-926c-4240185eb8ae",
+            "mapping_revision": 1,
+            "default_kind": "physical_product",
+            "default_amount_treatment": "include",
+            "confirmed": true,
+            "rules": [
+              {
+                "match_by": "category",
+                "value": "shipping_service",
+                "kind": "shipping_service",
+                "amount_treatment": "exclude",
+                "basis": "公开数据UX测试假定"
+              },
+              {
+                "match_by": "category",
+                "value": "manual_adjustment",
+                "kind": "manual_adjustment",
+                "amount_treatment": "exclude",
+                "basis": "公开数据UX测试假定"
+              },
+              {
+                "match_by": "category",
+                "value": "other",
+                "kind": "other",
+                "amount_treatment": "exclude",
+                "basis": "公开数据UX测试假定"
+              }
+            ]
+          },
+          {
+            "version_id": "31d42782-1d41-47df-b7ab-93606447bd25",
+            "mapping_revision": 1,
+            "default_kind": "physical_product",
+            "default_amount_treatment": "include",
+            "confirmed": true,
+            "rules": [
+              {
+                "match_by": "category",
+                "value": "shipping_service",
+                "kind": "shipping_service",
+                "amount_treatment": "exclude",
+                "basis": "公开数据UX测试假定"
+              },
+              {
+                "match_by": "category",
+                "value": "manual_adjustment",
+                "kind": "manual_adjustment",
+                "amount_treatment": "exclude",
+                "basis": "公开数据UX测试假定"
+              },
+              {
+                "match_by": "category",
+                "value": "other",
+                "kind": "other",
+                "amount_treatment": "exclude",
+                "basis": "公开数据UX测试假定"
+              }
+            ]
+          }
+        ],
+        "source_hashes": {
+          "18acfa38-e2c1-4a16-926c-4240185eb8ae": "0bd9c7fada4633640837ffab190c4aeaed63a4bc57984982ea370c5c438c636a",
+          "31d42782-1d41-47df-b7ab-93606447bd25": "ba7185009caae648bb780aaa0a34d83fdaa1ac2557db1b3e0e8ac00d46d6eb56"
+        },
+        "classification_sha256": "d4d75170f380b97f7c1d99ec4b8e1458533d14bfed675680ef91ae9feb22f1e0"
+      },
+      "timeout_seconds": 1200,
+      "memory_mb": 8192
+    },
+    "result": null
+  },
+  "v1": {
+    "id": "31d42782-1d41-47df-b7ab-93606447bd25",
+    "project_id": "28d9cc47-e371-4dba-9ceb-eb4aa97e6260",
+    "number": 1,
+    "filename": "monthly_2011-09.csv",
+    "sha256": "78b3fdb20d9c36153f419dd72495c63fe5320aa99ff7a5415f3418088281de3d",
+    "bytes": 178663,
+    "row_count": 2797,
+    "source_dataset": null,
+    "created_at": "2026-10-10T15:41:35.474774+00:00",
+    "mapping_revision": 1,
+    "options": {
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheets": [],
+      "shape": "transactions",
+      "basket_column": null,
+      "item_separator": "|"
+    },
+    "preview": {
+      "row_count": 2797,
+      "blank_rows_skipped": 0,
+      "columns": [
+        {
+          "key": "c0",
+          "name": "item_id",
+          "missing": 0,
+          "examples": [
+            "10080",
+            "10120",
+            "10124G"
+          ]
+        },
+        {
+          "key": "c1",
+          "name": "name",
+          "missing": 0,
+          "examples": [
+            "GROOVY CACTUS INFLATABLE",
+            "DOGGY RUBBER",
+            "ARMY CAMO BOOKCOVER TAPE"
+          ]
+        },
+        {
+          "key": "c2",
+          "name": "quantity",
+          "missing": 0,
+          "examples": [
+            "60",
+            "10",
+            "4"
+          ]
+        },
+        {
+          "key": "c3",
+          "name": "amount",
+          "missing": 0,
+          "examples": [
+            "23.4",
+            "2.1",
+            "1.68"
+          ]
+        },
+        {
+          "key": "c4",
+          "name": "record_type",
+          "missing": 0,
+          "examples": [
+            "physical_product",
+            "manual_adjustment",
+            "shipping_service"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "source_row_id": "CSV:2",
+          "c0": "10080",
+          "c1": "GROOVY CACTUS INFLATABLE",
+          "c2": "60",
+          "c3": "23.4",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:3",
+          "c0": "10120",
+          "c1": "DOGGY RUBBER",
+          "c2": "10",
+          "c3": "2.1",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:4",
+          "c0": "10124G",
+          "c1": "ARMY CAMO BOOKCOVER TAPE",
+          "c2": "4",
+          "c3": "1.68",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:5",
+          "c0": "10125",
+          "c1": "MINI FUNKY DESIGN TAPES",
+          "c2": "210",
+          "c3": "178.5",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:6",
+          "c0": "10133",
+          "c1": "COLOURING PENCILS BROWN TUBE",
+          "c2": "207",
+          "c3": "92.27",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:7",
+          "c0": "10135",
+          "c1": "COLOURING PENCILS BROWN TUBE",
+          "c2": "70",
+          "c3": "99.6",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:8",
+          "c0": "11001",
+          "c1": "ASSTD DESIGN RACING CAR PEN",
+          "c2": "96",
+          "c3": "167.04",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:9",
+          "c0": "15030",
+          "c1": "FAN BLACK FRAME ",
+          "c2": "3",
+          "c3": "0.8699999999999999",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:10",
+          "c0": "15034",
+          "c1": "PAPER POCKET TRAVELING FAN ",
+          "c2": "394",
+          "c3": "59.99000000000001",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:11",
+          "c0": "15036",
+          "c1": "ASSORTED COLOURS SILK FAN",
+          "c2": "487",
+          "c3": "433.33",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:12",
+          "c0": "15039",
+          "c1": "SANDALWOOD FAN",
+          "c2": "61",
+          "c3": "55.75",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:13",
+          "c0": "15044A",
+          "c1": "PINK PAPER PARASOL ",
+          "c2": "32",
+          "c3": "102.92000000000002",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:14",
+          "c0": "15044B",
+          "c1": "BLUE PAPER PARASOL ",
+          "c2": "6",
+          "c3": "17.700000000000003",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:15",
+          "c0": "15044C",
+          "c1": "PURPLE PAPER PARASOL",
+          "c2": "31",
+          "c3": "97.13000000000001",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:16",
+          "c0": "15044D",
+          "c1": "RED PAPER PARASOL",
+          "c2": "101",
+          "c3": "269.15",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:17",
+          "c0": "15056BL",
+          "c1": "EDWARDIAN PARASOL BLACK",
+          "c2": "261",
+          "c3": "1495.77",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:18",
+          "c0": "15056N",
+          "c1": "EDWARDIAN PARASOL NATURAL",
+          "c2": "351",
+          "c3": "2059.59",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:19",
+          "c0": "15056P",
+          "c1": "EDWARDIAN PARASOL PINK",
+          "c2": "48",
+          "c3": "285.6",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:20",
+          "c0": "15056bl",
+          "c1": "EDWARDIAN PARASOL BLACK",
+          "c2": "8",
+          "c3": "99.68",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:21",
+          "c0": "15056n",
+          "c1": "EDWARDIAN PARASOL NATURAL",
+          "c2": "10",
+          "c3": "124.60000000000001",
+          "c4": "physical_product"
+        }
+      ],
+      "suggestions": {
+        "columns": {
+          "item_id": "c0",
+          "quantity": "c2"
+        },
+        "warnings": [
+          "「amount」的金额层级不明确，未自动映射。"
+        ],
+        "method": "exact_alias_v1"
+      },
+      "preview_truncated_at": 500,
+      "source_shape": "transactions",
+      "raw_values_preserved": true
+    },
+    "mapping": {
+      "id": "97948980-d642-4956-bfcf-612f22bdf925",
+      "revision": 1,
+      "created_at": "2026-10-10T15:41:35.476147+00:00",
+      "config": {
+        "columns": {
+          "item_id": "c0",
+          "quantity": "c2",
+          "item_name": "c1",
+          "line_amount": "c3",
+          "category": "c4",
+          "order_id": null,
+          "order_amount": null
+        },
+        "order_boundary": "unavailable",
+        "amount_mode": "line_amount",
+        "currency_constant": "GBP",
+        "quantity_unit": "原始商品单位",
+        "time_format": null,
+        "timezone": null,
+        "status_rule": "all_forward",
+        "status_values": {},
+        "confirmed": true,
+        "record_kind": "monthly_summary",
+        "summary_month": "2011-09"
+      },
+      "validation": {
+        "warnings": [
+          "订单边界未知，暂不声明订单或购物篮分析能力。"
+        ],
+        "checked_preview_rows": 20,
+        "quality_processing": "pending",
+        "business_aggregation": "not_performed"
+      }
+    }
+  },
+  "v2": {
+    "id": "18acfa38-e2c1-4a16-926c-4240185eb8ae",
+    "project_id": "28d9cc47-e371-4dba-9ceb-eb4aa97e6260",
+    "number": 2,
+    "filename": "monthly_2011-10.csv",
+    "sha256": "c73854e69b22bf40194ee505533e7fcd7a08e5e4dc1db1491fa47a8bc9ecbfbc",
+    "bytes": 187501,
+    "row_count": 2954,
+    "source_dataset": null,
+    "created_at": "2026-10-10T15:42:04.421285+00:00",
+    "mapping_revision": 1,
+    "options": {
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheets": [],
+      "shape": "transactions",
+      "basket_column": null,
+      "item_separator": "|"
+    },
+    "preview": {
+      "row_count": 2954,
+      "blank_rows_skipped": 0,
+      "columns": [
+        {
+          "key": "c0",
+          "name": "item_id",
+          "missing": 0,
+          "examples": [
+            "10080",
+            "10120",
+            "10125"
+          ]
+        },
+        {
+          "key": "c1",
+          "name": "name",
+          "missing": 0,
+          "examples": [
+            "GROOVY CACTUS INFLATABLE",
+            "DOGGY RUBBER",
+            "MINI FUNKY DESIGN TAPES"
+          ]
+        },
+        {
+          "key": "c2",
+          "name": "quantity",
+          "missing": 0,
+          "examples": [
+            "6",
+            "10",
+            "51"
+          ]
+        },
+        {
+          "key": "c3",
+          "name": "amount",
+          "missing": 0,
+          "examples": [
+            "2.34",
+            "2.1",
+            "44.129999999999995"
+          ]
+        },
+        {
+          "key": "c4",
+          "name": "record_type",
+          "missing": 0,
+          "examples": [
+            "physical_product",
+            "manual_adjustment",
+            "shipping_service"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "source_row_id": "CSV:2",
+          "c0": "10080",
+          "c1": "GROOVY CACTUS INFLATABLE",
+          "c2": "6",
+          "c3": "2.34",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:3",
+          "c0": "10120",
+          "c1": "DOGGY RUBBER",
+          "c2": "10",
+          "c3": "2.1",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:4",
+          "c0": "10125",
+          "c1": "MINI FUNKY DESIGN TAPES",
+          "c2": "51",
+          "c3": "44.129999999999995",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:5",
+          "c0": "10135",
+          "c1": "COLOURING PENCILS BROWN TUBE",
+          "c2": "70",
+          "c3": "103.23",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:6",
+          "c0": "11001",
+          "c1": "ASSTD DESIGN RACING CAR PEN",
+          "c2": "116",
+          "c3": "221.64",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:7",
+          "c0": "15030",
+          "c1": "FAN BLACK FRAME ",
+          "c2": "10",
+          "c3": "2.9",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:8",
+          "c0": "15034",
+          "c1": "PAPER POCKET TRAVELING FAN ",
+          "c2": "1791",
+          "c3": "168.81000000000003",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:9",
+          "c0": "15036",
+          "c1": "ASSORTED COLOURS SILK FAN",
+          "c2": "1255",
+          "c3": "1010.05",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:10",
+          "c0": "15039",
+          "c1": "SANDALWOOD FAN",
+          "c2": "134",
+          "c3": "115.06",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:11",
+          "c0": "15044A",
+          "c1": "PINK PAPER PARASOL ",
+          "c2": "3",
+          "c3": "8.850000000000001",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:12",
+          "c0": "15044C",
+          "c1": "PURPLE PAPER PARASOL",
+          "c2": "6",
+          "c3": "20.540000000000003",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:13",
+          "c0": "15044D",
+          "c1": "RED PAPER PARASOL",
+          "c2": "78",
+          "c3": "201.29999999999998",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:14",
+          "c0": "15056BL",
+          "c1": "EDWARDIAN PARASOL BLACK",
+          "c2": "549",
+          "c3": "2892.57",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:15",
+          "c0": "15056N",
+          "c1": "EDWARDIAN PARASOL NATURAL",
+          "c2": "275",
+          "c3": "1603.3100000000002",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:16",
+          "c0": "15056P",
+          "c1": "EDWARDIAN PARASOL PINK",
+          "c2": "49",
+          "c3": "264.55",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:17",
+          "c0": "15056bl",
+          "c1": "EDWARDIAN PARASOL BLACK",
+          "c2": "5",
+          "c3": "62.300000000000004",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:18",
+          "c0": "15056n",
+          "c1": "EDWARDIAN PARASOL NATURAL",
+          "c2": "11",
+          "c3": "137.06",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:19",
+          "c0": "15056p",
+          "c1": "EDWARDIAN PARASOL PINK",
+          "c2": "1",
+          "c3": "12.46",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:20",
+          "c0": "15058A",
+          "c1": "BLUE POLKADOT GARDEN PARASOL",
+          "c2": "4",
+          "c3": "40.31999999999999",
+          "c4": "physical_product"
+        },
+        {
+          "source_row_id": "CSV:21",
+          "c0": "15058C",
+          "c1": "ICE CREAM DESIGN GARDEN PARASOL",
+          "c2": "1",
+          "c3": "10.79",
+          "c4": "physical_product"
+        }
+      ],
+      "suggestions": {
+        "columns": {
+          "item_id": "c0",
+          "quantity": "c2"
+        },
+        "warnings": [
+          "「amount」的金额层级不明确，未自动映射。"
+        ],
+        "method": "exact_alias_v1"
+      },
+      "preview_truncated_at": 500,
+      "source_shape": "transactions",
+      "raw_values_preserved": true
+    },
+    "mapping": {
+      "id": "ff884288-316d-4f41-8efa-dd8246ca0f7a",
+      "revision": 1,
+      "created_at": "2026-10-10T15:42:04.421901+00:00",
+      "config": {
+        "columns": {
+          "item_id": "c0",
+          "quantity": "c2",
+          "item_name": "c1",
+          "line_amount": "c3",
+          "category": "c4",
+          "order_id": null,
+          "order_amount": null
+        },
+        "order_boundary": "unavailable",
+        "amount_mode": "line_amount",
+        "currency_constant": "GBP",
+        "quantity_unit": "原始商品单位",
+        "time_format": null,
+        "timezone": null,
+        "status_rule": "all_forward",
+        "status_values": {},
+        "confirmed": true,
+        "record_kind": "monthly_summary",
+        "summary_month": "2011-10"
+      },
+      "validation": {
+        "warnings": [
+          "订单边界未知，暂不声明订单或购物篮分析能力。"
+        ],
+        "checked_preview_rows": 20,
+        "quality_processing": "pending",
+        "business_aggregation": "not_performed"
+      }
+    }
+  }
+}

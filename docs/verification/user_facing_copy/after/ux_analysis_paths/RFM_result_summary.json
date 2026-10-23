@@ -1,0 +1,26 @@
+{
+  "id": "8b424c16-c5fe-41f0-86e4-da897b60c42a",
+  "status": "succeeded",
+  "summary": {
+    "customers": 1360,
+    "unique_feature_vectors": 1360,
+    "selected_k": 2,
+    "publishable": true,
+    "reasons": []
+  },
+  "parameters": {
+    "analysis": {
+      "kind": "rfm",
+      "k_min": 2,
+      "k_max": 8,
+      "random_state": 42,
+      "n_init": 10,
+      "min_support": 0.005,
+      "min_count": 20,
+      "min_confidence": 0.2,
+      "max_length": 3
+    },
+    "timeout_seconds": 600,
+    "memory_mb": 8192
+  }
+}

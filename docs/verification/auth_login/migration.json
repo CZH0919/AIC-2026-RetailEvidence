@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "schema_before": 5,
+  "schema_after": 6,
+  "rollback": "restore tested on separate file, schema5 original rows preserved",
+  "tables_unchanged": {
+    "projects": 53,
+    "import_drafts": 52,
+    "dataset_versions": 40,
+    "mapping_versions": 41,
+    "cleaning_policies": 39,
+    "analysis_runs": 111,
+    "run_events": 333,
+    "sales_records": 28
+  },
+  "original_backup_sha256": "c6cf5d20cde558a519c2146734a1414ccdd57307bcb7279f5bf819d83f283cc9",
+  "legacy_owner": "unassigned, no automatic access",
+  "new_tables": [
+    "account_sessions",
+    "accounts",
+    "auth_throttle",
+    "project_owners"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "source_commit": "0dbb6962dddb57c99222729c5df9917975f72b7e",
+  "pdf_sha256": "97f2d3e19def603bc0431d115bfef4e5cd606dc992627c7f513fefd30990185a",
+  "pages": 2,
+  "chinese_text_present": true,
+  "summary_first_page": true,
+  "text_checks": "PASS",
+  "visual_review": "PASS; both rendered pages inspected, Chinese/summary/appendix intact",
+  "manifest_matches_main": true,
+  "entry": "http://127.0.0.1:18087/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01?run=0386ec96-a541-46a7-afd9-68f4c2cfdf7b"
+}

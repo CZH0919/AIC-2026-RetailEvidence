@@ -1,0 +1,181 @@
+{
+  "status": "PASS",
+  "project_id": "2d2af665-a0b0-46c0-b7d3-a8654fb8724b",
+  "version_id": "62fd5562-b87b-43cd-8f9f-e9896de08b6d",
+  "run_id": "e519806f-37e1-4d0c-a9ab-2b6fd138e1ed",
+  "source_sha256": "143e9ce22b1e3e885b9467efcb7cd12c72cec6b0ec8b40ca907c93bc2b3e9168",
+  "summary": {
+    "source_order_amount": null,
+    "quantity": 626765,
+    "amount": 1105884.75,
+    "amount_missing_rows": 0,
+    "orders": null,
+    "refund_amount": null,
+    "products": 2863,
+    "attention_total": 0,
+    "unit": "原始商品单位",
+    "currency": "GBP",
+    "previous": null,
+    "complete_month": false,
+    "amount_label": "按确认分类口径的销售额（数量仅含实物，退款另计）",
+    "average_order": null
+  },
+  "classification_sha256": "6f9c83d5e7ba56a4f7fc09bfe539f54c9409470e0b1fa2733add3b821db6557e",
+  "field_ai": {
+    "answer": "商品标识（item_id）：用于唯一标识每一件商品，便于追踪和管理商品信息。",
+    "ai_used": true,
+    "mode": "model_inference",
+    "proposal": {
+      "columns": {
+        "item_id": "c0",
+        "quantity": "c2"
+      }
+    },
+    "references": [
+      "item_id"
+    ],
+    "prompt_version": "field-explain-v1",
+    "draft_id": "93434adc-a2f7-41f0-9efd-93ccad1e8e9d",
+    "preview_token": "90dfdb5f-3625-445b-9cde-cc7fd224914a",
+    "evidence_id": "93434adc-a2f7-41f0-9efd-93ccad1e8e9d:90dfdb5f-3625-445b-9cde-cc7fd224914a",
+    "notice": "列名建议由程序提出；AI只解释，应用后仍需核对并确认业务口径。"
+  },
+  "ai": {
+    "answer": "本月销量为626,765，销售额为1,105,884.75。进货前先核对记录；记录类型和金额口径以用户确认为准。",
+    "ai_used": true,
+    "mode": "model_inference",
+    "references": [
+      "summary",
+      "classification"
+    ],
+    "evidence": {
+      "summary": {
+        "source_order_amount": null,
+        "quantity": 626765,
+        "amount": 1105884.75,
+        "amount_missing_rows": 0,
+        "orders": null,
+        "refund_amount": null,
+        "products": 2863,
+        "attention_total": 0,
+        "unit": "原始商品单位",
+        "currency": "GBP",
+        "previous": null,
+        "complete_month": false,
+        "amount_label": "按确认分类口径的销售额（数量仅含实物，退款另计）",
+        "average_order": null
+      },
+      "quality": {
+        "input_rows": 3005,
+        "included_rows": 3005,
+        "excluded_rows": 0,
+        "duplicate_candidates": 0,
+        "reasons": []
+      },
+      "forecast": {
+        "status": "unavailable",
+        "reason": "需要确认完整日期范围后，才能预测；月汇总不支持日级预测。",
+        "metrics": [],
+        "version": "sales-v2.2.0"
+      },
+      "anomaly": {
+        "status": "unavailable",
+        "reason": "当前记录无法核对完整的历史波动。",
+        "version": "sales-v2.2.0"
+      },
+      "classification": {
+        "version": "record-classification-v1",
+        "sha256": "6f9c83d5e7ba56a4f7fc09bfe539f54c9409470e0b1fa2733add3b821db6557e",
+        "counts": {
+          "physical_product": 2998,
+          "other": 3,
+          "shipping_service": 3,
+          "manual_adjustment": 1
+        },
+        "pending_product_rows": 0,
+        "financial_breakdown": [
+          {
+            "month": "2011-10",
+            "record_kind": "manual_adjustment",
+            "label": "人工调整",
+            "amount_treatment": "exclude",
+            "rows": 1,
+            "amount": 21548.67,
+            "missing_amount_rows": 0
+          },
+          {
+            "month": "2011-10",
+            "record_kind": "other",
+            "label": "其他",
+            "amount_treatment": "exclude",
+            "rows": 3,
+            "amount": 79.72,
+            "missing_amount_rows": 0
+          },
+          {
+            "month": "2011-10",
+            "record_kind": "physical_product",
+            "label": "实物商品",
+            "amount_treatment": "include",
+            "rows": 2998,
+            "amount": 1105884.75,
+            "missing_amount_rows": 0
+          },
+          {
+            "month": "2011-10",
+            "record_kind": "shipping_service",
+            "label": "运费/服务",
+            "amount_treatment": "exclude",
+            "rows": 3,
+            "amount": 26681.09,
+            "missing_amount_rows": 0
+          }
+        ]
+      },
+      "items": [
+        {
+          "id": "22423",
+          "name": "REGENCY CAKESTAND 3 TIER",
+          "quantity": 1083,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "23084",
+          "name": "23084",
+          "quantity": 6348,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "23284",
+          "name": "DOORMAT KEEP CALM AND COME IN",
+          "quantity": 1540,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "85099B",
+          "name": "JUMBO BAG RED RETROSPOT",
+          "quantity": 5412,
+          "reason": "",
+          "flags": []
+        },
+        {
+          "id": "22086",
+          "name": "PAPER CHAIN KIT 50'S CHRISTMAS ",
+          "quantity": 3389,
+          "reason": "",
+          "flags": []
+        }
+      ],
+      "actions": []
+    },
+    "run_id": "e519806f-37e1-4d0c-a9ab-2b6fd138e1ed",
+    "model": "qwen2.5-1.5b-instruct-q4_k_m",
+    "prompt_version": "sales-explain-v5",
+    "evidence_id": "e519806f-37e1-4d0c-a9ab-2b6fd138e1ed:6f9c83d5e7ba56a4f7fc09bfe539f54c9409470e0b1fa2733add3b821db6557e"
+  },
+  "three_browser_sessions": true,
+  "errors": []
+}

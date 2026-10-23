@@ -1,0 +1,48 @@
+{
+  "phase": "after",
+  "results": [
+    {
+      "id": "B_csv_encoding",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/dbbcb6f7-44fd-488f-a313-69f4f6f2b3e9/data",
+      "evidence": "B_csv_encoding.png"
+    },
+    {
+      "id": "B_xlsx_sheets",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/dbbcb6f7-44fd-488f-a313-69f4f6f2b3e9/data",
+      "evidence": "B_xlsx_sheets.png"
+    },
+    {
+      "id": "C_missing_fields",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/dbbcb6f7-44fd-488f-a313-69f4f6f2b3e9/data",
+      "evidence": "C_missing_fields.png"
+    },
+    {
+      "id": "E_two_month_append",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/28d9cc47-e371-4dba-9ceb-eb4aa97e6260?run=d4e9324f-6c28-4f8d-91ec-3875d9470eb9",
+      "evidence": "E_two_month_append.png"
+    },
+    {
+      "id": "J_data_history",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/28d9cc47-e371-4dba-9ceb-eb4aa97e6260/data",
+      "evidence": "J_data_history.png"
+    },
+    {
+      "id": "E_tablet_mobile",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/28d9cc47-e371-4dba-9ceb-eb4aa97e6260?run=539ca5db-a97b-4f4d-96b2-6c00bcd95a63",
+      "evidence": "E_tablet_mobile.png"
+    },
+    {
+      "id": "B_daily_summary",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/283140a6-cf95-4eaf-beee-195c3cc84696?run=11424f33-1686-45a1-8fe2-2a5f2aea61c7",
+      "evidence": "B_daily_summary.png"
+    }
+  ],
+  "errors": []
+}

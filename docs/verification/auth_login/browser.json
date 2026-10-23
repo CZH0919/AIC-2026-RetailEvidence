@@ -1,0 +1,77 @@
+{
+  "status": "PASS",
+  "project": {
+    "id": "528f38b8-4b5b-42d6-96fa-5d1ca369920e",
+    "name": "UI基线｜青禾模拟 1792738685003",
+    "description": "完全模拟数据，仅用于功能测试和视频演示；非真实商户研究。",
+    "color": "teal",
+    "created_at": "2026-10-23T06:58:05.463845+00:00",
+    "updated_at": "2026-10-23T06:58:05.463860+00:00",
+    "revision": 1
+  },
+  "version_id": "6e8b0a10-6b66-4d5e-ad15-4258454af8d7",
+  "run_id": "243604ce-91da-4c6f-9b42-0e3edaf8daa1",
+  "results": [
+    {
+      "id": "00_registration_gate_responsive",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects"
+    },
+    {
+      "id": "01_create_upload_map",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e"
+    },
+    {
+      "id": "02_classification_monthly",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e?run=243604ce-91da-4c6f-9b42-0e3edaf8daa1"
+    },
+    {
+      "id": "03_products_anomaly_note",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e/products?run=243604ce-91da-4c6f-9b42-0e3edaf8daa1"
+    },
+    {
+      "id": "04_forecast_inventory",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e/products?run=243604ce-91da-4c6f-9b42-0e3edaf8daa1"
+    },
+    {
+      "id": "05_cpu_ai_exports",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e?run=243604ce-91da-4c6f-9b42-0e3edaf8daa1"
+    },
+    {
+      "id": "06_quality_views",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e/quality"
+    },
+    {
+      "id": "07_RF",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e/quality"
+    },
+    {
+      "id": "07_RFM",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e/quality"
+    },
+    {
+      "id": "07_共购",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e/quality"
+    },
+    {
+      "id": "08_account_menu_password_logout_login",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e?run=243604ce-91da-4c6f-9b42-0e3edaf8daa1"
+    },
+    {
+      "id": "09_second_account_cannot_read_first",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18107/projects/528f38b8-4b5b-42d6-96fa-5d1ca369920e?run=243604ce-91da-4c6f-9b42-0e3edaf8daa1"
+    }
+  ],
+  "errs": []
+}

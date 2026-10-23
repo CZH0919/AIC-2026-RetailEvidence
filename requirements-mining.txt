@@ -1,6 +1,0 @@
-# Runtime numerical and mining dependencies, matching the validated environment.
-numpy==2.5.3
-pandas==3.0.6
-scipy==1.18.1
-scikit-learn==1.9.1
-mlxtend==0.25.0

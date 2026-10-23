@@ -1,0 +1,262 @@
+[
+  {
+    "file": "frontend/src/pages/ProjectLibrary.tsx",
+    "original": "<HelpHint topic=\"UX01\" /><p>将交易数据组织成独立项目，让每一次分析都有清晰的依据。</p>",
+    "changed": "<HelpHint topic=\"UX01\" context=\"将交易数据组织成独立项目，让每一次分析都有清晰的依据。\" />"
+  },
+  {
+    "file": "frontend/src/pages/ProjectLibrary.tsx",
+    "original": "<p>{project.description || '为这个项目记录一个清晰的分析目标。'}</p>",
+    "changed": "<p>{project.description}</p>"
+  },
+  {
+    "file": "frontend/src/pages/ProjectLibrary.tsx",
+    "original": "<section className=\"workflow\" aria-label=\"分析流程\">",
+    "changed": "<details className=\"workspace-disclosure library-guide\"><summary>首次使用：三步开始分析</summary><section className=\"workflow\" aria-label=\"分析流程\">"
+  },
+  {
+    "file": "frontend/src/pages/ProjectLibrary.tsx",
+    "original": "    </section>\n  </>",
+    "changed": "    </section></details>\n  </>"
+  },
+  {
+    "file": "frontend/src/components/States.tsx",
+    "original": "FileTextOutlined, FolderOpenOutlined",
+    "changed": "FolderOpenOutlined"
+  },
+  {
+    "file": "frontend/src/components/States.tsx",
+    "original": "<div className=\"empty-illustration\" aria-hidden=\"true\"><FileTextOutlined /><FolderOpenOutlined /></div>",
+    "changed": "<div className=\"empty-mark\" aria-hidden=\"true\"><FolderOpenOutlined /></div>"
+  },
+  {
+    "file": "frontend/src/components/FieldAssistant.tsx",
+    "original": "<section aria-label=\"字段理解助手\" className=\"editor-intro\">",
+    "changed": "<section aria-label=\"字段理解助手\" className=\"editor-intro field-assistant\"><details className=\"workspace-disclosure\"><summary>AI 辅助理解字段</summary>"
+  },
+  {
+    "file": "frontend/src/components/FieldAssistant.tsx",
+    "original": "  </section>",
+    "changed": "  </details></section>"
+  },
+  {
+    "file": "frontend/src/components/ImportEditor.tsx",
+    "original": "<Drawer open title=\"导入数据\"",
+    "changed": "<Drawer className=\"retail-import-drawer\" open title=\"导入数据\""
+  },
+  {
+    "file": "frontend/src/components/ImportEditor.tsx",
+    "original": "<HelpHint topic=\"UX02\" /><p>上传 CSV 或 XLSX，保留原始文件并建立可追溯的数据版本。</p>",
+    "changed": "<HelpHint topic=\"UX02\" context=\"上传 CSV 或 XLSX，保留原始文件并建立可追溯的数据版本。\" />"
+  },
+  {
+    "file": "frontend/src/components/ImportEditor.tsx",
+    "original": "<h3>或从公开数据开始</h3><p>使用已有数据集，体验完整导入流程。</p>",
+    "changed": "<h3>或从公开数据开始</h3>"
+  },
+  {
+    "file": "frontend/src/components/ImportEditor.tsx",
+    "original": "<HelpHint topic={draft.suffix === \".csv\" ? \"UX03\" : \"UX04\"} /><p>选择正确的格式后生成预览。原始文件始终保留。</p>",
+    "changed": "<HelpHint topic={draft.suffix === \".csv\" ? \"UX03\" : \"UX04\"} context=\"选择正确的格式后生成预览。原始文件始终保留。\" />"
+  },
+  {
+    "file": "frontend/src/components/DataPreview.tsx",
+    "original": "{c.missing ? `${c.missing.toLocaleString()} 个缺失` : '无缺失'}",
+    "changed": "{c.missing ? `${c.missing.toLocaleString()} 个缺失` : null}"
+  },
+  {
+    "file": "frontend/src/components/DataPreview.tsx",
+    "original": "<p className=\"field-help\">保留原始值与来源行号。预览中的长文本最多显示 500 个字符，完整内容保存在数据版本中。{preview.blank_rows_skipped > 0 && ` 已跳过 ${preview.blank_rows_skipped} 个全空行。`}</p>",
+    "changed": "{preview.blank_rows_skipped > 0 && <p className=\"field-help\">已跳过 {preview.blank_rows_skipped} 个全空行。</p>}<details className=\"workspace-disclosure preview-disclosure\"><summary>预览范围说明</summary><p>保留原始值与来源行号。预览中的长文本最多显示 500 个字符，完整内容保存在数据版本中。</p></details>"
+  },
+  {
+    "file": "frontend/src/components/DataWorkspace.tsx",
+    "original": "<DataPreview preview={detail.preview} />",
+    "changed": "<details className=\"workspace-disclosure saved-data-preview\"><summary>查看原始数据预览</summary><DataPreview preview={detail.preview} /></details>"
+  },
+  {
+    "file": "frontend/src/components/DataWorkspace.tsx",
+    "original": "<HelpHint topic=\"UX06\" /><p>字段修改会创建新的映射版本，原有记录继续保留。</p>",
+    "changed": "<HelpHint topic=\"UX06\" context=\"字段修改会创建新的映射版本，原有记录继续保留。\" />"
+  },
+  {
+    "file": "frontend/src/components/DataWorkspace.tsx",
+    "original": "<Drawer open={!!editing}",
+    "changed": "<Drawer className=\"retail-import-drawer\" open={!!editing}"
+  },
+  {
+    "file": "frontend/src/components/QualityWorkspace.tsx",
+    "original": "<span className=\"eyebrow\">更多分析前的数据检查</span><h2>先确认数据，再相信结论</h2><HelpHint topic=\"UX24\" /><p>看清记录的去向，明确每项分析可以使用的数据范围。</p>",
+    "changed": "<h2>数据质量检查</h2><HelpHint topic=\"UX24\" context=\"看清记录的去向，明确每项分析可以使用的数据范围。\" />"
+  },
+  {
+    "file": "frontend/src/components/QualityWorkspace.tsx",
+    "original": "<HelpHint topic=\"UX26\" /></div><div className=\"mapping-grid\">",
+    "changed": "<HelpHint topic=\"UX26\" context=\"每次结果固定数据版本、字段与清洗策略。修改设置会产生新的处理记录，原始文件保持完整。\" /></div><div className=\"mapping-grid\">"
+  },
+  {
+    "file": "frontend/src/components/QualityWorkspace.tsx",
+    "original": "        <p className=\"field-help\">每次结果固定数据版本、字段与清洗策略。修改设置会产生新的处理记录，原始文件保持完整。</p>\n",
+    "changed": ""
+  },
+  {
+    "file": "frontend/src/components/QualityWorkspace.tsx",
+    "original": "<span>选择一次记录，查看对应结果</span>",
+    "changed": ""
+  },
+  {
+    "file": "frontend/src/components/QualityWorkspace.tsx",
+    "original": "<div className=\"quality-events\" aria-label=\"处理过程\">",
+    "changed": "<details className=\"workspace-disclosure process-disclosure\"><summary>查看处理过程</summary><div className=\"quality-events\" aria-label=\"处理过程\">"
+  },
+  {
+    "file": "frontend/src/components/QualityWorkspace.tsx",
+    "original": "</time></div>)}</div>",
+    "changed": "</time></div>)}</div></details>"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "['原始记录', report.raw_rows, '完整保留来源']",
+    "changed": "['原始记录', report.raw_rows, '']"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "['有效正向记录', report.views.common.included_rows, '范围与基础规则通过']",
+    "changed": "['有效正向记录', report.views.common.included_rows, '']"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "<small>{help}</small>",
+    "changed": "{help && <small>{help}</small>}"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "<HelpHint topic=\"UX24\" /><HelpHint topic=\"UX26\" /><p>输入条件通过后，仍需在实际分析时检验结果质量。</p>",
+    "changed": "<HelpHint topic=\"UX24\" /><HelpHint topic=\"UX26\" context=\"输入条件通过后，仍需在实际分析时检验结果质量。\" />"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "<HelpHint topic=\"UX39\" /><HelpHint topic=\"UX40\" /><p>根据顾客最近一次购买、购买次数，以及可用的购买金额，了解不同群体的购买习惯。</p>",
+    "changed": "<HelpHint topic=\"UX39\" context=\"根据顾客最近一次购买、购买次数，以及可用的购买金额，了解不同群体的购买习惯。\" /><HelpHint topic=\"UX40\" />"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "<HelpHint topic=\"UX41\" /><HelpHint topic=\"UX42\" /><p>查看哪些商品经常出现在同一张小票中；结果还会用未参与分析的购物篮检验。</p>",
+    "changed": "<HelpHint topic=\"UX41\" context=\"查看哪些商品经常出现在同一张小票中；结果还会用未参与分析的购物篮检验。\" /><HelpHint topic=\"UX42\" />"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "<HelpHint topic=\"UX24\" /><p>同一条记录可能适合销售统计，却不适合客户分群；下方分别列出各项分析的使用和排除数量。</p>",
+    "changed": "<HelpHint topic=\"UX24\" context=\"同一条记录可能适合销售统计，却不适合客户分群；下方分别列出各项分析的使用和排除数量。\" />"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "      <p>时间范围：",
+    "changed": "      <details className=\"workspace-disclosure\"><summary>本次范围与策略</summary><p>时间范围："
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "金额来源冲突时等待确认'}。</p>",
+    "changed": "金额来源冲突时等待确认'}。</p></details>"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'customers'",
+    "changed": "align: 'right' as const, dataIndex: 'customers'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'share'",
+    "changed": "align: 'right' as const, dataIndex: 'share'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'recency_median'",
+    "changed": "align: 'right' as const, dataIndex: 'recency_median'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'frequency_median'",
+    "changed": "align: 'right' as const, dataIndex: 'frequency_median'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'monetary_median'",
+    "changed": "align: 'right' as const, dataIndex: 'monetary_median'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'k'",
+    "changed": "align: 'right' as const, dataIndex: 'k'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'min_cluster_size'",
+    "changed": "align: 'right' as const, dataIndex: 'min_cluster_size'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'silhouette'",
+    "changed": "align: 'right' as const, dataIndex: 'silhouette'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'ari_median'",
+    "changed": "align: 'right' as const, dataIndex: 'ari_median'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'n_ab'",
+    "changed": "align: 'right' as const, dataIndex: 'n_ab'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'support'",
+    "changed": "align: 'right' as const, dataIndex: 'support'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'confidence'",
+    "changed": "align: 'right' as const, dataIndex: 'confidence'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'lift'",
+    "changed": "align: 'right' as const, dataIndex: 'lift'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'baskets'",
+    "changed": "align: 'right' as const, dataIndex: 'baskets'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'hit_rate_at_5'",
+    "changed": "align: 'right' as const, dataIndex: 'hit_rate_at_5'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'recommendation_coverage'",
+    "changed": "align: 'right' as const, dataIndex: 'recommendation_coverage'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "dataIndex: 'popularity_hit_rate_at_5'",
+    "changed": "align: 'right' as const, dataIndex: 'popularity_hit_rate_at_5'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "import { HelpHint } from './HelpHint'",
+    "changed": "import { HelpHint } from './HelpHint'\nimport { AnalysisHistory } from './AnalysisHistory'"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "<div className=\"quality-run-strip compact\">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{stateLabel[run.status] ?? run.status}</span><small>{run.parameters?.analysis?.kind?.toUpperCase() ?? '分群'}</small></button>) : <p>还没有客户分群记录。</p>}</div>",
+    "changed": "<AnalysisHistory title=\"客户分群\" runs={runs} selected={selected} detail={detail} onSelect={id => { setSelected(id); setDetail(null) }} />"
+  },
+  {
+    "file": "frontend/src/components/QualityReport.tsx",
+    "original": "<div className=\"quality-run-strip compact\">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{stateLabel[run.status] ?? run.status}</span><small>关联规则</small></button>) : <p>还没有商品共购记录。</p>}</div>",
+    "changed": "<AnalysisHistory title=\"商品共购\" runs={runs} selected={selected} detail={detail} onSelect={id => { setSelected(id); setDetail(null) }} />"
+  }
+]

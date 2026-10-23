@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "parent_sha": "a35ba1b3acd6e8707d2f177f998c24f1705a5836",
+  "unit_tests": 9,
+  "browser_groups": {
+    "copy-density/results.json": 6,
+    "guards/results.json": 6,
+    "prototype/results.json": 4
+  },
+  "data_unchanged": true,
+  "downloaded_json_matches_frozen_result": true,
+  "page_errors": 0,
+  "normal_ui_with_real_backend": true,
+  "injected_warning_test_separate": true,
+  "main_merged": false,
+  "date": "2026-10-19T14:08:21.754899+00:00"
+}

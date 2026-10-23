@@ -1,0 +1,264 @@
+INFO:     Started server process [98341]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18084 (Press CTRL+C to quit)
+INFO:     127.0.0.1:45148 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49166 - "GET /assets/index-DCzLmG91.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /assets/data-DYFcKqPI.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /assets/index-DyMRz45R.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49174 - "GET /assets/rolldown-runtime-CbXtAM7H.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /api/projects?q=&offset=0&limit=12 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49180 - "GET /api/projects?q=&offset=0&limit=12 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /assets/SalesWorkspace-Drkq_hku.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /assets/quality-BYBEWhh6.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/imports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /api/public-datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "POST /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/imports?filename=monthly_with_types.csv HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49154 - "POST /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/imports/50e96f73-5039-40a2-990e-c801293eb700/preview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "POST /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/imports/50e96f73-5039-40a2-990e-c801293eb700/preview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "POST /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/imports/50e96f73-5039-40a2-990e-c801293eb700/explain-fields HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47000 - "POST /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/imports/50e96f73-5039-40a2-990e-c801293eb700/confirm HTTP/1.1" 201 Created
+INFO:     127.0.0.1:47010 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47000 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47000 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/sources/0e73ce73-76dd-4bae-a1b4-3bed2200a74a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47010 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/sources/0e73ce73-76dd-4bae-a1b4-3bed2200a74a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35298 - "POST /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:35298 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/8b79b07f-5185-4a9a-ab54-248b3e961650 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35298 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/8b79b07f-5185-4a9a-ab54-248b3e961650 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35298 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/8b79b07f-5185-4a9a-ab54-248b3e961650 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35298 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/8b79b07f-5185-4a9a-ab54-248b3e961650 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35298 - "POST /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:35298 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33118 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33118 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33118 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33118 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33118 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33118 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33132 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33132 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33118 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33132 - "GET /projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01?run=0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33132 - "GET /assets/index-DyMRz45R.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:33104 - "GET /assets/rolldown-runtime-CbXtAM7H.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:33144 - "GET /assets/data-DYFcKqPI.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:33156 - "GET /assets/index-DCzLmG91.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:33156 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33156 - "GET /assets/SalesWorkspace-Drkq_hku.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:33144 - "GET /assets/quality-BYBEWhh6.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:33144 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33156 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "PUT /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/item-notes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01?run=0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33156 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33144 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33144 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33144 - "POST /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33144 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/report?all_attention=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33144 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/files/sales_products.csv HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33144 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/files/sales_classification.csv HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33144 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/files/sales_business_records.csv HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33144 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/files/sales_report.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45304 - "GET /projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01?run=0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45318 - "GET /assets/index-DCzLmG91.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45340 - "GET /projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01?run=0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45334 - "GET /projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01?run=0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45324 - "GET /assets/rolldown-runtime-CbXtAM7H.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45304 - "GET /assets/index-DyMRz45R.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45332 - "GET /assets/data-DYFcKqPI.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45366 - "GET /assets/rolldown-runtime-CbXtAM7H.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45340 - "GET /assets/index-DyMRz45R.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45374 - "GET /assets/data-DYFcKqPI.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45334 - "GET /assets/index-DyMRz45R.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45410 - "GET /assets/data-DYFcKqPI.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45356 - "GET /assets/index-DCzLmG91.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45394 - "GET /assets/rolldown-runtime-CbXtAM7H.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45386 - "GET /assets/index-DCzLmG91.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45332 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45374 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45332 - "GET /assets/SalesWorkspace-Drkq_hku.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45410 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45304 - "GET /assets/quality-BYBEWhh6.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45374 - "GET /assets/SalesWorkspace-Drkq_hku.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45340 - "GET /assets/quality-BYBEWhh6.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45410 - "GET /assets/SalesWorkspace-Drkq_hku.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45334 - "GET /assets/quality-BYBEWhh6.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45304 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45332 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45340 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45410 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45334 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45374 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45386 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45324 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45356 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45324 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45386 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45356 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45420 - "GET /projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45450 - "GET /assets/data-DYFcKqPI.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45420 - "GET /assets/index-DyMRz45R.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45442 - "GET /assets/rolldown-runtime-CbXtAM7H.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45426 - "GET /assets/index-DCzLmG91.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45450 - "GET /api/projects?q=&offset=0&limit=12 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45450 - "GET /projects/17f4583e-14ca-4adc-849f-c70430f1591b?run=b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45450 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45420 - "GET /assets/quality-BYBEWhh6.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45450 - "GET /assets/SalesWorkspace-Drkq_hku.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45450 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45420 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59144 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59144 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/sales/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40852 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40864 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/sales/sources/f63b3412-79e6-48c0-b1cc-b9e468d012ea HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51198 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51210 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/imports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51210 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions/f63b3412-79e6-48c0-b1cc-b9e468d012ea HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60408 - "GET /projects/e1711757-601a-4e9a-a05f-037d7e6909e6/data HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60418 - "GET /assets/index-DyMRz45R.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60434 - "GET /assets/rolldown-runtime-CbXtAM7H.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60408 - "GET /assets/index-DCzLmG91.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60448 - "GET /assets/data-DYFcKqPI.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60448 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60408 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/imports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/versions/e4e9bd38-43a5-4158-bb19-36092f446d03 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/versions/48b9d571-3d7f-43d4-b4f0-19ea931123be HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /projects/17f4583e-14ca-4adc-849f-c70430f1591b/data HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60408 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/imports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60408 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions/f63b3412-79e6-48c0-b1cc-b9e468d012ea HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60408 - "GET /api/public-datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60408 - "POST /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/imports?filename=monthly_2011-10.csv HTTP/1.1" 201 Created
+INFO:     127.0.0.1:60408 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49544 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions/f63b3412-79e6-48c0-b1cc-b9e468d012ea HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/imports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49550 - "GET /projects/17f4583e-14ca-4adc-849f-c70430f1591b/data HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49550 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49550 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/imports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions/f63b3412-79e6-48c0-b1cc-b9e468d012ea HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/public-datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "POST /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/imports?filename=public_detail_sample.xlsx HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49544 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions/f63b3412-79e6-48c0-b1cc-b9e468d012ea HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49550 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/imports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60408 - "GET /projects/e1711757-601a-4e9a-a05f-037d7e6909e6/products?run=2b78c6a3-98f1-4d46-b308-4651224f5d96 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60408 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49550 - "GET /assets/quality-BYBEWhh6.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60408 - "GET /assets/SalesWorkspace-Drkq_hku.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60408 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/2b78c6a3-98f1-4d46-b308-4651224f5d96 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/sales/runs/2b78c6a3-98f1-4d46-b308-4651224f5d96/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49550 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49550 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/sales/runs/2b78c6a3-98f1-4d46-b308-4651224f5d96/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39970 - "GET /projects/17f4583e-14ca-4adc-849f-c70430f1591b?run=b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39970 - "GET /assets/index-DCzLmG91.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:39972 - "GET /assets/index-DyMRz45R.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:39984 - "GET /assets/data-DYFcKqPI.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:39980 - "GET /assets/rolldown-runtime-CbXtAM7H.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:39980 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39980 - "GET /assets/SalesWorkspace-Drkq_hku.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:39984 - "GET /assets/quality-BYBEWhh6.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:39984 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39980 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/sales/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /projects/e1711757-601a-4e9a-a05f-037d7e6909e6/quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /assets/QualityWorkspace-Dh-2UsW-.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/versions/e4e9bd38-43a5-4158-bb19-36092f446d03/mappings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39980 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39980 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39980 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=clustering HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=association HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad/rows?view=row_audit&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=association HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/5450dfb7-2836-4705-b15e-87a5e7e4a07c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=clustering HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=association HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/5450dfb7-2836-4705-b15e-87a5e7e4a07c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=clustering HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=association HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/5450dfb7-2836-4705-b15e-87a5e7e4a07c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=clustering HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=association HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/5450dfb7-2836-4705-b15e-87a5e7e4a07c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=clustering HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=association HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/5450dfb7-2836-4705-b15e-87a5e7e4a07c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=clustering HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=association HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/5450dfb7-2836-4705-b15e-87a5e7e4a07c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=clustering HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=association HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/5450dfb7-2836-4705-b15e-87a5e7e4a07c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/bec53404-4a72-4ce7-a06f-c3f6b5f77fad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=quality HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=clustering HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs?dataset_version_id=e4e9bd38-43a5-4158-bb19-36092f446d03&kind=association HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /api/projects/e1711757-601a-4e9a-a05f-037d7e6909e6/runs/5450dfb7-2836-4705-b15e-87a5e7e4a07c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /projects/17f4583e-14ca-4adc-849f-c70430f1591b?run=b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39984 - "GET /assets/index-DyMRz45R.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:39972 - "GET /assets/index-DCzLmG91.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:47502 - "GET /assets/data-DYFcKqPI.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:47498 - "GET /assets/rolldown-runtime-CbXtAM7H.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:47498 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47498 - "GET /assets/SalesWorkspace-Drkq_hku.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:47502 - "GET /assets/quality-BYBEWhh6.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:47502 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47498 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/sales/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /projects/17f4583e-14ca-4adc-849f-c70430f1591b?run=b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39972 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47498 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/sales/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47384 - "GET /projects/17f4583e-14ca-4adc-849f-c70430f1591b?run=b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47384 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47384 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/versions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47386 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs?kind=sales&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47402 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47402 - "GET /api/projects/17f4583e-14ca-4adc-849f-c70430f1591b/sales/runs/b9ba34b0-d35b-43c5-9663-60639bc17e54/records HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52660 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/files/manifest.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56620 - "GET /api/projects/f187a0f3-71ae-4ac1-926d-8f28cf868a01/sales/runs/0386ec96-a541-46a7-afd9-68f4c2cfdf7b/files/manifest.json HTTP/1.1" 200 OK

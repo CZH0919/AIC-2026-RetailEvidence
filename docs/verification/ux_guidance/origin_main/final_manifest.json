@@ -1,0 +1,98 @@
+{
+  "context": {
+    "project_id": "f187a0f3-71ae-4ac1-926d-8f28cf868a01",
+    "data_version_id": "0e73ce73-76dd-4bae-a1b4-3bed2200a74a",
+    "mapping_revision": 1,
+    "policy_id": "3587cc5a-123e-438b-9096-c67d64952e9b",
+    "quality_run_id": null,
+    "run_id": "0386ec96-a541-46a7-afd9-68f4c2cfdf7b"
+  },
+  "source_sha256": "143e9ce22b1e3e885b9467efcb7cd12c72cec6b0ec8b40ca907c93bc2b3e9168",
+  "mapping_sha256": "659e5536dbf4e9731bcc749355db9fe013fb51ee1f0ecfa0df84d8292681e134",
+  "policy_sha256": "58d014c62b4c37d36240623b2fc0e69d2f71f65255f4067a9f257c105f10bb8c",
+  "parameters": {
+    "sales": {
+      "sources": [
+        {
+          "version_id": "0e73ce73-76dd-4bae-a1b4-3bed2200a74a",
+          "mapping_revision": 1
+        }
+      ],
+      "month": "2011-10",
+      "merge_mode": "append",
+      "duplicates": "keep",
+      "coverage_start": null,
+      "coverage_end": null,
+      "complete_coverage": false,
+      "closed_dates": [],
+      "budget_seconds": 1200,
+      "check_only": false,
+      "classifications": [
+        {
+          "version_id": "0e73ce73-76dd-4bae-a1b4-3bed2200a74a",
+          "mapping_revision": 1,
+          "default_kind": "pending",
+          "default_amount_treatment": "pending",
+          "confirmed": true,
+          "rules": [
+            {
+              "match_by": "category",
+              "value": "physical_product",
+              "kind": "physical_product",
+              "amount_treatment": "include",
+              "basis": "公开数据派生验收声明，需真实商户另行确认"
+            },
+            {
+              "match_by": "category",
+              "value": "shipping_service",
+              "kind": "shipping_service",
+              "amount_treatment": "exclude",
+              "basis": "公开数据派生验收声明，需真实商户另行确认"
+            },
+            {
+              "match_by": "category",
+              "value": "manual_adjustment",
+              "kind": "manual_adjustment",
+              "amount_treatment": "exclude",
+              "basis": "公开数据派生验收声明，需真实商户另行确认"
+            },
+            {
+              "match_by": "category",
+              "value": "other",
+              "kind": "other",
+              "amount_treatment": "exclude",
+              "basis": "公开数据派生验收声明，需真实商户另行确认"
+            }
+          ]
+        }
+      ],
+      "source_hashes": {
+        "0e73ce73-76dd-4bae-a1b4-3bed2200a74a": "4e5ae9af3cb353c74f6847c84ba0fdc353f7e19f7d7ee20f20293fc94b0761a2"
+      },
+      "classification_sha256": "b10d7f448042ecc7532ae04a8cfc2a82d7e066e93040b2a8c55a70c67a1456f2"
+    },
+    "timeout_seconds": 1200,
+    "memory_mb": 8192
+  },
+  "code_sha256": "7819afe8a9ff4fb4da5e5af27f5bc4b346610e4740dc8c64be2d72cdb5c9aaec",
+  "application_version": "0.6.2",
+  "source_commit": "0dbb6962dddb57c99222729c5df9917975f72b7e",
+  "python": "3.12.3",
+  "dependencies": {
+    "pyarrow": "25.0.1",
+    "sqlalchemy": "2.1.3",
+    "psutil": "7.2.2",
+    "pydantic": "2.13.5",
+    "scikit-learn": "1.9.1"
+  },
+  "artifacts": {
+    "sales_report.json": "79f06239874e890e1ed4c039d450245688c06a1d30b09085ada756e239d77535",
+    "sales_products.csv": "6efb8263ffc449b403a7ce97146f6ec3f140e6d04ffa977cbe9078a5a1f49b9d",
+    "sales_row_audit.csv": "6a4a63c7b842c1395319e542b08a7cdfaf6b59de797ecfe28593f081e0bb9dd9",
+    "sales_backtests.csv": "b9574a157e8e108dce0f3021b367d9aba5650e595eeb4d21f7f0fd920e6d57bc",
+    "sales_classification.csv": "d7fe9729c444305654ad6727cc23391378e28ca7ac0b71f877834f5c8e9912b1",
+    "sales_business_records.csv": "709eb1b72fc8fe6bc425d55fd0a479b542bc5644745a9b9192ffb9e0c3d3151d"
+  },
+  "peak_rss_bytes": 262303744,
+  "elapsed_seconds": 5.156
+}

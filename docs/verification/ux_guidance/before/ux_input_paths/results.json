@@ -1,0 +1,48 @@
+{
+  "phase": "before",
+  "results": [
+    {
+      "id": "B_csv_encoding",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/eb02716d-400c-4dd8-8ace-1f1a8540eff5/data",
+      "evidence": "B_csv_encoding.png"
+    },
+    {
+      "id": "B_xlsx_sheets",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/eb02716d-400c-4dd8-8ace-1f1a8540eff5/data",
+      "evidence": "B_xlsx_sheets.png"
+    },
+    {
+      "id": "C_missing_fields",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/eb02716d-400c-4dd8-8ace-1f1a8540eff5/data",
+      "evidence": "C_missing_fields.png"
+    },
+    {
+      "id": "E_two_month_append",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/573bf9b8-90c5-4607-a72d-c260f149e82a?run=d3fcbdc6-1cd2-4236-a1a4-3de13769ba75",
+      "evidence": "E_two_month_append.png"
+    },
+    {
+      "id": "J_data_history",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/573bf9b8-90c5-4607-a72d-c260f149e82a/data",
+      "evidence": "J_data_history.png"
+    },
+    {
+      "id": "E_tablet_mobile",
+      "status": "PASS",
+      "url": "http://127.0.0.1:18084/projects/573bf9b8-90c5-4607-a72d-c260f149e82a?run=ad2effad-30c4-47c8-ac6c-6e0cf95bf851",
+      "evidence": "E_tablet_mobile.png"
+    },
+    {
+      "id": "B_daily_summary",
+      "status": "FAIL",
+      "error": "locator.waitFor: Timeout 25000ms exceeded.\nCall log:\n  - waiting for locator('.classification-editor') to be visible\n",
+      "url": "http://127.0.0.1:18084/projects/6dd50205-4b69-469b-89bc-c7c729582b2e?compose=1"
+    }
+  ],
+  "errors": []
+}
