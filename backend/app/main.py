@@ -9,7 +9,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import func, or_, select, update
+from sqlalchemy import case, func, or_, select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
@@ -66,7 +66,7 @@ def create_app(
 
     app = FastAPI(
         title="RetailEvidence Studio",
-        version="0.7.0",
+        version="0.7.1",
         lifespan=lifespan,
         dependencies=[Depends(authorize_request)],
         docs_url=None,
@@ -156,8 +156,14 @@ def create_app(
         owned = select(ProjectOwner.project_id).where(
             ProjectOwner.account_id == request.state.user["id"]
         )
+        # name_key also stores the owner namespace; never search that private prefix.
+        prefix = request.state.user["id"] + ":"
+        searchable_name = case(
+            (Project.name_key.startswith(prefix), func.substr(Project.name_key, len(prefix) + 1)),
+            else_=Project.name_key,
+        )
         condition = Project.id.in_(owned) & or_(
-            Project.name_key.contains(name_key(q.strip()), autoescape=True),
+            searchable_name.contains(name_key(q.strip()), autoescape=True),
             Project.description.contains(q.strip(), autoescape=True),
         )
         with app.state.sessions() as session:

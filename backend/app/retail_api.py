@@ -2,10 +2,10 @@ import asyncio
 import hashlib
 import json
 import logging
-import math
 import os
 import urllib.request
 from datetime import date
+from decimal import ROUND_CEILING, Decimal
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, HTTPException
@@ -448,13 +448,21 @@ def install_retail_routes(app):
                 or not origin <= payload.arrival_date <= date.fromisoformat(prediction["end"])
             ):
                 raise DataIssue("仅能扣除预测这七天内确定到货的数量。", "inventory_arrival")
+            # Decimal strings preserve entered sales units at package boundaries.
+            # A binary float residue must not add an entire extra package.
             need = max(
-                0, prediction["quantity"] + payload.reserve - payload.available - payload.incoming
+                Decimal(0),
+                Decimal(str(prediction["quantity"]))
+                + Decimal(str(payload.reserve))
+                - Decimal(str(payload.available))
+                - Decimal(str(payload.incoming)),
             )
+            pack_size = Decimal(str(payload.pack_size))
+            suggested = (need / pack_size).to_integral_value(rounding=ROUND_CEILING) * pack_size
             value = {
                 "input": payload.model_dump(mode="json"),
                 "forecast": prediction,
-                "suggested_quantity": math.ceil(need / payload.pack_size) * payload.pack_size,
+                "suggested_quantity": float(suggested),
                 "notice": "仅为七天总量参考；晚到货可能导致期间缺货，未考虑保质期和采购预算。",
             }
         with app.state.sessions() as session:

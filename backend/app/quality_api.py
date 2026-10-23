@@ -269,7 +269,7 @@ def install_quality_routes(app):
     def eligibility(project_id: UUID, run_id: UUID, payload: AnalysisParameters):
         with app.state.sessions() as session:
             run = scoped(session, AnalysisRun, run_id, project_id)
-            if run.status not in PUBLISHED or not run.result:
+            if run.kind != "quality" or run.status not in PUBLISHED or not run.result:
                 raise DataIssue("请先完成数据质量检查。", "quality_not_ready", 409)
             return require_capability(json.loads(run.result), payload)
 
@@ -295,7 +295,11 @@ def install_quality_routes(app):
                 )
             )
             if existing:
-                if existing.request_sha256 != sha:
+                if (
+                    existing.request_sha256 != sha
+                    or existing.quality_run_id != quality.id
+                    or existing.kind != "clustering"
+                ):
                     raise DataIssue(
                         "同一提交标识对应了不同设置，请重新提交。", "idempotency_conflict", 409
                     )
@@ -328,7 +332,12 @@ def install_quality_routes(app):
                         AnalysisRun.idempotency_key == payload.idempotency_key,
                     )
                 )
-                if existing and existing.request_sha256 == sha:
+                if (
+                    existing
+                    and existing.request_sha256 == sha
+                    and existing.quality_run_id == quality.id
+                    and existing.kind == "clustering"
+                ):
                     return run_read(existing, True)
                 raise DataIssue(
                     "提交设置发生冲突，请刷新后重试。", "idempotency_conflict", 409
@@ -357,7 +366,11 @@ def install_quality_routes(app):
                 )
             )
             if existing:
-                if existing.request_sha256 != sha:
+                if (
+                    existing.request_sha256 != sha
+                    or existing.quality_run_id != quality.id
+                    or existing.kind != "association"
+                ):
                     raise DataIssue(
                         "同一提交标识对应了不同设置，请重新提交。", "idempotency_conflict", 409
                     )
@@ -390,7 +403,12 @@ def install_quality_routes(app):
                         AnalysisRun.idempotency_key == payload.idempotency_key,
                     )
                 )
-                if existing and existing.request_sha256 == sha:
+                if (
+                    existing
+                    and existing.request_sha256 == sha
+                    and existing.quality_run_id == quality.id
+                    and existing.kind == "association"
+                ):
                     return run_read(existing, True)
                 raise DataIssue(
                     "提交设置发生冲突，请刷新后重试。", "idempotency_conflict", 409
