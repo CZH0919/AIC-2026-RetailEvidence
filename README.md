@@ -1,6 +1,12 @@
 # RetailEvidence Studio
 
-小商户月度销售与备货助手，沿用团队 FastAPI、SQLite/SQLAlchemy、React/TypeScript 架构。版本 0.6.3，schema 5，销售算法 sales-v2.2.0；文案审计与本轮验收见 [文案验收](docs/USER_FACING_COPY_ACCEPTANCE.md)；此前操作提示验收见 [真实UX报告](docs/UX_GUIDANCE_ACCEPTANCE.md)；原系统验收见 [历史交付报告](docs/ACCEPTANCE_REPORT.md)。
+## 当前系统复查与界面细化（0.7.1）
+
+注册登录后进入自己的项目空间。新版本修复搜索、历史报告导航、慢请求结果串入其他上下文、小数包装取整及临时断连丢草稿；统一导航、数字、表格和表单，详细帮助按需展开。没有改变销售算法、历史报告或数据库结构。
+
+[复查与修复说明](docs/SYSTEM_REVIEW_20261023.md) · [实际验收](docs/SYSTEM_REVIEW_ACCEPTANCE.md) · [同数据前后截图](docs/SYSTEM_REVIEW_BEFORE_AFTER.md)。下面按日期列出的旧任务证据是历史记录，不能替代本轮结果。
+
+小商户月度销售与备货助手，沿用团队 FastAPI、SQLite/SQLAlchemy、React/TypeScript 架构。当前版本 0.7.1，schema 6，销售算法 sales-v2.2.0；文案审计与本轮验收见 [文案验收](docs/USER_FACING_COPY_ACCEPTANCE.md)；此前操作提示验收见 [真实UX报告](docs/UX_GUIDANCE_ACCEPTANCE.md)；原系统验收见 [历史交付报告](docs/ACCEPTANCE_REPORT.md)。
 
 上传收银明细、独立商品日汇总或月汇总 → 确认字段、月份、记录类型与金额口径 → 检查数据 → 生成月报 → 查看全部商品及异常原始记录 → 保存核对备注 → AI 辅助解释证据 → 导出 HTML/CSV/JSON、浏览器打印 PDF。RF/RFM 客户分群与 FP-growth 共购保留在“更多分析”。
 
@@ -55,7 +61,7 @@ export AIC_AI_URL=http://127.0.0.1:8081/v1/chat/completions
 bash scripts/run.sh
 ```
 
-默认 Web `http://127.0.0.1:8000`，单 Worker；首次在自己的状态目录初始化 schema 5。环境通过进程变量提供，脚本不会自动加载 `.env`；安全样例见 [.env.example](.env.example)。`.runtime/` 不提交 Git。Ubuntu 未安装 ensurepip 时可使用已有 uv，无须 sudo。Windows 操作需遵守 [C 盘保护与交接](docs/HANDOFF.md)，本任务主要测试在远端完成。
+默认 Web `http://127.0.0.1:8000`，单 Worker；首次在自己的状态目录初始化 schema 6。环境通过进程变量提供，脚本不会自动加载 `.env`；安全样例见 [.env.example](.env.example)。`.runtime/` 不提交 Git。Ubuntu 未安装 ensurepip 时可使用已有 uv，无须 sudo。Windows 操作需遵守 [C 盘保护与交接](docs/HANDOFF.md)，本任务主要测试在远端完成。
 
 模型使用 [官方 Qwen2.5-1.5B GGUF](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF) 和 llama.cpp CPU 服务，详细配置、SHA-256、线程与端口见 [技术交接](docs/HANDOFF.md)。模型不可用仍可使用确定性报告，界面明确标记预设说明。没有模型权重、原始大数据、个人凭据或数据库随 Git 发布。
 
