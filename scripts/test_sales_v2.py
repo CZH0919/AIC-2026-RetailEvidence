@@ -89,17 +89,6 @@ class SalesTests(unittest.TestCase):
         output.mkdir()
         params = {
             "sources": [],
-            "classifications": [
-                {
-                    "version_id": s["version_id"],
-                    "mapping_revision": s["mapping_revision"],
-                    "default_kind": "physical_product",
-                    "default_amount_treatment": "include",
-                    "confirmed": True,
-                    "rules": [],
-                }
-                for s in sources
-            ],
             "month": "2026-09",
             "merge_mode": "append",
             "duplicates": "keep",
@@ -247,7 +236,9 @@ class SalesTests(unittest.TestCase):
         self.assertEqual(len(report["attention_ids"]), 8)
         self.assertEqual(len(report["highlights"]), 5)
         self.assertLessEqual(len(report["actions"]), 3)
-        self.assertEqual(len(report["actions"][0]["related_items"]), 8)
+        # A last-week jump with only 14 observed days is not enough evidence
+        # for an action, while all original attention items remain accessible.
+        self.assertEqual(report["actions"], [])
         with (output / "sales_products.csv").open(encoding="utf-8-sig") as stream:
             self.assertTrue(next(csv.DictReader(stream))["name"].startswith("'="))
         self.assertIn("全部待关注商品", render_report(report, "<店铺>", True))

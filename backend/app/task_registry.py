@@ -8,8 +8,6 @@ TASK_SPECS = {
             "sales_products.csv",
             "sales_row_audit.csv",
             "sales_backtests.csv",
-            "sales_classification.csv",
-            "sales_business_records.csv",
         ],
     },
     "quality": {
@@ -31,6 +29,8 @@ TASK_SPECS = {
             "cluster_assignments.csv",
             "cluster_candidates.csv",
             "cluster_report.json",
+            "customer_opportunities.json",
+            "customer_followup.csv",
         ],
     },
     "association": {
@@ -51,6 +51,9 @@ def run_registered(job, progress):
 
         return process_retail(job, progress)
     if job["kind"] == "quality":
+        if job.get("automatic_input"):
+            from .sales_automation_inputs import prepare
+            return prepare(job, progress)
         from pathlib import Path
 
         from .quality import process_quality

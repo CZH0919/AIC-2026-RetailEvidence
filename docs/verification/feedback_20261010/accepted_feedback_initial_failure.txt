@@ -1,6 +1,0 @@
-page.waitForFunction: Timeout 30000ms exceeded.
-    at select (/home/ubuntu/retailevidence_personal_20261009_01/updates/review_20261010_01/source/scripts/browser_feedback_20261010.cjs:11:341)
-    at async /home/ubuntu/retailevidence_personal_20261009_01/updates/review_20261010_01/source/scripts/browser_feedback_20261010.cjs:13:192 {
-  log: [],
-  name: 'TimeoutError'
-}

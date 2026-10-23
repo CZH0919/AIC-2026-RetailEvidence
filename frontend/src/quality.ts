@@ -23,7 +23,8 @@ export type AssociationReport = {
   context: { mapping_revision: number; policy_id: string; quality_run_id: string; run_id: string; data_version_id: string }
   analysis: { kind: 'association'; random_state: number; min_support: number; min_count: number; min_confidence: number; max_length: number }
   summary: { baskets: number; train_baskets: number; validation_baskets: number; test_baskets: number; items: number; itemsets: number; rules: number; publishable: boolean; reasons: string[] }
-  top_rules: { antecedents: string; consequents: string; support: number; confidence: number; lift: number; n_ab: number; n_a: number; n_b: number; denominator: number }[]
+  evaluation_notice?: string; notice?: string;
+  top_rules: { antecedents: string; consequents: string; support: number; confidence: number; lift: number; n_ab: number; n_a: number; n_b: number; denominator: number; confidence_lower?: number; confidence_upper?: number; validation_n_ab?: number; validation_denominator?: number }[]
   evaluations: { split: string; baskets: number; precision_at_5: number | null; recall_at_5: number | null; hit_rate_at_5: number | null; recommendation_coverage: number | null; popularity_hit_rate_at_5: number | null; popularity_coverage: number | null }[]
 }
 export type QualityRun = {
@@ -38,7 +39,7 @@ export const associationDefaults = (): AnalysisParameters => ({ kind: 'associati
 export const cleanDefaults: CleaningConfig = { trim_identifiers: true, duplicates: 'keep', monetary_subset: 'all_customers', accept_selected_amount_source: false }
 export const scopeDefaults: DataScope = { date_start: null, date_end: null, countries: [], item_ids: [], currency: null }
 export const finished = new Set(['succeeded', 'completed_with_warnings', 'not_applicable', 'failed', 'cancelled', 'resource_limited', 'interrupted'])
-export const stateLabel: Record<string, string> = { queued: '等待处理', running: '正在处理', succeeded: '处理完成', completed_with_warnings: '完成 · 有提示', not_applicable: '完成 · 条件不足', failed: '处理未完成', cancelled: '已取消', resource_limited: '达到处理上限', interrupted: '处理已中断' }
+export const stateLabel: Record<string, string> = { queued: '等待处理', running: '正在检查', succeeded: '检查完成', completed_with_warnings: '完成 · 有提示', not_applicable: '完成 · 条件不足', failed: '处理未完成', cancelled: '已取消', resource_limited: '达到处理上限', interrupted: '处理已中断' }
 export const viewLabels: Record<string, string> = { common: '有效正向记录', rf: '客户频次与时间', rfm: '客户频次、时间与金额', amount: '有效金额', association: '完整购物篮' }
 const root = (project: string) => `/projects/${encodeURIComponent(project)}`
 export const qualityApi = {

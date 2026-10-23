@@ -1,3 +1,4 @@
+import { UNKNOWN_QUANTITY_UNIT } from './quantity'
 import { request } from './api'
 
 export type Column = { key: string; name: string; missing: number; examples: string[] }
@@ -11,10 +12,9 @@ export type VersionDetail = Version & { options: ParseOptions; preview: Preview;
 export type PublicDataset = { id: string; title: string; bytes: number; source_url: string; license: string }
 
 const base = (p: string) => `/projects/${encodeURIComponent(p)}`
+const storedMapping = (mapping: Mapping): Mapping => ({ ...mapping, quantity_unit: mapping.quantity_unit.trim() || (mapping.columns.quantity ? UNKNOWN_QUANTITY_UNIT : '') })
 const post = (body: unknown) => ({ method: 'POST', body: JSON.stringify(body) })
-export type FieldExplanation = { answer: string; ai_used: boolean; mode: string; proposal: { columns: Record<string, string> }; preview_token: string; evidence_id: string; notice: string }
 export const dataApi = {
-  explainFields: (p: string, d: Draft, question: string) => request<FieldExplanation>(`${base(p)}/imports/${d.id}/explain-fields`, post({ preview_token: d.preview_token, question }), 45000),
   versions: (p: string) => request<{ items: Version[] }>(`${base(p)}/versions`),
   version: (p: string, v: string) => request<VersionDetail>(`${base(p)}/versions/${v}`),
   drafts: (p: string) => request<{ items: Draft[] }>(`${base(p)}/imports`),
@@ -24,9 +24,9 @@ export const dataApi = {
   preview: (p: string, d: string, options: ParseOptions) => request<Draft>(`${base(p)}/imports/${d}/preview`, post(options), 660000),
   saveDraft: (p: string, d: Draft, mapping: Mapping) => request<Draft>(`${base(p)}/imports/${d.id}/mapping-draft`, { method: 'PUT', body: JSON.stringify({ preview_token: d.preview_token, mapping }) }),
   discard: (p: string, d: string) => request(`${base(p)}/imports/${d}`, { method: 'DELETE' }),
-  confirm: (p: string, d: Draft, mapping: Mapping) => request<VersionDetail>(`${base(p)}/imports/${d.id}/confirm`, post({ preview_token: d.preview_token, mapping }), 660000),
+  confirm: (p: string, d: Draft, mapping: Mapping) => request<VersionDetail>(`${base(p)}/imports/${d.id}/confirm`, post({ preview_token: d.preview_token, mapping: storedMapping(mapping) }), 660000),
   history: (p: string, v: string) => request<{ items: MappingVersion[] }>(`${base(p)}/versions/${v}/mappings`),
-  revise: (p: string, v: VersionDetail, mapping: Mapping) => request<MappingVersion>(`${base(p)}/versions/${v.id}/mappings`, post({ expected_revision: v.mapping.revision, mapping }), 660000),
+  revise: (p: string, v: VersionDetail, mapping: Mapping) => request<MappingVersion>(`${base(p)}/versions/${v.id}/mappings`, post({ expected_revision: v.mapping.revision, mapping: storedMapping(mapping) }), 660000),
 }
 export const parseDefaults: ParseOptions = { encoding: 'utf-8-sig', delimiter: ',', sheets: [], shape: 'transactions', basket_column: null, item_separator: '|' }
 export function initialMapping(draft: Draft): Mapping {

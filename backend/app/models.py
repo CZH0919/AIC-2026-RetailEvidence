@@ -131,32 +131,3 @@ class SalesRecord(Base):
     value: Mapped[str] = mapped_column(Text)
     revision: Mapped[int] = mapped_column(Integer, default=1)
     updated_at: Mapped[str] = mapped_column(String(40), default=timestamp)
-
-
-class Account(Base):
-    __tablename__ = "accounts"
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
-    username: Mapped[str] = mapped_column(String(32), unique=True)
-    password_hash: Mapped[str] = mapped_column(Text)
-    active: Mapped[bool] = mapped_column(default=True)
-    created_at: Mapped[str] = mapped_column(String(40), default=timestamp)
-
-
-class AccountSession(Base):
-    __tablename__ = "account_sessions"
-    id: Mapped[str] = mapped_column(String(64), primary_key=True)
-    account_id: Mapped[str] = mapped_column(ForeignKey("accounts.id"), index=True)
-    expires_at: Mapped[int] = mapped_column(index=True)
-
-
-class ProjectOwner(Base):
-    __tablename__ = "project_owners"
-    project_id: Mapped[str] = mapped_column(ForeignKey("projects.id"), primary_key=True)
-    account_id: Mapped[str] = mapped_column(ForeignKey("accounts.id"), index=True)
-
-
-class AuthThrottle(Base):
-    __tablename__ = "auth_throttle"
-    id: Mapped[str] = mapped_column(String(64), primary_key=True)
-    attempts: Mapped[int]
-    expires_at: Mapped[int] = mapped_column(index=True)

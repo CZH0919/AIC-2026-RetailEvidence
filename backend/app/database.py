@@ -22,7 +22,7 @@ def create_database(path: Path):
     with engine.connect() as connection:
         connection.exec_driver_sql("PRAGMA journal_mode=WAL")
         version = connection.exec_driver_sql("PRAGMA user_version").scalar()
-        if version not in (0, 1, 2, 3, 4, 5, 6):
+        if version not in (0, 1, 2, 3, 4, 5):
             raise RuntimeError("Unsupported database schema; migration required")
     Base.metadata.create_all(engine)
     with engine.begin() as connection:
@@ -35,5 +35,5 @@ def create_database(path: Path):
             connection.exec_driver_sql(
                 "ALTER TABLE analysis_runs ADD COLUMN quality_run_id VARCHAR(36)"
             )
-        connection.exec_driver_sql("PRAGMA user_version=6")
+        connection.exec_driver_sql("PRAGMA user_version=5")
     return engine, sessionmaker(engine, expire_on_commit=False)

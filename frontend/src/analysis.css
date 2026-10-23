@@ -41,11 +41,3 @@
     grid-template-columns: 1fr;
   }
 }
-
-/* Saved analyses use one selector; keep result status and actions below. */
-.analysis-history { display: grid; grid-template-columns: auto minmax(0, 520px); align-items: center; gap: 12px; margin-top: 12px; }
-.analysis-history > label { color: var(--muted); font-size: 14px; }
-.analysis-history .ant-select { min-width: 0; width: 100%; }
-.analysis-history-popup .ant-select-item-option-content { white-space: normal; overflow-wrap: anywhere; }
-.analysis-history-empty { color: var(--muted); margin: 12px 0; }
-@media (max-width: 600px) { .analysis-history { grid-template-columns: minmax(0, 1fr); gap: 8px; } }

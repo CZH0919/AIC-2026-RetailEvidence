@@ -93,7 +93,14 @@ AUDIT_SCHEMA = pa.schema(
         ("issues", pa.list_(pa.string())),
     ]
 )
-BASKET_SCHEMA = pa.schema([("order_id", pa.string()), ("item_id", pa.string())])
+BASKET_SCHEMA = pa.schema(
+    [
+        ("order_id", pa.string()),
+        ("item_id", pa.string()),
+        ("event_time", pa.string()),
+        ("customer_id", pa.string()),
+    ]
+)
 
 
 class RowsWriter:
@@ -564,7 +571,14 @@ def process_quality(
                 view_writers["amount_orders"].add(record)
             if identity in baskets:
                 for item in sorted(order.items):
-                    basket_writer.add({"order_id": identity, "item_id": item})
+                    basket_writer.add(
+                        {
+                            "order_id": identity,
+                            "item_id": item,
+                            "event_time": order.time if not order.time_invalid else None,
+                            "customer_id": order.customer,
+                        }
+                    )
     finally:
         for view in view_writers.values():
             view.close()

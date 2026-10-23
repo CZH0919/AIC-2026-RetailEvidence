@@ -1,12 +1,12 @@
 import { Button, Skeleton } from 'antd'
-import { FolderOpenOutlined, ReloadOutlined } from '@ant-design/icons'
+import { FileTextOutlined, FolderOpenOutlined, ReloadOutlined } from '@ant-design/icons'
 import type { ReactNode } from 'react'
 
 export function EmptyState({ title, description, action, compact = false }: {
   title: string; description: string; action?: ReactNode; compact?: boolean
 }) {
   return <div className={`empty-state ${compact ? 'compact' : ''}`}>
-    <div className="empty-mark" aria-hidden="true"><FolderOpenOutlined /></div>
+    <div className="empty-illustration" aria-hidden="true"><FileTextOutlined /><FolderOpenOutlined /></div>
     <h2>{title}</h2><p>{description}</p>{action}
   </div>
 }

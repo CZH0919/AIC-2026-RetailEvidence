@@ -1,4 +1,3 @@
-import { AuthProvider, AuthPage, RequireAccount } from './Auth'
 import { Component, type ReactNode } from 'react'
 import { Button } from 'antd'
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
@@ -17,16 +16,14 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean
 }
 
 export function Application() {
-  return <ErrorBoundary><BrowserRouter><AuthProvider><Routes>
-    <Route path="/login" element={<AuthPage key="login" />} />
-    <Route path="/register" element={<AuthPage key="register" />} />
-    <Route element={<RequireAccount />}><Route element={<Shell />}>
+  return <ErrorBoundary><BrowserRouter><Routes><Route element={<Shell />}>
     <Route path="/" element={<Navigate to="/projects" replace />} />
     <Route path="/projects" element={<ProjectLibrary />} />
     <Route path="/projects/:projectId" element={<ProjectRoute />} />
     <Route path="/projects/:projectId/data" element={<ProjectRoute />} />
     <Route path="/projects/:projectId/products" element={<ProjectRoute />} />
+    <Route path="/projects/:projectId/pairings" element={<ProjectRoute />} />
     <Route path="/projects/:projectId/quality" element={<ProjectRoute />} />
     <Route path="*" element={<EmptyState title="这个页面不存在" description="返回项目库，继续你的分析。" action={<Link className="button-link" to="/projects">返回项目库</Link>} />} />
-  </Route></Route></Routes></AuthProvider></BrowserRouter></ErrorBoundary>
+  </Route></Routes></BrowserRouter></ErrorBoundary>
 }
