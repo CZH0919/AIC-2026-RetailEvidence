@@ -9,6 +9,7 @@ import './analysis.css'
 import './retail.css'
 import './commercial-ui.css'
 import './auth.css'
+import './workspace-polish.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode><ConfigProvider locale={zhCN} theme={{

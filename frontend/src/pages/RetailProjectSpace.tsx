@@ -23,7 +23,7 @@ function ProjectSpace({ projectId }: { projectId: string }) {
   const [reload, setReload] = useState(0), [editing, setEditing] = useState(false)
   const { remember } = useWorkspace(), { message } = App.useApp()
   const location = useLocation(), path = location.pathname
-  const runId = !path.endsWith('/data') && !path.endsWith('/quality') ? new URLSearchParams(location.search).get('run') : null
+  const runId = new URLSearchParams(location.search).get('run')
   const reportSearch = runId ? `?${new URLSearchParams({ run: runId })}` : ''
   useEffect(() => {
     const controller = new AbortController()
@@ -39,7 +39,7 @@ function ProjectSpace({ projectId }: { projectId: string }) {
   return <>
     <Link to="/projects" className="back-link"><ArrowLeftOutlined />返回店铺列表</Link>
     <div className="page-heading project-heading"><div><h1>{project.name}</h1>{project.description && <p>{project.description}</p>}</div><Button icon={<EditOutlined />} onClick={() => setEditing(true)}>编辑店铺</Button></div>
-    <nav className="project-tabs" aria-label="店铺导航"><NavLink to={`/projects/${project.id}${reportSearch}`} end>销售月报</NavLink><NavLink to={`/projects/${project.id}/products${reportSearch}`}>商品明细</NavLink><NavLink to={`/projects/${project.id}/data`}>数据记录</NavLink><NavLink to={`/projects/${project.id}/quality`}>更多分析</NavLink></nav>
+    <nav className="project-tabs" aria-label="店铺导航"><NavLink to={`/projects/${project.id}${reportSearch}`} end>销售月报</NavLink><NavLink to={`/projects/${project.id}/products${reportSearch}`}>商品明细</NavLink><NavLink to={`/projects/${project.id}/data${reportSearch}`}>数据记录</NavLink><NavLink to={`/projects/${project.id}/quality${reportSearch}`}>更多分析</NavLink></nav>
     {path.endsWith('/data') ? <DataWorkspace projectId={project.id} /> : <Suspense fallback={<LoadingState />}>{path.endsWith('/quality') ? <QualityWorkspace projectId={project.id} /> : <SalesWorkspace projectId={project.id} productsMode={path.endsWith('/products')} />}</Suspense>}
     <ProjectEditor open={editing} project={project} onClose={() => setEditing(false)} onSaved={saved => { setProject(saved); remember(saved); setEditing(false); void message.success('已更新') }} />
   </>

@@ -1,0 +1,91 @@
+/* Visual refinement on the existing workspace. No visibility or business rules. */
+.app-shell .sidebar { background: #163e38; border-right: 1px solid #214b44; }
+.app-shell .sidebar .brand strong { color: #f1f6f2; }
+.app-shell .sidebar .brand small { color: #bdcec8; }
+.app-shell .sidebar .brand-mark i { background: #96c9b7; }
+.app-shell .sidebar .brand-mark i + i { background: #d3e5c9; }
+.app-shell .sidebar .nav-main { color: #d4e4de; }
+.app-shell .sidebar .nav-main.active { color: #fff; background: #2b554b; }
+.app-shell .sidebar .nav-main.active::before { background: #b6d9be; }
+.app-shell .sidebar .recent-projects h2 { color: #b2c9c0; font-size: 13px; letter-spacing: 0; }
+.app-shell .sidebar .recent-link { color: #d5e3dd; padding-block: 13px; }
+.app-shell .sidebar .recent-link:hover, .app-shell .sidebar .recent-link.selected { background: #2b554b; color: #fff; }
+.app-shell .sidebar .color-dot { outline: 2px solid #ffffff9c; outline-offset: 2px; }
+.app-shell .sidebar .recent-empty { color: #bdcec8; }
+.app-shell .sidebar .guide-button { border-color: #416158; color: #dce8e1; font-size: 14px; }
+.app-shell .topbar { min-height: 68px; height: auto; padding-block: 12px; }
+.app-shell .workspace { background: #fff; }
+.app-shell main { padding-top: 26px; }
+.app-shell .page-heading { margin-bottom: 24px; }
+.app-shell .page-heading h1 { font-size: 26px; line-height: 36px; font-weight: 650; }
+.app-shell .project-heading p { max-width: 760px; color: #596b66; }
+.app-shell .back-link { color: #52665e; }
+.app-shell .project-tabs { gap: 8px; margin-bottom: 18px; }
+.app-shell .project-tabs a { padding: 12px 18px; border-radius: 6px 6px 0 0; color: #52655f; }
+.app-shell .project-tabs a:hover { background: #f3f7f5; color: #086d61; }
+.app-shell .project-tabs a.active { color: #086d61; background: #edf5f1; }
+.app-shell .project-tabs a.active::after { height: 3px; background: #087f73; }
+.app-shell .library-panel { border-color: #dce5df; }
+.app-shell .panel-toolbar { background: #f6f8f5; min-height: 72px; }
+.app-shell .project-table-header { color: #5a6c64; }
+.app-shell .project-row { min-height: 86px; padding-block: 19px; }
+.app-shell .project-row .project-icon { width: 38px; height: 38px; background: var(--project-tint); border-radius: 8px; }
+.app-shell .project-row h3 { font-size: 16px; }
+.app-shell .project-row p { color: #5c6c64; }
+.app-shell .project-search { max-width: 280px; }
+.sales-toolbar { padding-block: 12px 22px; }
+.sales-toolbar h2 { color: #253d35; font-size: 21px; }
+.sales-metrics { background: #f7f9f6; border-color: #dce6df; }
+.sales-metrics > div { padding: 20px 22px; }
+.sales-metrics > div:first-child { background: #edf5f0; border-radius: 8px 0 0 8px; }
+.sales-metrics strong { color: #223d33; font-size: 32px; line-height: 42px; letter-spacing: -.5px; }
+.sales-metrics span { color: #4f6359; }
+.sales-workspace .sales-section-heading h3 { color: #253d35; font-size: 19px; }
+.sales-workspace > section.sales-band { padding-block: 26px; }
+.sales-summary { font-size: 14px; line-height: 1.85; color: #3d5049; margin-bottom: 16px; }
+.sales-workspace .ant-table-thead > tr > th { background: #f2f6f3; color: #334b40; }
+.sales-workspace .ant-table-tbody > tr > td { padding-block: 14px; }
+.sales-action-index { display: grid; place-items: center; width: 28px; height: 28px; background: #edf4ef; border-radius: 6px; color: #316454; font-size: 14px; font-weight: 600; }
+.sales-action h4 { line-height: 28px; }
+.help-hint.ant-btn { color: #376b5e; font-weight: 400; padding-inline: 6px; }
+.help-hint.ant-btn:hover { color: #075f51; background: #edf5f0; }
+.help-content h4 { color: #205e4d; }
+.mapping-grid .data-field > label:first-child { grid-column: 1; align-self: center; font-size: 14px; font-weight: 600; color: #304b3e; cursor: pointer; }
+.mapping-grid .data-field > small { white-space: normal; overflow-wrap: anywhere; }
+.mapping-editor .editor-intro { padding-bottom: 18px; border-bottom: 1px solid #dfe8e1; }
+.classification-rule { background: #f7f9f6; border-color: #dce5df; gap: 16px; }
+.retail-product-drawer .sales-detail-metrics { background: #edf5f0; border-color: #dce5df; }
+.retail-product-drawer .sales-inventory { background: #f7f9f6; }
+.auth-story { background: #123f39; }
+.auth-story::before { opacity: .08; }
+.auth-story-copy h1 { letter-spacing: 0; }
+.auth-form-wrap { max-width: 400px; }
+.auth-form .ant-input-affix-wrapper { min-height: 48px; }
+.auth-form .ant-btn-primary { min-height: 48px; }
+.auth-note, .auth-support { font-size: 13px; }
+.auth-entry-footer { font-size: 13px; color: #5c6e64; }
+@media (max-width: 1000px) {
+  .sales-metrics > div:first-child { border-radius: 8px 8px 0 0; }
+}
+@media (max-width: 760px) {
+  .app-shell main { padding-top: 18px; }
+  .app-shell .topbar { min-height: 60px; gap: 8px; }
+  .app-shell .project-tabs { gap: 0; }
+  .app-shell .project-tabs a { padding: 12px 10px; }
+  .app-shell .page-heading h1 { font-size: 23px; line-height: 32px; }
+  .sales-metrics > div { padding: 16px; }
+  .sales-metrics strong { font-size: 28px; line-height: 38px; }
+  .sales-workspace > section.sales-band { padding-block: 22px; }
+}
+@media (max-width: 430px) {
+  .app-shell .project-tabs a { font-size: 14px; padding-inline: 8px; }
+  .app-shell .project-row { padding-inline: 14px; }
+  .app-shell .project-row .project-icon { width: 30px; height: 30px; }
+  .help-hint.ant-btn { font-size: 13px; }
+}
+.sales-page-help { margin-bottom: 6px; }
+.sales-page-help > summary { color: #4e665b; font-size: 13px; }
+.sales-page-help[open] { padding-bottom: 6px; }
+
+.account-reconnect { display: grid; gap: 18px; }
+.account-reconnect > .ant-btn { justify-self: start; }

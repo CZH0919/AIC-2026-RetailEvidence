@@ -778,7 +778,7 @@ export const helpContent = {
   "UX28": {
     "id": "UX28",
     "title": "月度比较与日趋势限制",
-    "label": "为何不能比较？",
+    "label": "如何比较月份？",
     "pages": [
       "月报 / 本月上月、无每日曲线"
     ],

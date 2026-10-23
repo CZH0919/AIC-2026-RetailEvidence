@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { Alert, App, Avatar, Button, Dropdown, Form, Input, Modal, Spin } from 'antd'
 import { ArrowRightOutlined, LockOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons'
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { request } from './api'
+import { ApiError, request } from './api'
 
 type User = { id: string; username: string }
 type AccountState = { user: User | null; loading: boolean; unavailable: boolean; reload: () => Promise<void>; accept: (user: User | null) => void }
@@ -18,13 +18,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function reload() {
     const attempt = ++generation.current
     try { const result = await request<{ user: User }>('/auth/me'); if (attempt !== generation.current) return; setUser(result.user); setUnavailable(false) }
-    catch (e) { if (attempt !== generation.current) return; setUser(null); setUnavailable(e instanceof Error && 'code' in e && e.code === 'network_error') }
+    catch (e) {
+      if (attempt !== generation.current) return
+      if (e instanceof ApiError && e.status === 401) { setUser(null); setUnavailable(false) }
+      else setUnavailable(true)
+    }
     finally { if (attempt === generation.current) setLoading(false) }
   }
   const accept = (next: User | null) => { generation.current++; setLoading(false); setUser(next); setUnavailable(false); broadcast() }
   useEffect(() => {
     void reload()
-    const expired = () => { generation.current++; setLoading(false); setUser(null); broadcast() }
+    const expired = () => { generation.current++; setLoading(false); setUser(null); setUnavailable(false); broadcast() }
     const channel = new BroadcastChannel('retailevidence.account')
     channel.onmessage = () => { setLoading(true); void reload() }
     const focus = () => { void reload() }
@@ -38,10 +42,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function RequireAccount() {
   const { user, loading, unavailable, reload } = useAccount()
   const location = useLocation()
-  if (loading) return <div className="account-loading"><Spin /><p>正在进入工作台…</p></div>
-  if (unavailable) return <div className="account-loading"><h1>暂时无法连接工作台</h1><p>请检查网络或服务连接，再重新尝试。</p><Button onClick={() => void reload()}>重新连接</Button></div>
-  if (!user) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />
-  return <Outlet key={user.id} />
+  const reconnectLayer = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!user || (!loading && !unavailable)) return
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const focusLayer = () => {
+      const layer = reconnectLayer.current
+      ;(layer?.querySelector<HTMLButtonElement>('button:not(:disabled)') ?? layer)?.focus()
+    }
+    // Existing editors use body portals. Keep keyboard input inside this blocking
+    // layer as well as covering them visually; do not unmount their saved drafts.
+    const keys = (event: KeyboardEvent) => {
+      if (event.key === 'Tab' || event.key === 'Escape') {
+        event.preventDefault(); event.stopImmediatePropagation(); focusLayer()
+      }
+    }
+    const focus = (event: FocusEvent) => {
+      const layer = reconnectLayer.current
+      if (layer && event.target instanceof Node && !layer.contains(event.target)) focusLayer()
+    }
+    window.addEventListener('keydown', keys, true)
+    document.addEventListener('focusin', focus, true)
+    const timer = window.setTimeout(focusLayer, 100)
+    return () => {
+      window.clearTimeout(timer)
+      window.removeEventListener('keydown', keys, true)
+      document.removeEventListener('focusin', focus, true)
+      if (previous?.isConnected) requestAnimationFrame(() => previous.focus())
+    }
+  }, [user, loading, unavailable])
+  const connectionState = loading
+    ? <div className="account-loading"><Spin /><p>正在进入工作台…</p></div>
+    : <div className="account-loading"><Alert type="warning" showIcon title="暂时无法连接工作台" description="请检查连接后重试，当前填写内容仍然保留。" /><Button onClick={() => void reload()}>重新连接</Button></div>
+  // Keep drafts mounted during a temporary outage, but do not expose the previous
+  // account's page while another tab's account change is being verified.
+  if (user) return <>
+    <Modal open={loading || unavailable} title={loading ? '正在确认登录状态' : '暂时无法连接工作台'} zIndex={2000} centered
+      closable={false} maskClosable={false} keyboard={false} footer={null} styles={{ mask: { background: '#f8faf9' } }}>
+      <div ref={reconnectLayer} tabIndex={-1} className="account-reconnect">{loading ? <Spin /> : <><Alert type="warning" showIcon title="当前填写内容仍然保留" description="请检查连接后重试。" /><Button onClick={() => void reload()}>重新连接</Button></>}</div>
+    </Modal>
+    <div hidden={loading || unavailable} inert={loading || unavailable}><Outlet key={user.id} /></div>
+  </>
+  if (loading || unavailable) return connectionState
+  return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />
 }
 
 function safeNext(search: string) {
@@ -83,7 +126,7 @@ export function AuthPage() {
         <p className="auth-intro">{register ? '为自己的店铺，建立独立的数据空间。' : '登录后，继续查看你的店铺与销售月报。'}</p>
         {error && <Alert className="auth-error" type="error" showIcon title={error} role="alert" />}
         <Form form={form} layout="vertical" onFinish={submit} requiredMark={false} disabled={busy} className="auth-form">
-          <Form.Item name="username" label="用户名" rules={[{ required: true, message: '请输入用户名。' }, { pattern: /^[a-zA-Z0-9][a-zA-Z0-9_-]{2,31}$/, message: '请输入3–32位字母、数字、下划线或短横线。' }]} extra={register ? '3–32位字母、数字、下划线或短横线，不区分大小写。' : undefined}>
+          <Form.Item name="username" label="用户名" rules={[{ required: true, message: '请输入用户名。' }, { pattern: /^[a-zA-Z0-9][a-zA-Z0-9_-]{2,31}$/, message: '以字母或数字开头，共3–32位，可使用下划线和短横线。' }]} extra={register ? '以字母或数字开头，3–32位；可用下划线和短横线，不区分大小写。' : undefined}>
             <Input size="large" prefix={<UserOutlined />} placeholder={register ? '例如 qinghe_shop' : '请输入用户名'} autoComplete="username" maxLength={32} autoCapitalize="none" spellCheck={false} />
           </Form.Item>
           <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码。' }, { min: 12, max: 128, message: '密码长度为12–128个字符。' }]} extra={register ? '至少12个字符，建议使用不在其他网站使用的长密码。' : undefined}>
