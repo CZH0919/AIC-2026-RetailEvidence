@@ -54,9 +54,9 @@
 .mapping-grid .data-field > small { white-space: normal; overflow-wrap: anywhere; line-height: 1.65; }
 .sales-inventory { background: #f7f9f6; border-radius: 8px; padding: 16px; }
 .quality-section-title h3, .data-heading h2 { color: #253d35; }
-.analysis-history { display: grid; gap: 8px; margin: 16px 0; }
+.analysis-history { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 8px; margin: 16px 0; }
 .analysis-history > label { font-weight: 600; color: #4f6359; }
-.analysis-history .ant-select { width: min(100%, 650px); }
+.analysis-history .ant-select { width: min(100%, 650px); min-width: 0; max-width: 100%; }
 .analysis-history-popup .ant-select-item-option-content { white-space: normal; line-height: 1.6; }
 .analysis-history-empty { color: #65766d; padding-block: 8px; }
 .analysis-detail-disclosure, .quality-details { margin-top: 18px; }
@@ -85,3 +85,7 @@
 @media (prefers-reduced-motion: reduce) {
   .project-tabs a, .sidebar .recent-link, .help-hint { transition: none; }
 }
+
+.data-heading-title, .data-heading-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; }
+.data-heading-actions { gap: 8px; }
+.data-heading-title .help-hint { margin: 0; }

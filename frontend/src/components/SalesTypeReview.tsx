@@ -39,7 +39,7 @@ export function SalesTypeReview({ projectId, report, focusId, onClose, onDone }:
     footer={<div className="sales-type-confirm-footer"><Checkbox checked={confirmed} disabled={!edits.length || busy} onChange={e => setConfirmed(e.target.checked)}>我已核对所改记录的实际类型，同意据此生成新的分析结果</Checkbox><div className="sales-type-footer"><span>已调整 {edits.length} 项</span><div><Button disabled={busy} onClick={onClose}>取消</Button><Button type="primary" loading={busy} disabled={!edits.length || !confirmed} onClick={() => void submit()}>确认并生成新月报</Button></div></div></div>}>
     <div className="sales-type-review">
       <HelpHint topic="types" />
-      <p>区分可以备货的实物、费用或服务，以及记账项目。未确认的记录继续保留保护；本次调整会重新分析当前月份，历史月报保持原样。</p>
+      <p>按实际业务区分实物商品、费用或服务、记账项目。暂不确定的可保留“待确认”；保存后生成当前月份的新月报，历史结果保留。</p>
       <div className="sales-type-controls"><Input.Search aria-label="搜索待确认记录" placeholder="商品名称或编号" value={query} onChange={e => setQuery(e.target.value)} />
         <Checkbox checked={onlyUnknown} onChange={e => { setOnlyUnknown(e.target.checked); setSelected([]) }}>只看类型待确认</Checkbox></div>
       <div className="sales-type-batch"><span>已选 {selected.length} 项</span><Select aria-label="批量确认类型" value={batchKind} options={itemKindOptions} onChange={setBatchKind} /><Button disabled={!selected.length || busy} onClick={() => { update(Object.fromEntries(selected.map(id => [id, batchKind]))); setSelected([]) }}>应用到已选项</Button></div>
@@ -51,7 +51,7 @@ export function SalesTypeReview({ projectId, report, focusId, onClose, onDone }:
           {title: '商品或记录', key: 'item', render: (_: unknown, p) => <div className="sales-type-item"><strong>{p.name}</strong><small>{p.id}</small></div>},
           {title: '确认类型', key: 'type', width: 160, render: (_: unknown, p) => <Select aria-label={`记录类型 ${p.id}`} disabled={busy} value={changes[p.id] ?? p.item_type?.kind ?? 'unknown'} options={itemKindOptions} onChange={kind => update({[p.id]: kind})} />},
         ]} />
-      {reclassified.length > 0 && <Alert type="warning" showIcon title={`其中 ${reclassified.length} 项原为费用或记账，正在改为实物`} description="请确认这些记录确实可以按实物管理库存，不能仅因为名称像商品就改变类型。" />}
+      {reclassified.length > 0 && <Alert type="warning" showIcon title={`其中 ${reclassified.length} 项原为费用或记账，正在改为实物`} description="请按实际业务核对，确认这些记录对应可盘点、可备货的实物商品。" />}
     </div>
   </Drawer>
 }

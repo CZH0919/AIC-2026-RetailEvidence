@@ -77,11 +77,11 @@ export function SalesReportExplanation({ report, onDownload }: {
       <h3>预测和异常提醒</h3>
       {monthly ? <div className="report-availability-note">
         <strong>这份表是月汇总</strong>
-        <p>只有每月总销量，没有每天的销量，因此不能预测未来七天销量，也不能找出哪一天销量异常。</p>
+        <p>当前可查看月度销量与商品表现。七天预测和每日异常分析需要每日销售记录。</p>
         <p className="report-explanation-muted">如需这些分析，请上传带销售日期的明细或每日汇总。</p>
       </div> : report.forecast.status !== 'evaluated' && report.anomaly.status !== 'evaluated' && incompleteDaily && !report.parameters.check_only ? <div className="report-availability-note">
         <strong>每日记录还未确认齐全</strong>
-        <p>暂时不能预测未来七天销量，也不能检查每日销量异常。</p>
+        <p>补充确认后，系统会按有效记录检查七天预测与每日销量异常的适用条件。</p>
         <p className="report-explanation-muted">请核对是否漏传了销售记录，并确认完整的记录日期范围。</p>
       </div> : <div className="report-analysis-results">
         <div><h4>未来七天销量</h4>
@@ -110,7 +110,7 @@ export function SalesReportExplanation({ report, onDownload }: {
             { title: 'WAPE', dataIndex: 'wape', render: (value: number | null) => value == null ? '—' : `${(value * 100).toFixed(1)}%` },
           ]} />
         </> : <p>本次没有预测检验结果。</p>}
-        {report.anomaly.status === 'evaluated' && <><h4>异常提醒依据</h4><p>{report.change_drivers ? '比较此前相同星期的实际销量，保留偏离明显的日期，将连续日期归为一次核对事项；不判断缺货或活动原因。' : 'Isolation Forest（孤立森林），结合当天销量、过去七天平均销量和过去二十八天波动，并筛选出变化幅度明显的记录。'}</p></>}
+        {report.anomaly.status === 'evaluated' && <><h4>异常提醒依据</h4><p>{report.change_drivers ? '比较此前相同星期的实际销量，标出偏离明显的日期，并将连续日期合并为一次核对事项，帮助结合实际经营情况查找原因。' : 'Isolation Forest（孤立森林），结合当天销量、过去七天平均销量和过去二十八天波动，并筛选出变化幅度明显的记录。'}</p></>}
         <h4>文件与字段设置</h4>
         <ul className="report-source-list">{report.sources.map(source => <li key={source.version_id}>{source.filename} · 字段设置第 {source.mapping_revision} 版</li>)}</ul>
         <div className="sales-evidence-downloads">

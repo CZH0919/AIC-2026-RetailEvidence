@@ -16,6 +16,8 @@ export function Guide({ open, onClose, dataOnly = false }: { open: boolean; onCl
               <div><dt>销售总览</dt><dd>这个月卖得怎么样，接下来先做什么。</dd></div>
               <div><dt>商品分析</dt><dd>哪些商品卖得好，哪些变化需要留意。</dd></div>
               <div><dt>搭配建议</dt><dd>哪些商品常一起买，适合搭配摆放或销售。</dd></div>
+              <div><dt>数据记录</dt><dd>查看上传表格、字段含义和历史版本。</dd></div>
+              <div><dt>更多分析</dt><dd>检查数据质量，查看客户分群与商品共购。</dd></div>
             </dl>
           </li>
         </ol>

@@ -249,12 +249,12 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
           {product.forecast ? <>
             <p className="product-detail-prediction"><strong>约 {number(product.forecast.quantity)}</strong><span>{unit}</span></p>
             <p className="product-detail-muted">{product.forecast.start} 至 {product.forecast.end} · {['fee_service', 'accounting'].includes(product.item_type?.kind ?? '') ? '用于了解记录变化，不适用实物备货' : '进货时还需结合库存'}</p>
-            {product.forecast.range && <p>历史误差参考范围：{number(product.forecast.range.lower)} 至 {number(product.forecast.range.upper)} {unit}，不保证未来覆盖。</p>}
+            {product.forecast.range && <p>历史误差对应的参考区间：{number(product.forecast.range.lower)} 至 {number(product.forecast.range.upper)} {unit}。</p>}
             <details className="product-detail-method">
               <summary>预测说明</summary>
               <p>参考方法：{methods[product.forecast.method]}。历史检验中，七天总销量平均相差约 {number(product.forecast.validation_mae)} {unit}。</p>
               {product.forecast.test_mae != null && <p>最近 {product.forecast.test_origins} 次{report.forecast.test_used_for_selection === false ? '独立检验' : '历史检查'}中，七天总量平均相差约 {number(product.forecast.test_mae)} {unit}。请结合近期误差使用预测。</p>}
-              <p>{product.forecast.notice}</p>
+              <p>{product.forecast.notice.replace('历史误差不保证未来表现，未计入未知缺货和未来活动。', '请结合近期缺货情况与未来活动安排使用。')}</p>
             </details>
           </> : <>
             <p className="product-detail-muted">{product.forecast_unavailable?.message ?? '这份历史月报未记录具体的预测不可用原因。'}</p>
@@ -271,7 +271,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
               <AnomalyExplanation product={product} detailed />
               {!!product.anomaly_events?.length && <ul>{product.anomaly_events.map(event => <li key={event.start}>{event.start} 至 {event.end}：实际 {number(event.actual)} {unit}，历史参考合计 {number(event.reference)} {unit}。请核对下列日期。</li>)}</ul>}
               {product.anomalies.length > 0 && <>
-                <p className="product-detail-muted">{product.anomaly_check?.reference_label?.includes('相同星期') ? '参考销量取此前最多12个相同星期几的中位数，至少需要6个；包含确认没有销售的日子。它用于识别异常，不代表近期每天都卖这么多。' : '参考销量用于识别变化，具体方法见月报计算说明。'}</p>
+                <p className="product-detail-muted">{product.anomaly_check?.reference_label?.includes('相同星期') ? '参考销量取此前最多12个相同星期几的中位数，至少需要6个，包含确认没有销售的日子，用于对照当天的销量变化。' : '参考销量用于识别变化，具体方法见月报计算说明。'}</p>
                 <p className="product-detail-muted">点日期查看当天的销售记录。{unit && `销量单位：${unit}。`}</p>
                 <Table rowKey="date" size="small" pagination={false} dataSource={product.anomalies} columns={[
                   { title: '日期', dataIndex: 'date', render: (day: string) => <Button type="link" loading={busy} onClick={() => void loadSourceRows(day)}>{day}</Button> },
@@ -338,8 +338,8 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
       {answer && <div className="sales-ai-answer" aria-live="polite">
         <strong>{answeredQuestion}</strong>
         <p style={{ whiteSpace: 'pre-line' }}>{answer}</p>
-        {answerSource === 'model_unavailable' && <small>语言整理服务暂不可用，以上直接展示已计算结果。</small>}
-        {answerSource === 'model_busy' && <small>语言整理服务正在忙，以上直接展示已计算结果。</small>}
+        {answerSource === 'model_unavailable' && <small>AI 说明暂不可用，当前展示月报中的计算结果。</small>}
+        {answerSource === 'model_busy' && <small>AI 正在处理其他请求，当前展示月报中的计算结果。</small>}
         <Button type="link" onClick={() => setEvidence(true)}>查看月报数据说明</Button>
       </div>}
     </Drawer>

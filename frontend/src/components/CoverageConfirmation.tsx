@@ -18,7 +18,7 @@ export function CoverageConfirmation({month, kinds, complete, start, end, missin
     </>}
     <div className="sales-coverage-capabilities" aria-live="polite"><p>{readiness.summary}</p>
       <dl><div><dt>未来七天销量</dt><dd>{readiness.forecast}</dd></div><div><dt>每日销量异常</dt><dd>{readiness.anomaly}</dd></div></dl>
-      <small>满足日期条件不代表每件商品都有预测；还会检查有效成交记录、历史长度和预测误差。</small>
+      <small>系统将结合每件商品的有效成交记录、历史长度与检验误差，确定可用的预测。</small>
     </div>
   </section>
 }

@@ -66,7 +66,7 @@ export function QualityReport({ report, projectId, runId }: { report: Report; pr
       <div className="ledger-bar" role="img" aria-label={`${viewLabels[key]}纳入${counts.included_rows}行，排除${counts.excluded_rows}行`}><i style={{ width: `${report.raw_rows ? counts.included_rows / report.raw_rows * 100 : 0}%` }} /></div>
       <div className="reason-chips">{Object.entries(counts.primary_reasons).filter(([reason]) => reason !== 'included').map(([reason, count]) => <span key={reason}>{report.reason_labels[reason] ?? reason}<b>{count.toLocaleString()}</b></span>)}</div>
     </div>)}</div>
-    <div className="quality-notes"><ExclamationCircleOutlined /><div><strong>理解分析范围</strong><ul>{report.warnings.map(text => <li key={text}>{text}</li>)}</ul>
+    <div className="quality-notes"><ExclamationCircleOutlined /><div><strong>理解分析范围</strong><ul>{report.warnings.map(text => <li key={text}>{text.replace('购物篮完整性仅针对所提供数据，不保证覆盖真实订单的全部明细。', '请确认上传数据包含每笔订单的全部商品；购物篮完整性按已提供记录核验。')}</li>)}</ul>
       <p>时间范围：{report.scope.date_start ?? '不限起点'} 至 {report.scope.date_end ?? '不限终点'}；币种：{report.scope.currency ?? (s.currencies.join('、') || '未指定')}。有效金额为正向购买金额，未净扣退货。</p>
       <p>国家 / 地区：{report.scope.countries.join('、') || '全部'}；商品范围：{report.scope.item_ids.join('、') || '全部'}。</p>
       <p>本次策略：{report.policy.duplicates === 'keep' ? '保留完全重复候选' : '移除完全重复记录'}；{report.policy.monetary_subset === 'complete_customers' ? '明确选择金额完整客户评估 RFM' : '金额不完整时优先使用 RF'}；{report.policy.accept_selected_amount_source ? '已确认采用选定金额来源' : '金额来源冲突时等待确认'}。</p>
@@ -147,23 +147,23 @@ function ClusterPanel({ report, projectId, qualityRunId }: { report: Report; pro
       {result && <><div className="quality-metrics cluster-metrics">
         <article><span>分析模式</span><strong>{result.analysis.mode}</strong><small>参考点 {new Date(result.analysis.reference_time).toLocaleDateString('zh-CN')}</small></article>
         <article><span>有效客户</span><strong>{result.summary.customers.toLocaleString()}</strong><small>{result.summary.unique_feature_vectors.toLocaleString()} 种特征组合</small></article>
-        <article><span>选择 K</span><strong>{result.summary.selected_k ?? '—'}</strong><small>{result.summary.publishable ? '可发布画像' : '不建议发布'}</small></article>
+        <article><span>客户分组数</span><strong>{result.summary.selected_k ?? '—'}</strong><small>{result.summary.publishable ? '分群结果可用' : '暂未形成稳定分组'}</small></article>
       </div>
-      {!result.summary.publishable && <Alert type="warning" showIcon title="本次结果不建议作为正式分群结论" description={result.summary.reasons.join(' ')} />}
-      <Table size="small" pagination={false} dataSource={result.clusters.map(row => ({ ...row, key: row.cluster }))} columns={[
+      {!result.summary.publishable && <Alert type="warning" showIcon title="本次暂未形成可用的客户分组" description={result.summary.reasons.join(' ')} />}
+      <Table size="small" pagination={false} scroll={{ x: 'max-content' }} dataSource={result.clusters.map(row => ({ ...row, key: row.cluster }))} columns={[
         { title: '群体', dataIndex: 'cluster', render: value => `G${Number(value) + 1}` },
         { title: '客户数', dataIndex: 'customers', render: value => Number(value).toLocaleString() },
         { title: '占比', dataIndex: 'share', render: value => `${(Number(value) * 100).toFixed(1)}%` },
-        { title: 'R 中位数', dataIndex: 'recency_median' },
-        { title: 'F 中位数', dataIndex: 'frequency_median' },
-        { title: 'M 中位数', dataIndex: 'monetary_median', render: value => value === null ? '—' : Number(value).toLocaleString() },
+        { title: '距上次购买天数（中位数）', dataIndex: 'recency_median' },
+        { title: '购买次数（中位数）', dataIndex: 'frequency_median' },
+        { title: '消费金额（中位数）', dataIndex: 'monetary_median', render: value => value === null ? '—' : Number(value).toLocaleString() },
       ]} locale={{ emptyText: '本次没有形成可展示的群体' }} />
-      <Table className="candidate-table" size="small" pagination={false} dataSource={result.candidates.map(row => ({ ...row, key: row.k }))} columns={[
-        { title: 'K', dataIndex: 'k' },
+      <Table className="candidate-table" size="small" pagination={false} scroll={{ x: 'max-content' }} dataSource={result.candidates.map(row => ({ ...row, key: row.k }))} columns={[
+        { title: '分组数', dataIndex: 'k' },
         { title: '最小群体', dataIndex: 'min_cluster_size' },
         { title: '轮廓系数', dataIndex: 'silhouette', render: value => value === null ? '—' : Number(value).toFixed(3) },
         { title: 'ARI 中位数', dataIndex: 'ari_median', render: value => value === null ? '—' : Number(value).toFixed(3) },
-        { title: '判定', dataIndex: 'publishable', render: value => <Tag color={value ? 'cyan' : 'default'}>{value ? '通过' : '诊断保留'}</Tag> },
+        { title: '判定', dataIndex: 'publishable', render: value => <Tag color={value ? 'cyan' : 'default'}>{value ? '通过' : '未采用'}</Tag> },
       ]} /></>}
     </div>}
   </section>
@@ -220,11 +220,11 @@ function AssociationPanel({ report, projectId, qualityRunId }: { report: Report;
       <div className="quality-result-header"><div><Tag color={result?.summary.publishable ? 'cyan' : active ? 'blue' : 'default'}>{stateLabel[detail.status] ?? detail.status}</Tag><span>{detail.message}</span></div>
         {active && <Button danger onClick={async () => { try { setDetail(await qualityApi.cancel(projectId, detail.id)); void message.info('取消请求已提交') } catch (e) { void message.error(e instanceof Error ? e.message : '未能取消，请重试。') } }}>取消</Button>}</div>
       {result && <><div className="quality-metrics cluster-metrics">
-        <article><span>完整购物篮</span><strong>{result.summary.baskets.toLocaleString()}</strong><small>{result.summary.items.toLocaleString()} 类训练商品</small></article>
+        <article><span>完整购物篮</span><strong>{result.summary.baskets.toLocaleString()}</strong><small>{result.summary.items.toLocaleString()} 类参与分析的商品</small></article>
         <article><span>规则数量</span><strong>{result.summary.rules.toLocaleString()}</strong><small>{result.summary.itemsets.toLocaleString()} 个频繁项集</small></article>
-        <article><span>测试篮</span><strong>{result.summary.test_baskets.toLocaleString()}</strong><small>{result.summary.publishable ? '可查看规则' : '保留诊断'}</small></article>
+        <article><span>测试购物篮</span><strong>{result.summary.test_baskets.toLocaleString()}</strong><small>{result.summary.publishable ? '可查看搭配依据' : '查看未满足条件'}</small></article>
       </div>
-      {!result.summary.publishable && <Alert type="warning" showIcon title="本次结果不建议作为正式共购结论" description={result.summary.reasons.join(' ')} />}
+      {!result.summary.publishable && <Alert type="warning" showIcon title="本次暂未找到符合条件的商品搭配" description={result.summary.reasons.join(' ')} />}
       <Table size="small" pagination={{ pageSize: 8 }} dataSource={result.top_rules.map((row, index) => ({ ...row, key: index }))} columns={[
         { title: '已购买商品', dataIndex: 'antecedents' },
         { title: '常共同出现的商品', dataIndex: 'consequents' },
@@ -233,12 +233,12 @@ function AssociationPanel({ report, projectId, qualityRunId }: { report: Report;
         { title: '置信度', dataIndex: 'confidence', render: (value: number) => percent(value) },
         { title: '提升度', dataIndex: 'lift', render: (value: number) => value.toFixed(2) },
       ]} locale={{ emptyText: '当前阈值下没有形成规则' }} scroll={{ x: 'max-content' }} />
-      <Table className="candidate-table" size="small" pagination={false} dataSource={result.evaluations.map(row => ({ ...row, key: row.split }))} columns={[
+      <Table className="candidate-table" size="small" pagination={false} scroll={{ x: 'max-content' }} dataSource={result.evaluations.map(row => ({ ...row, key: row.split }))} columns={[
         { title: '集合', dataIndex: 'split', render: (value: string) => value === 'test' ? '测试集' : '验证集' },
-        { title: '评测篮', dataIndex: 'baskets' },
-        { title: '规则 Hit@5', dataIndex: 'hit_rate_at_5', render: (value: number | null) => percent(value) },
+        { title: '评测购物篮', dataIndex: 'baskets' },
+        { title: '搭配命中率@5', dataIndex: 'hit_rate_at_5', render: (value: number | null) => percent(value) },
         { title: '规则覆盖率', dataIndex: 'recommendation_coverage', render: (value: number | null) => percent(value) },
-        { title: '热门 Hit@5', dataIndex: 'popularity_hit_rate_at_5', render: (value: number | null) => percent(value) },
+        { title: '热门推荐命中率@5', dataIndex: 'popularity_hit_rate_at_5', render: (value: number | null) => percent(value) },
       ]} /></>}
     </div>}
   </section>
