@@ -42,6 +42,19 @@ class AIContractTests(unittest.IsolatedAsyncioTestCase):
             )
         )
         self.client.__enter__()
+        from app.models import ProjectOwner
+
+        self.client.headers["X-Requested-With"] = "RetailEvidence"
+        registered = self.client.post(
+            "/api/auth/register",
+            json={"username": "contract_user", "password": "contract-test-password-2026"},
+        )
+        assert registered.status_code == 201
+        with self.client.app.state.sessions() as session:
+            session.add(
+                ProjectOwner(project_id=self.seed.pid, account_id=registered.json()["user"]["id"])
+            )
+            session.commit()
         self.path = f"/api/projects/{self.seed.pid}/sales/runs/{self.rid}/ask"
 
     async def asyncTearDown(self):

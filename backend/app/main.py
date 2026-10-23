@@ -5,7 +5,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -14,10 +14,11 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from .auth import authorize_request, install_auth_routes, project_name_key
 from .data_api import install_data_routes
 from .database import create_database
 from .import_formats import DataIssue
-from .models import Project, timestamp
+from .models import Project, ProjectOwner, timestamp
 from .quality_api import install_quality_routes
 from .retail_api import install_retail_routes
 from .schemas import ProjectInput, ProjectList, ProjectRead, ProjectUpdate, name_key
@@ -63,7 +64,15 @@ def create_app(
             await runner.stop()
             engine.dispose()
 
-    app = FastAPI(title="RetailEvidence Studio", version="0.6.3", lifespan=lifespan)
+    app = FastAPI(
+        title="RetailEvidence Studio",
+        version="0.7.0",
+        lifespan=lifespan,
+        dependencies=[Depends(authorize_request)],
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
+    )
     app.state.storage = (
         project_path(storage_root)
         if storage_root
@@ -110,6 +119,10 @@ def create_app(
                 "name": "请填写 1–64 个字符的项目名称。",
                 "description": "项目说明最多 500 个字符。",
                 "color": "请选择有效的项目标记。",
+                "username": "用户名需为3–32位字母、数字、下划线或短横线。",
+                "password": "密码需为12–128个字符。",
+                "new_password": "新密码需为12–128个字符。",
+                "current_password": "请输入当前密码。",
                 "revision": "项目信息已变化，请刷新后重试。",
             }
             fields[field] = messages.get(field, "请检查输入内容。")
@@ -135,11 +148,15 @@ def create_app(
 
     @app.get("/api/projects", response_model=ProjectList)
     def list_projects(
+        request: Request,
         q: str = Query(default="", max_length=100),
         limit: int = Query(default=30, ge=1, le=100),
         offset: int = Query(default=0, ge=0),
     ):
-        condition = or_(
+        owned = select(ProjectOwner.project_id).where(
+            ProjectOwner.account_id == request.state.user["id"]
+        )
+        condition = Project.id.in_(owned) & or_(
             Project.name_key.contains(name_key(q.strip()), autoescape=True),
             Project.description.contains(q.strip(), autoescape=True),
         )
@@ -155,11 +172,18 @@ def create_app(
             return {"items": items, "total": total, "limit": limit, "offset": offset}
 
     @app.post("/api/projects", response_model=ProjectRead, status_code=201)
-    def create_project(payload: ProjectInput):
-        project = Project(**payload.model_dump(), name_key=name_key(payload.name))
+    def create_project(payload: ProjectInput, request: Request):
+        project = Project(
+            **payload.model_dump(),
+            name_key=project_name_key(request.state.user["id"], name_key(payload.name)),
+        )
         with app.state.sessions() as session:
             session.add(project)
             try:
+                session.flush()
+                session.add(
+                    ProjectOwner(project_id=project.id, account_id=request.state.user["id"])
+                )
                 session.commit()
             except IntegrityError:
                 session.rollback()
@@ -180,10 +204,12 @@ def create_app(
             return project
 
     @app.patch("/api/projects/{project_id}", response_model=ProjectRead)
-    def update_project(project_id: UUID, payload: ProjectUpdate):
+    def update_project(project_id: UUID, payload: ProjectUpdate, request: Request):
         values = payload.model_dump(exclude={"revision"})
         values.update(
-            name_key=name_key(payload.name), updated_at=timestamp(), revision=payload.revision + 1
+            name_key=project_name_key(request.state.user["id"], name_key(payload.name)),
+            updated_at=timestamp(),
+            revision=payload.revision + 1,
         )
         with app.state.sessions() as session:
             try:
@@ -208,6 +234,7 @@ def create_app(
                 )
             return session.get(Project, str(project_id))
 
+    install_auth_routes(app)
     install_data_routes(app)
     install_quality_routes(app)
     install_retail_routes(app)
