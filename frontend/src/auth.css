@@ -63,3 +63,8 @@
 .app-shell .project-list .project-row:hover { background: #f3f8f4; }
 .app-shell .project-list .row-arrow { color: #42685b; }
 @media (prefers-reduced-motion: reduce) { .app-shell .project-list .project-row { transition: none; } }
+
+@media (max-width: 640px) {
+  .app-shell .topbar .breadcrumb { flex: 1; min-width: 0; flex-wrap: wrap; gap: 4px 8px; }
+  .app-shell .topbar .breadcrumb > span, .app-shell .topbar .breadcrumb > a { white-space: nowrap; flex-shrink: 0; }
+}
