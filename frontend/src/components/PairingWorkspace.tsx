@@ -97,14 +97,14 @@ function PairingResults({ report }: { report: AssociationReport }) {
   const filtered = rules.filter(r => `${r.antecedents} ${r.consequents}`.toLowerCase().includes(query.toLowerCase().trim()))
   const visible = all ? filtered : rules.slice(0, 5)
   return <section className="pairing-results">
-    <div className="pairing-intro"><h3>这些商品经常一起买</h3><p>可作为相邻摆放或组合展示的候选；历史搭配不能保证销售收益。</p><p>以下次数与比例来自 {count(report.summary.train_baskets)} 笔历史订单。</p></div>
+    <div className="pairing-intro"><h3>这些商品经常一起买</h3><p>可用于小范围的陈列或组合销售尝试，结合实际效果调整。</p><p>以下次数与比例来自 {count(report.summary.train_baskets)} 笔历史订单。</p></div>
     {all && <Input.Search aria-label="搜索搭配商品" placeholder="搜索商品名称" allowClear value={query} onChange={e => setQuery(e.target.value)} className="pairing-search" />}
     <ol className="pairing-list">{visible.map((rule, index) => <li key={`${rule.antecedents}:${rule.consequents}`}>
       <span className="pairing-number" aria-hidden="true">{index + 1}</span>
       <article><h4 className="pairing-items">{[...items(rule.antecedents), ...items(rule.consequents)].map((item, i) => <span key={item}>{i > 0 && <b aria-hidden="true">＋</b>}<span className="pairing-item">{item}</span></span>)}</h4>
         <p>买了「{items(rule.antecedents).join('」和「')}」的 {count(rule.n_a)} 笔订单中，<strong>{count(rule.n_ab)} 笔</strong>也买了「{items(rule.consequents).join('」和「')}」。</p>
         <div className="pairing-proportion"><span>一起购买的比例 <strong>{percent(rule.confidence)}</strong></span><div className="pairing-bar" aria-hidden="true"><span style={{ width: `${Math.min(100, rule.confidence * 100)}%` }} /></div></div>
-        <details className="pairing-rule-details"><summary>为什么推荐这组商品</summary><p>共分析 {count(rule.denominator)} 笔订单，有 {count(rule.n_ab)} 笔同时买了这组商品，占 {percent(rule.support)}。</p><p>买了「{items(rule.antecedents).join('」和「')}」的订单，购买「{items(rule.consequents).join('」和「')}」的比例，是全部订单中购买后者比例的 {rule.lift.toFixed(2)} 倍。</p>{rule.validation_n_ab !== undefined && <p>另一批 {count(rule.validation_denominator ?? 0)} 笔订单中，观察到 {count(rule.validation_n_ab)} 次共同购买，关联方向保持一致。</p>}{rule.confidence_lower !== undefined && <p>考虑订单样本量后，购买比例的历史参考范围约为 {percent(rule.confidence_lower)} 至 {percent(rule.confidence_upper ?? 1)}。它仅辅助判断这组记录，不保证未来表现。</p>}</details>
+        <details className="pairing-rule-details"><summary>为什么推荐这组商品</summary><p>共分析 {count(rule.denominator)} 笔订单，有 {count(rule.n_ab)} 笔同时买了这组商品，占 {percent(rule.support)}。</p><p>买了「{items(rule.antecedents).join('」和「')}」的订单，购买「{items(rule.consequents).join('」和「')}」的比例，是全部订单中购买后者比例的 {rule.lift.toFixed(2)} 倍。</p>{rule.validation_n_ab !== undefined && <p>另一批 {count(rule.validation_denominator ?? 0)} 笔订单中，观察到 {count(rule.validation_n_ab)} 次共同购买，关联方向保持一致。</p>}{rule.confidence_lower !== undefined && <p>考虑订单样本量后，购买比例的历史参考范围约为 {percent(rule.confidence_lower)} 至 {percent(rule.confidence_upper ?? 1)}。该范围描述这批订单的关联情况，可结合近期销售变化判断。</p>}</details>
       </article>
     </li>)}</ol>
     {!visible.length && <p className="pairing-muted">没有找到匹配的商品搭配。</p>}

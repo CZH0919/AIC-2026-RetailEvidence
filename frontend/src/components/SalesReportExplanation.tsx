@@ -1,3 +1,4 @@
+import { HelpHint } from './HelpHint'
 import { quantityUnit } from '../quantity'
 import { Button, Table } from 'antd'
 import { DownloadOutlined } from '@ant-design/icons'
@@ -93,11 +94,11 @@ export function SalesReportExplanation({ report, onDownload }: {
     </section>
 
     <details className="report-technical-details">
-      <summary>技术详情与下载</summary>
+      <summary>计算说明与下载</summary>
       <div className="report-technical-content">
         <h4>重点商品怎么选</h4>
         <p>{monthly ? '比较本月和上月的商品销量' : '比较月底最后七天和前七天的商品销量'}，变化达到 25% 且数量至少相差 3 {quantityUnit(report.summary.unit)}时，标为明显增加或减少。重点商品还包括有销量异常提醒的商品{report.change_drivers && '和销售额贡献较高的商品，兼顾变化影响与不同关注事项'}，首页最多展示五款。</p>
-        <h4>预测方法与误差</h4>
+        <h4>预测方法与误差</h4><HelpHint topic="forecast" />
         {report.forecast.metrics.length > 0 ? <>
           <p>{report.change_drivers ? '按历史成交情况比较不同销量参考，并检查最后几个时间段的表现。' : '对比梯度提升树、上一周销量、过去四周平均销量。'}本次主要采用：{methods[report.forecast.selected_method ?? ''] ?? report.forecast.selected_method ?? '未选择'}。</p>
           <p>用过去的数据检查七天总销量预测误差。MAE 是平均相差的销量；WAPE 是绝对误差总和除以实际销量总和，越小越好。</p>

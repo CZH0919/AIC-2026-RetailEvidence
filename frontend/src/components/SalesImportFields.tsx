@@ -1,3 +1,4 @@
+import { HelpHint } from './HelpHint'
 import { quantityUnit, UNKNOWN_QUANTITY_UNIT } from '../quantity'
 import { Button, Input, Select } from 'antd'
 import type { Mapping, Preview } from '../data'
@@ -18,7 +19,7 @@ export function SalesImportFields({ preview, value, onChange }: { preview: Previ
       <small>{selected ? `例如：${selected.examples.slice(0, 2).join('、') || '空值'}` : required ? '没有自动识别，请选择对应列。' : '可不填写。'}</small>
     </label>
   }
-  return <div className="sales-upload-fields">
+  return <div className="sales-upload-fields"><div className="section-help"><HelpHint topic="fields" /><HelpHint topic="amount" /></div>
     <label className="sales-upload-field"><span>表格记录的是</span><Select aria-label="销售表记录类型" value={value.record_kind ?? 'transactions'} options={[{ value: 'transactions', label: '每笔销售的商品明细' }, { value: 'daily_summary', label: '每种商品每天的销售汇总' }, { value: 'monthly_summary', label: '整月销售汇总（不用日期列）' }]} onChange={setKind} /></label>
     {value.record_kind === 'monthly_summary' && <p className="sales-upload-muted">按月汇总分析，请在下方填写这份表所属月份。</p>}
     <div className="sales-upload-grid">{column('item_id', '商品名称或编号', true)}{column('quantity', '销量', true)}{value.record_kind !== 'monthly_summary' && <div className="sales-upload-date-field">

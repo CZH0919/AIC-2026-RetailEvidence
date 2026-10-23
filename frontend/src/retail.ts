@@ -32,7 +32,7 @@ export type AutomaticStep = {status: string; message: string; run_id?: string; q
 export type AutomaticAnalyses = {status: string; steps: {association?: AutomaticStep; customers?: AutomaticStep}; customer_groups?: {cluster: number; customers: number; recency_median: number; frequency_median: number; monetary_median?: number | null}[]; customer_mode?: string; customer_evidence?: {through_date: string; history_start: string; rule: string; opportunities: {customers: number}[]}}
 export type SalesRun = { has_result?: boolean; id: string; status: string; message: string; created_at: string; finished_at: string | null; result: SalesReport | null; parameters?: { sales: SalesParameters } }
 export type SourceInfo = { version_id: string; mapping_revision: number; start: string | null; end: string | null; months: string[]; suggested_month: string | null; mapping: Mapping }
-export type SavedRecord = { value: { status?: string; note?: string; suggested_quantity?: number; notice?: string; item_id?: string; day?: string | null; reason?: string; source?: string }; revision: number; updated_at: string }
+export type SavedRecord = { value: { status?: string; note?: string; suggested_quantity?: number; notice?: string; item_id?: string; day?: string | null; reason?: string; source?: string; input?: Record<string, unknown> }; revision: number; updated_at: string }
 export type SourceRecords = { date: string; count: number; shown: number; items: { source_row_id: string; version_id: string; filename: string; quantity: string | null; line_amount: string | null; unit_price: string | null; event_time: string | null; reason: string }[] }
 const root = (p: string) => `/projects/${encodeURIComponent(p)}`
 export const salesApi = {

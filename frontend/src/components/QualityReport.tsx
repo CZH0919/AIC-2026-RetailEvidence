@@ -1,3 +1,5 @@
+import { AnalysisHistory } from './AnalysisHistory'
+import { HelpHint } from './HelpHint'
 import { useEffect, useState } from 'react'
 import { Alert, App, Button, Select, Table, Tag } from 'antd'
 import { CheckCircleOutlined, ExclamationCircleOutlined, InfoCircleOutlined, PlayCircleOutlined } from '@ant-design/icons'
@@ -47,7 +49,7 @@ export function QualityReport({ report, projectId, runId }: { report: Report; pr
   ]
   return <div className="quality-report">
     <div className="quality-metrics">{overview.map(([label, count, help]) => <article key={label}><span>{label}</span><strong>{Number(count).toLocaleString()}</strong><small>{help}</small></article>)}</div>
-    <div className="quality-section-title"><div><h3>这份数据适合做什么</h3><p>输入条件通过后，仍需在实际分析时检验结果质量。</p></div><span>字段版本 M{report.context.mapping_revision}</span></div>
+    <div className="quality-section-title"><div><h3>这份数据适合做什么</h3><HelpHint topic="quality" /></div><span>字段版本 M{report.context.mapping_revision}</span></div>
     <div className="capability-grid">{capabilities.map(([key, title, description]) => {
       const cap = report.capabilities[key]
       return <article key={key} className={`capability-card ${cap.allowed ? 'ready' : 'restricted'}`}>
@@ -131,14 +133,14 @@ function ClusterPanel({ report, projectId, qualityRunId }: { report: Report; pro
   const active = detail && !finished.has(detail.status)
   const result = isClusterReport(detail?.result) ? detail.result : null
   return <section className="analysis-panel">
-    <div className="quality-section-title"><div><h3>客户分群</h3><p>使用通过质量检查的订单视图，生成可复核的 RF/RFM 群体画像。</p></div>
+    <div className="quality-section-title"><div><h3>客户分群</h3><HelpHint topic="clustering" /></div>
       <div className="analysis-actions">
         <Button icon={<PlayCircleOutlined />} disabled={!report.capabilities.rf.allowed} loading={busy === 'rf'} onClick={() => void submit('rf')}>运行 RF</Button>
         <Button icon={<PlayCircleOutlined />} disabled={!report.capabilities.rfm.allowed} loading={busy === 'rfm'} onClick={() => void submit('rfm')}>运行 RFM</Button>
       </div>
     </div>
     {error && <Alert className="import-alert" type="error" showIcon title={error} />}
-    <div className="quality-run-strip compact">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{stateLabel[run.status] ?? run.status}</span><small>{run.parameters?.analysis?.kind?.toUpperCase() ?? '分群'}</small></button>) : <p>还没有客户分群记录。</p>}</div>
+    <AnalysisHistory title="客户分群" runs={runs} selected={selected} detail={detail} onSelect={id => { setSelected(id); setDetail(null) }} />
     {detail && <div className="cluster-result">
       <div className="quality-result-header"><div><Tag color={result?.summary.publishable ? 'cyan' : active ? 'blue' : 'default'}>{stateLabel[detail.status] ?? detail.status}</Tag><span>{detail.message}</span></div>
         {active && <Button danger onClick={async () => { try { setDetail(await qualityApi.cancel(projectId, detail.id)); void message.info('取消请求已提交') } catch (e) { void message.error(e instanceof Error ? e.message : '未能取消，请重试。') } }}>取消</Button>}</div>
@@ -209,11 +211,11 @@ function AssociationPanel({ report, projectId, qualityRunId }: { report: Report;
   const result = isAssociationReport(detail?.result) ? detail.result : null
   const percent = (value: number | null) => value === null ? '—' : `${(value * 100).toFixed(1)}%`
   return <section className="analysis-panel">
-    <div className="quality-section-title"><div><h3>商品共购</h3><p>从完整购物篮中挖掘规则，并用固定留出篮评测 Top-5 补全。</p></div>
+    <div className="quality-section-title"><div><h3>商品共购</h3><HelpHint topic="association" /></div>
       <div className="analysis-actions"><Button icon={<PlayCircleOutlined />} disabled={!report.capabilities.association.allowed} loading={busy} onClick={() => void submit()}>运行共购</Button></div>
     </div>
     {error && <Alert className="import-alert" type="error" showIcon title={error} />}
-    <div className="quality-run-strip compact">{runs.length ? runs.map(run => <button key={run.id} className={`run-chip ${run.id === selected ? 'selected' : ''}`} onClick={() => { setSelected(run.id); setDetail(null) }}><span>{stateLabel[run.status] ?? run.status}</span><small>关联规则</small></button>) : <p>还没有商品共购记录。</p>}</div>
+    <AnalysisHistory title="商品共购" runs={runs} selected={selected} detail={detail} onSelect={id => { setSelected(id); setDetail(null) }} />
     {detail && <div className="cluster-result">
       <div className="quality-result-header"><div><Tag color={result?.summary.publishable ? 'cyan' : active ? 'blue' : 'default'}>{stateLabel[detail.status] ?? detail.status}</Tag><span>{detail.message}</span></div>
         {active && <Button danger onClick={async () => { try { setDetail(await qualityApi.cancel(projectId, detail.id)); void message.info('取消请求已提交') } catch (e) { void message.error(e instanceof Error ? e.message : '未能取消，请重试。') } }}>取消</Button>}</div>
@@ -224,12 +226,12 @@ function AssociationPanel({ report, projectId, qualityRunId }: { report: Report;
       </div>
       {!result.summary.publishable && <Alert type="warning" showIcon title="本次结果不建议作为正式共购结论" description={result.summary.reasons.join(' ')} />}
       <Table size="small" pagination={{ pageSize: 8 }} dataSource={result.top_rules.map((row, index) => ({ ...row, key: index }))} columns={[
-        { title: '前件', dataIndex: 'antecedents' },
-        { title: '后件', dataIndex: 'consequents' },
+        { title: '已购买商品', dataIndex: 'antecedents' },
+        { title: '常共同出现的商品', dataIndex: 'consequents' },
         { title: '共同次数', dataIndex: 'n_ab' },
         { title: '支持度', dataIndex: 'support', render: (value: number) => percent(value) },
         { title: '置信度', dataIndex: 'confidence', render: (value: number) => percent(value) },
-        { title: 'Lift', dataIndex: 'lift', render: (value: number) => value.toFixed(2) },
+        { title: '提升度', dataIndex: 'lift', render: (value: number) => value.toFixed(2) },
       ]} locale={{ emptyText: '当前阈值下没有形成规则' }} scroll={{ x: 'max-content' }} />
       <Table className="candidate-table" size="small" pagination={false} dataSource={result.evaluations.map(row => ({ ...row, key: row.split }))} columns={[
         { title: '集合', dataIndex: 'split', render: (value: string) => value === 'test' ? '测试集' : '验证集' },

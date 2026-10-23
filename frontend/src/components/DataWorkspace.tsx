@@ -1,3 +1,4 @@
+import { HelpHint } from './HelpHint'
 import { quantityUnit } from '../quantity'
 import { useEffect, useState } from 'react'
 import { Alert, App, Button, Drawer, Select, Tag } from 'antd'
@@ -51,7 +52,7 @@ export function DataWorkspace({ projectId }: { projectId: string }) {
     return () => { active = false }
   }, [projectId, selected, reload])
   const failure = (e: unknown) => e instanceof ApiError ? e.message : '操作未能完成，请重试。'
-  return <div className="data-workspace">
+  return <div className="data-workspace"><div className="section-help"><HelpHint topic="import" /></div>
     <div className="data-heading"><h2>营业数据记录</h2><div><Button onClick={() => navigate(`/projects/${projectId}?compose=1`)}>生成月报</Button><Button type="primary" icon={<PlusOutlined />} onClick={() => setImporting({ draft: null })}>上传新数据</Button></div></div>
     {drafts.length > 0 && <div className="drafts-strip"><strong>继续未完成的导入</strong>{drafts.map(d => <div key={d.id}><span title={d.filename}>{d.filename}</span><Button size="small" onClick={() => setImporting({ draft: d })}>继续</Button><Button size="small" type="text" onClick={() => modal.confirm({ title: '放弃这份导入草稿？', content: '已保存的数据版本不受影响。', okText: '放弃草稿', cancelText: '保留', onOk: async () => { try { await dataApi.discard(projectId, d.id); setReload(x => x + 1) } catch (e) { void message.error(failure(e)); throw e } } })}>放弃</Button></div>)}</div>}
     {loading ? <LoadingState /> : error ? <ErrorState message={error} onRetry={() => setReload(x => x + 1)} /> : versions.length === 0 ? <div className="workspace-panel data-empty"><div className="data-empty-mark"><DatabaseOutlined /></div><EmptyState compact title="为这个项目添加第一份数据" description="支持交易明细、购物篮和公开数据集。先查看内容，再确认字段，无需提前调整列名。" action={<Button type="primary" onClick={() => setImporting({ draft: null })}>选择数据来源</Button>} /><div className="data-principles"><span>01 保留原始文件</span><span>02 确认业务含义</span><span>03 独立保存版本</span></div></div>

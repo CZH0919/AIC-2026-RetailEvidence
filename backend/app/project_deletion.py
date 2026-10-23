@@ -10,8 +10,15 @@ from sqlalchemy import delete, select, update
 from .import_formats import DataIssue
 from .import_jobs import exclusive
 from .models import (
-    AnalysisRun, CleaningPolicy, DatasetVersion, ImportDraft, MappingVersion,
-    Project, RunEvent, SalesRecord,
+    AnalysisRun,
+    CleaningPolicy,
+    DatasetVersion,
+    ImportDraft,
+    MappingVersion,
+    Project,
+    ProjectOwner,
+    RunEvent,
+    SalesRecord,
 )
 from .task_runner import TERMINAL
 
@@ -50,6 +57,7 @@ def install_project_deletion(app):
                         (MappingVersion, MappingVersion.dataset_version_id.in_(version_ids)),
                         (DatasetVersion, DatasetVersion.project_id == identity),
                         (ImportDraft, ImportDraft.project_id == identity),
+                        (ProjectOwner, ProjectOwner.project_id == identity),
                         (Project, Project.id == identity),
                     ]
                     storage = app.state.storage.resolve()

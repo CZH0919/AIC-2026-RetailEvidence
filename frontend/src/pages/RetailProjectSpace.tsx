@@ -56,6 +56,8 @@ function ProjectSpace({ projectId }: { projectId: string }) {
       <NavLink to={`/projects/${project.id}${salesQuery}`} end>销售总览</NavLink>
       <NavLink to={`/projects/${project.id}/products${salesQuery}`}>商品分析</NavLink>
       <NavLink to={`/projects/${project.id}/pairings${salesQuery}`}>搭配建议</NavLink>
+      <NavLink to={`/projects/${project.id}/data${salesQuery}`}>数据记录</NavLink>
+      <NavLink to={`/projects/${project.id}/quality${salesQuery}`}>更多分析</NavLink>
     </nav>
     {path.endsWith('/data') ? <DataWorkspace projectId={project.id} /> : <Suspense fallback={<LoadingState />}>{path.endsWith('/quality') ? <QualityWorkspace projectId={project.id} /> : path.endsWith('/pairings') ? <PairingWorkspace projectId={project.id} /> : <SalesWorkspace projectId={project.id} productsMode={path.endsWith('/products')} />}</Suspense>}
     <Drawer title="店铺介绍" open={storeInfo} width={440} onClose={() => setStoreInfo(false)}><h3>{project.name}</h3><p>{project.description || '还没有填写店铺介绍。'}</p></Drawer>

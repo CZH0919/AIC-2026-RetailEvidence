@@ -34,7 +34,7 @@ export function ImportEditor({ projectId, initial, onClose, onSaved }: { project
       {step === 2 && <Button disabled={!!busy} onClick={() => setStep(1)}>调整读取方式</Button>}
       {step === 1 && <Button type="primary" loading={!!busy} onClick={() => draft && void run('正在解析并生成预览', async () => { const next = await dataApi.preview(projectId, draft.id, options); setDraft(next); setMapping(initialMapping(next)); setStep(2) })}>生成预览</Button>}
       {step === 2 && <><Button disabled={!!busy} onClick={() => draft && mapping && void run('正在保存草稿', async () => { setDraft(await dataApi.saveDraft(projectId, draft, mapping)); void message.success('字段草稿已保存，可稍后继续') })}>保存草稿</Button>
-        <Button type="primary" loading={!!busy} disabled={!mapping?.confirmed} onClick={() => draft && mapping && void run('正在保存数据版本', async () => onSaved(await dataApi.confirm(projectId, draft, mapping)))}>确认并创建版本</Button></>}
+        <Button type="primary" aria-label="确认并创建版本" aria-busy={!!busy} loading={!!busy} disabled={!mapping?.confirmed} onClick={() => draft && mapping && void run('正在保存数据版本', async () => onSaved(await dataApi.confirm(projectId, draft, mapping)))}>确认并创建版本</Button></>}
     </div></div>}>
     <Steps current={step} items={[{ title: '选择文件' }, { title: '读取设置' }, { title: '字段与口径' }]} />
     {error && <Alert className="import-alert" type="error" showIcon title="未能完成操作" description={error} />}

@@ -2,6 +2,7 @@ import { quantityUnit, UNKNOWN_QUANTITY_UNIT } from '../quantity'
 import { useState } from 'react'
 import { Alert, Button, Checkbox, Input, Select } from 'antd'
 import type { Mapping, Preview } from '../data'
+import { HelpHint } from './HelpHint'
 
 export const fields = [
   ['order_id', '订单 / 购物篮标识'], ['item_id', '商品标识'], ['item_name', '商品名称'], ['customer_id', '客户标识'],
@@ -14,7 +15,7 @@ export function MappingEditor({ preview, value, onChange }: { preview: Preview; 
   const update = (patch: Partial<Mapping>) => onChange({ ...value, ...patch, confirmed: false })
   const select = (key: keyof Mapping, label: string, choices: string[][]) => <label className="data-field"><span>{label}</span><Select aria-label={label} value={value[key] as string | null} options={options(choices)} onChange={v => update({ [key]: v })} /></label>
   return <div className="mapping-editor">
-    <div className="editor-intro"><span className="eyebrow">FIELD MAPPING</span><h3>让每一列都有明确含义</h3><p>已按列名提出对应建议。请核对样例，并保留无法确定的字段为空。</p></div>
+    <div className="editor-intro"><h3>确认字段对应</h3><div className="section-help"><p>已按列名给出建议，请对照样例核对。</p><HelpHint topic="fields" /></div></div>
     {preview.suggestions.warnings.length > 0 && <Alert type="warning" showIcon title="部分字段需要你判断" description={preview.suggestions.warnings.join(' ')} />}
     <div className="mapping-grid">{fields.map(([key, label]) => {
       const selected = preview.columns.find(c => c.key === value.columns[key])
@@ -23,7 +24,7 @@ export function MappingEditor({ preview, value, onChange }: { preview: Preview; 
         onChange={v => update({ columns: { ...value.columns, [key]: v ?? null }, ...(key === 'currency' && v ? { currency_constant: null } : {}) })} />
         <small>{selected ? `样例：${selected.examples.join(' · ') || '全部为空'}` : '保留未知，不补造字段'}</small></label>
     })}</div>
-    <div className="semantics-heading"><h3>确认业务口径</h3><p>这些选择决定后续如何理解数据，不会修改原始文件。</p></div>
+    <div className="semantics-heading"><h3>确认业务口径</h3><HelpHint topic="amount" /></div>
     <div className="mapping-grid">
       <label className="data-field"><span>每行是什么记录</span><Select aria-label="记录类型" value={value.record_kind ?? 'transactions'} options={options([['transactions', '一笔商品销售明细'], ['daily_summary', '某商品一天的销售汇总'], ['monthly_summary', '某商品一个月的销售汇总']])} onChange={kind => update({ record_kind: kind, ...(kind !== 'transactions' ? { order_boundary: 'unavailable', columns: { ...value.columns, order_id: null, order_amount: null }, amount_mode: value.amount_mode === 'order_amount' ? 'none' : value.amount_mode } : {}) })} /></label>
       {value.record_kind === 'monthly_summary' && <label className="data-field"><span>这份月汇总属于哪一月</span><input type="month" aria-label="月汇总月份" value={value.summary_month ?? ''} onChange={e => update({ summary_month: e.target.value || null })} /></label>}

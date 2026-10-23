@@ -3,6 +3,8 @@ import { Alert, App, Button, Input, Select } from 'antd'
 import { SaveOutlined } from '@ant-design/icons'
 import { salesApi } from '../retail'
 import type { SavedRecord } from '../retail'
+import { useRequestScope } from './useRequestScope'
+import { HelpHint } from './HelpHint'
 
 const reasons = [
   { value: 'unknown', label: '尚不清楚' },
@@ -23,11 +25,13 @@ export function ProductNote({ projectId, runId, itemId, dates }: {
   const [busy, setBusy] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [latestText, setLatestText] = useState<string | null>(null)
+  const capture = useRequestScope(JSON.stringify([projectId, runId, itemId, day]))
   const { message } = App.useApp()
 
   useEffect(() => {
     let active = true
-    setLoading(true); setError('')
+    setLoading(true); setError(''); setLatestText(null)
     salesApi.records(projectId, runId).then(response => {
       if (!active) return
       const record = Object.values(response.items).find(r => r.value.source === 'user_note'
@@ -39,18 +43,33 @@ export function ProductNote({ projectId, runId, itemId, dates }: {
   }, [projectId, runId, itemId, day])
 
   async function save() {
+    const isCurrent = capture()
     setBusy(true); setError('')
     try {
       const record = await salesApi.itemNote(projectId, runId, {
         item_id: itemId, day, reason, note, expected_revision: saved?.revision ?? 0,
       })
-      setSaved(record); void message.success('已保存核对记录')
-    } catch (issue) { setError((issue as Error).message) }
-    finally { setBusy(false) }
+      if (!isCurrent()) return
+      setSaved(record); setLatestText(null); void message.success('已保存核对记录')
+    } catch (issue) { if (isCurrent()) setError((issue as Error).message) }
+    finally { if (isCurrent()) setBusy(false) }
+  }
+
+  async function readLatest() {
+    const isCurrent = capture()
+    setBusy(true)
+    try {
+      const response = await salesApi.records(projectId, runId)
+      if (!isCurrent()) return
+      const record = Object.values(response.items).find(r => r.value.source === 'user_note'
+        && r.value.item_id === itemId && r.value.day === day) ?? null
+      setSaved(record); setLatestText(String(record?.value.note ?? '尚无记录')); setError('')
+    } catch (issue) { if (isCurrent()) setError((issue as Error).message) }
+    finally { if (isCurrent()) setBusy(false) }
   }
 
   return <section className="sales-detail-section sales-product-note">
-    <h3>记下核对结果</h3>
+    <h3>记下核对结果</h3><HelpHint topic="notes" />
     <div className="sales-filter">
       <Select aria-label="核对记录日期" value={day ?? 'month'} disabled={busy || loading}
         onChange={value => setDay(value === 'month' ? null : value)}
@@ -61,6 +80,8 @@ export function ProductNote({ projectId, runId, itemId, dates }: {
     <Input.TextArea aria-label="商品核对备注" value={note} onChange={e => setNote(e.target.value)}
       maxLength={500} rows={3} disabled={busy || loading} placeholder="写下你查到的情况" />
     {error && <Alert type="error" title={error} showIcon />}
+    {error && <Button loading={busy} onClick={() => void readLatest()}>读取最新记录，保留我的草稿</Button>}
+    {latestText !== null && <Alert type="info" title="已读取最新记录，你的草稿仍保留" description={`当前保存的文字：${latestText}。核对后可再次保存。`} />}
     <Button icon={<SaveOutlined />} loading={busy} disabled={loading || !!error}
       className="sales-ask" onClick={() => void save()}>保存核对记录</Button>
     <p className="sales-caveat">店主记录，不改变这份月报的统计或预测。</p>

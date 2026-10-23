@@ -18,10 +18,16 @@ import { EmptyState, LoadingState } from './States'
 import { useSalesReports } from './useSalesReports'
 import { AutomaticAnalysisStatus } from './AutomaticAnalysisStatus'
 import { ReportPicker, ReportHistory, HistoricalReportNotice } from './ReportPicker'
+import { useRequestScope } from './useRequestScope'
+import { overlayLayers } from '../overlayLayers'
+import { HelpHint } from './HelpHint'
 
 const number = (v: number | null | undefined) => v == null ? '—' : v.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
 const methods: Record<string, string> = { gradient_boosting: '历史销售参考', last_week: '上一周销量参考', four_week_mean: '过去四周平均参考', exponential_smoothing: '近期销量平滑参考', croston_sba: '间歇成交参考' }
 const flagNames: Record<string, string> = { growth: '卖得更多', decline: '卖得更少', anomaly: '变化需核对', contribution: '销售额贡献较高' }
+const inventorySignature = (value: Record<string, unknown>) => JSON.stringify(
+  ['snapshot_date', 'available', 'incoming', 'arrival_date', 'reserve', 'pack_size', 'confirmed', 'physical_confirmed'].map(key => value[key] ?? null),
+)
 
 export default function SalesWorkspace({ projectId, productsMode = false }: { projectId: string; productsMode?: boolean }) {
   const selection = useSalesReports(projectId, productsMode ? 'products' : 'overview')
@@ -43,6 +49,11 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
   const [customerAction, setCustomerAction] = useState<{runId: string; action: SalesAction} | null>(null)
   const [inventory, setInventory] = useState({ available: 0, incoming: 0, reserve: 0, pack_size: 1, arrival_date: '', confirmed: false })
   const [inventorySet, setInventorySet] = useState(false)
+  const [inventoryFresh, setInventoryFresh] = useState(false)
+  function changeInventory(change: (value: typeof inventory) => typeof inventory) {
+    setInventoryFresh(false)
+    setInventory(change)
+  }
   const [typeReview, setTypeReview] = useState<{focusId?: string} | null>(null)
   const [params] = useSearchParams(), navigate = useNavigate(), { message } = App.useApp()
   const [detailProduct, setDetailProduct] = useState<{runId: string; item: SalesProduct} | null>(null)
@@ -51,6 +62,12 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
   const unit = quantityUnit(report?.summary.unit)
   const product = detailProduct?.runId === current?.id && detailProduct?.item.id === detailId ? detailProduct.item : undefined
   const related = relatedReport && relatedReport.runId === current?.id ? relatedReport.report : report
+  const captureProduct = useRequestScope(JSON.stringify([projectId, current?.id, detailId]))
+  const inventoryInput = { ...inventory, arrival_date: inventory.arrival_date || null, physical_confirmed: inventory.confirmed, item_id: product?.id, snapshot_date: product?.forecast?.start }
+  const captureInventory = useRequestScope(JSON.stringify([projectId, current?.id, detailId, inventorySet, inventoryInput]))
+  const sourceRequest = useRef(0)
+  const savedInventory = product ? records[`inventory:${product.id}`] : undefined
+  const inventoryCurrent = inventoryFresh && !!savedInventory && inventorySet && inventory.confirmed && inventorySignature(savedInventory.value.input ?? {}) === inventorySignature(inventoryInput)
   const root = `/projects/${projectId}`
   async function ensureProducts() {
     if (relatedReport && relatedReport.runId === current?.id) return relatedReport.report
@@ -73,7 +90,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
     if (report) salesApi.records(projectId, current!.id).then(r => { if (active) setRecords(r.items) }).catch(e => { if (active) setError(e.message) })
     return () => { active = false }
   }, [current?.id, report?.context.run_id, projectId])
-  useEffect(() => { setRecordRows(null); setInventorySet(false); setInventory({ available: 0, incoming: 0, reserve: 0, pack_size: 1, arrival_date: '', confirmed: false }); setAnswer(''); setQuestion(''); setAnswerError(''); setAnswerSource(''); setAnsweredQuestion(''); ++aiGeneration.current; setAiBusy(false) }, [detailId, current?.id])
+  useEffect(() => { setRecordRows(null); setInventoryFresh(false); setBusy(false); setError(''); setInventorySet(false); setInventory({ available: 0, incoming: 0, reserve: 0, pack_size: 1, arrival_date: '', confirmed: false }); setAnswer(''); setQuestion(''); setAnswerError(''); setAnswerSource(''); setAnsweredQuestion(''); ++aiGeneration.current; setAiBusy(false) }, [detailId, current?.id, projectId])
 
   useEffect(() => {
     if (!detailId || !current) return
@@ -101,7 +118,32 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
   }
   useEffect(() => () => { ++aiGeneration.current }, [])
 
-  const perform = async (task: () => Promise<void>) => { setBusy(true); setError(''); try { await task() } catch (e) { setError((e as Error).message) } finally { setBusy(false) } }
+  const perform = async (task: (isCurrent: () => boolean) => Promise<void>) => {
+    const isCurrent = captureProduct()
+    setBusy(true); setError('')
+    try { await task(isCurrent) }
+    catch (e) { if (isCurrent()) setError((e as Error).message) }
+    finally { if (isCurrent()) setBusy(false) }
+  }
+  async function loadSourceRows(day: string) {
+    if (!current || !product) return
+    const request = ++sourceRequest.current
+    await perform(async isCurrent => {
+      const rows = await salesApi.itemRecords(projectId, current.id, product.id, day)
+      if (isCurrent() && request === sourceRequest.current) setRecordRows(rows)
+    })
+  }
+  async function calculateInventory() {
+    if (!current || !product?.forecast) return
+    const isInputCurrent = captureInventory()
+    await perform(async isCurrent => {
+      const saved = await salesApi.inventory(projectId, current.id, { ...inventory, physical_confirmed: inventory.confirmed, arrival_date: inventory.arrival_date || null, item_id: product.id, snapshot_date: product.forecast!.start })
+      if (isCurrent() && isInputCurrent()) {
+        setRecords(rows => ({ ...rows, [`inventory:${product.id}`]: saved }))
+        setInventoryFresh(true)
+      }
+    })
+  }
   const exportFile = (url: string) => { const anchor = document.createElement('a'); anchor.href = url; anchor.click() }
   const filteringAttention = params.get('attention') === '1'
   const filtered = report?.products.filter(p => (!filteringAttention || p.flags.length) && (category === 'all' || p.category === category) && (signal === 'all' || p.flags.includes(signal)) && `${p.name} ${p.id}`.toLowerCase().includes(query.toLowerCase())) ?? []
@@ -120,7 +162,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
 
   return <div className="sales-workspace">
     <div className={`sales-toolbar ${productsMode ? '' : 'overview-toolbar'}`}>
-      <h2>{productsMode ? '商品分析' : report ? `${report.month.slice(0, 4)} 年 ${Number(report.month.slice(5))} 月` : '销售总览'}</h2>
+      <h2>{productsMode ? '商品分析' : report ? `${report.month.slice(0, 4)} 年 ${Number(report.month.slice(5))} 月` : '销售总览'}{report && !productsMode && <HelpHint topic="overview" />}</h2>
       <div>
         <ReportPicker runs={runs} current={current} disabled={!!switching} onChoose={id => void chooseReport(id)} />
         <Button type={productsMode ? 'default' : 'primary'} icon={<PlusOutlined />} onClick={() => setImporting(true)}>上传销售表</Button>
@@ -130,14 +172,11 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
           ...(versions.length ? [{ key: 'generate', label: '生成月报' }] : []),
           ...(report ? [{ key: 'evidence', label: '月报怎么算的' }] : []),
           ...(report ? [{ key: 'types', label: '确认记录类型' }] : []),
-          { key: 'data', label: '数据记录' },
-          { key: 'analysis', label: '补充分析' },
         ], onClick: ({ key }) => {
           if (key === 'history') setHistory(true)
           else if (key === 'generate') setComposing(true)
           else if (key === 'evidence') setEvidence(true)
           else if (key === 'types') openTypeReview()
-          else navigate(`${root}/${key === 'data' ? 'data' : 'quality'}`)
         } }}><Button type="text" icon={<MoreOutlined />} aria-label="更多操作">更多</Button></Dropdown>
       </div>
     </div>
@@ -181,7 +220,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
     {typeReview && report && <SalesTypeReview key={`types:${current!.id}`} projectId={projectId} report={related!} focusId={typeReview.focusId}
       onClose={() => setTypeReview(null)} onDone={run => { setTypeReview(null); setChartScope('current'); void reload(run.id) }} />}
     <ReportHistory open={history} onClose={() => setHistory(false)} runs={runs} current={current} versions={versions} disabled={!!switching} onChoose={id => void chooseReport(id)} />
-    <Drawer title={product?.name ?? report?.products.find(p => p.id === detailId)?.name ?? '商品详情'} open={!!detailId} width={690} onClose={() => setDetailId(null)}>
+    <Drawer title={product?.name ?? report?.products.find(p => p.id === detailId)?.name ?? '商品详情'} open={!!detailId} width={690} zIndex={overlayLayers.product} keyboard={!evidence && !ai} onClose={() => setDetailId(null)}>
       {detailId && !product && <Spin />}
       {product && report && <div className="product-detail" key={`${current!.id}:${product.id}`}>
         <header className="product-detail-summary">
@@ -235,7 +274,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
                 <p className="product-detail-muted">{product.anomaly_check?.reference_label?.includes('相同星期') ? '参考销量取此前最多12个相同星期几的中位数，至少需要6个；包含确认没有销售的日子。它用于识别异常，不代表近期每天都卖这么多。' : '参考销量用于识别变化，具体方法见月报计算说明。'}</p>
                 <p className="product-detail-muted">点日期查看当天的销售记录。{unit && `销量单位：${unit}。`}</p>
                 <Table rowKey="date" size="small" pagination={false} dataSource={product.anomalies} columns={[
-                  { title: '日期', dataIndex: 'date', render: (day: string) => <Button type="link" loading={busy} onClick={() => void perform(async () => setRecordRows(await salesApi.itemRecords(projectId, current!.id, product.id, day)))}>{day}</Button> },
+                  { title: '日期', dataIndex: 'date', render: (day: string) => <Button type="link" loading={busy} onClick={() => void loadSourceRows(day)}>{day}</Button> },
                   { title: '实际销量', dataIndex: 'actual', render: number },
                   { title: product.anomaly_check?.reference_label?.includes('相同星期') ? '历史同星期中位数' : '历史参考销量', dataIndex: 'reference', render: number },
                 ]} />
@@ -256,9 +295,10 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
           {product.forecast && !['fee_service', 'accounting'].includes(product.item_type?.kind ?? '') && <details className="product-detail-disclosure">
             <summary><span>算一下备货量</span><small>填写库存后计算</small></summary>
             <div className="product-detail-content">
-              <div className="sales-inventory"><label>预测起点的可售库存<InputNumber aria-label="可售库存" min={0} value={inventorySet ? inventory.available : null} onChange={v => { setInventorySet(v !== null); setInventory(r => ({ ...r, available: v ?? 0, confirmed: false })) }} /></label><label>七天内已下单、确定到货数量<InputNumber aria-label="确定到货数量" min={0} value={inventory.incoming} onChange={v => setInventory(r => ({ ...r, incoming: v ?? 0, confirmed: false }))} /></label>{inventory.incoming > 0 && <label>预计到货日<input aria-label="预计到货日" type="date" value={inventory.arrival_date} onChange={e => setInventory(r => ({ ...r, arrival_date: e.target.value, confirmed: false }))} /></label>}<label>想额外保留的备用量<InputNumber aria-label="备用量" min={0} value={inventory.reserve} onChange={v => setInventory(r => ({ ...r, reserve: v ?? 0, confirmed: false }))} /></label><label>每个包装含多少销售单位<InputNumber aria-label="包装单位" min={1} value={inventory.pack_size} onChange={v => setInventory(r => ({ ...r, pack_size: v ?? 1, confirmed: false }))} /></label></div>
-          <Checkbox checked={inventory.confirmed} onChange={e => setInventory(r => ({ ...r, confirmed: e.target.checked }))}>我已确认这是可备货的实物商品，并核对 {product.forecast.start} 的可售库存、未到货数量（没有则为零）与备用量</Checkbox><Button className="sales-inventory-button" disabled={!inventory.confirmed || !inventorySet} loading={busy} onClick={() => void perform(async () => { const saved = await salesApi.inventory(projectId, current!.id, { ...inventory, physical_confirmed: inventory.confirmed, arrival_date: inventory.arrival_date || null, item_id: product.id, snapshot_date: product.forecast!.start }); setRecords(r => ({ ...r, [`inventory:${product.id}`]: saved })) })}>计算数量参考</Button>
-          {records[`inventory:${product.id}`] && <Alert type="info" title={`七天补货参考：${number(records[`inventory:${product.id}`].value.suggested_quantity)} ${unit}`} description={records[`inventory:${product.id}`].value.notice} />}
+              <HelpHint topic="inventory" context={`库存日期应对应预测起点 ${product.forecast.start}。`} />
+              <div className="sales-inventory"><label>预测起点的可售库存<InputNumber aria-label="可售库存" min={0} value={inventorySet ? inventory.available : null} onChange={v => { setInventorySet(v !== null); changeInventory(r => ({ ...r, available: v ?? 0, confirmed: false })) }} /></label><label>七天内已下单、确定到货数量<InputNumber aria-label="确定到货数量" min={0} value={inventory.incoming} onChange={v => changeInventory(r => ({ ...r, incoming: v ?? 0, confirmed: false }))} /></label>{inventory.incoming > 0 && <label>预计到货日<input aria-label="预计到货日" type="date" value={inventory.arrival_date} onChange={e => changeInventory(r => ({ ...r, arrival_date: e.target.value, confirmed: false }))} /></label>}<label>想额外保留的备用量<InputNumber aria-label="备用量" min={0} value={inventory.reserve} onChange={v => changeInventory(r => ({ ...r, reserve: v ?? 0, confirmed: false }))} /></label><label>每个包装含多少销售单位<InputNumber aria-label="包装单位" min={1} value={inventory.pack_size} onChange={v => changeInventory(r => ({ ...r, pack_size: v ?? 1, confirmed: false }))} /></label></div>
+          <Checkbox checked={inventory.confirmed} onChange={e => changeInventory(r => ({ ...r, confirmed: e.target.checked }))}>我已确认这是可备货的实物商品，并核对 {product.forecast.start} 的可售库存、未到货数量（没有则为零）与备用量</Checkbox><Button className="sales-inventory-button" disabled={!inventory.confirmed || !inventorySet} loading={busy} onClick={() => void calculateInventory()}>计算数量参考</Button>
+          {savedInventory && <Alert type="info" title={`${inventoryCurrent ? '七天补货参考' : '上次保存的七天补货参考'}：${number(savedInventory.value.suggested_quantity)} ${unit}`} description={`${inventoryCurrent ? '' : '输入已变化或尚未确认，请重新计算。'}${savedInventory.value.notice}`} />}
             </div>
           </details>}
 
@@ -275,7 +315,7 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
         </footer>
       </div>}
     </Drawer>
-    <Drawer title="月报怎么算的" open={evidence} width={700} onClose={() => setEvidence(false)}>
+    <Drawer title="月报怎么算的" open={evidence} width={700} zIndex={overlayLayers.evidence} push={false} onClose={() => setEvidence(false)}>
       {report && <SalesReportExplanation report={report} onDownload={file => void exportFile(salesApi.download(projectId, current!.id, file))} />}
     </Drawer>
     <Drawer title="客户名单与回访依据" open={!!customerAction && customerAction.runId === current?.id} width={520} onClose={() => setCustomerAction(null)}>
@@ -287,8 +327,8 @@ export default function SalesWorkspace({ projectId, productsMode = false }: { pr
         <p className="product-detail-muted">按客户编号查找对应客户，先小范围尝试，再比较复购情况。</p>
       </div>}
     </Drawer>
-    <Drawer title="导出月报" open={exporting} width={420} onClose={() => setExporting(false)}><Checkbox checked={allExport} onChange={e => setAllExport(e.target.checked)}>附上全部待关注商品</Checkbox><div className="sales-export-actions"><Button type="primary" icon={<DownloadOutlined />} onClick={() => current && exportFile(salesApi.report(projectId, current.id, allExport))}>下载月报</Button><Button icon={<DownloadOutlined />} onClick={() => current && exportFile(salesApi.download(projectId, current.id, 'sales_products.csv'))}>下载全部商品表</Button></div><p className="sales-caveat">月报可在浏览器中打印保存为 PDF。</p></Drawer>
-    <Drawer title="销售助手" open={ai} width={470} onClose={() => { setAi(false); ++aiGeneration.current; setAiBusy(false) }}>
+    <Drawer title="导出月报" open={exporting} width={420} onClose={() => setExporting(false)}><HelpHint topic="export" /><Checkbox checked={allExport} onChange={e => setAllExport(e.target.checked)}>附上全部待关注商品</Checkbox><div className="sales-export-actions"><Button type="primary" icon={<DownloadOutlined />} onClick={() => current && exportFile(salesApi.report(projectId, current.id, allExport))}>下载月报</Button><Button icon={<DownloadOutlined />} onClick={() => current && exportFile(salesApi.download(projectId, current.id, 'sales_products.csv'))}>下载全部商品表</Button></div><p className="sales-caveat">月报可在浏览器中打印保存为 PDF。</p></Drawer>
+    <Drawer title="销售助手" open={ai} width={470} zIndex={overlayLayers.assistant} keyboard={!evidence} push={false} onClose={() => { setAi(false); ++aiGeneration.current; setAiBusy(false) }}>
       <p>{product ? `正在查看：${product.name}` : '根据当前月报回答'}</p>
       <SalesAssistantQuestions product={product} disabled={aiBusy || !report} onChoose={setQuestion} />
       <Input.TextArea aria-label="向销售助手提问" disabled={aiBusy} value={question} onChange={e => setQuestion(e.target.value)} maxLength={500} autoSize={{ minRows: 3, maxRows: 6 }} placeholder={product ? '例如：这件商品本月卖得怎么样？' : '例如：本月销量怎么样？哪些商品卖得好？'} />

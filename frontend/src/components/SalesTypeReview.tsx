@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Alert, Button, Checkbox, Drawer, Input, Select, Table } from 'antd'
 import { itemKindOptions, salesApi } from '../retail'
 import type { ItemKind, SalesParameters, SalesProduct, SalesReport, SalesRun } from '../retail'
+import { HelpHint } from './HelpHint'
 
 export function SalesTypeReview({ projectId, report, focusId, onClose, onDone }: {
   projectId: string; report: SalesReport; focusId?: string; onClose: () => void; onDone: (run: SalesRun) => void
@@ -37,6 +38,7 @@ export function SalesTypeReview({ projectId, report, focusId, onClose, onDone }:
   return <Drawer title="确认商品与记录类型" open width={800} onClose={onClose} closable={!busy} maskClosable={!busy} keyboard={!busy}
     footer={<div className="sales-type-confirm-footer"><Checkbox checked={confirmed} disabled={!edits.length || busy} onChange={e => setConfirmed(e.target.checked)}>我已核对所改记录的实际类型，同意据此生成新的分析结果</Checkbox><div className="sales-type-footer"><span>已调整 {edits.length} 项</span><div><Button disabled={busy} onClick={onClose}>取消</Button><Button type="primary" loading={busy} disabled={!edits.length || !confirmed} onClick={() => void submit()}>确认并生成新月报</Button></div></div></div>}>
     <div className="sales-type-review">
+      <HelpHint topic="types" />
       <p>区分可以备货的实物、费用或服务，以及记账项目。未确认的记录继续保留保护；本次调整会重新分析当前月份，历史月报保持原样。</p>
       <div className="sales-type-controls"><Input.Search aria-label="搜索待确认记录" placeholder="商品名称或编号" value={query} onChange={e => setQuery(e.target.value)} />
         <Checkbox checked={onlyUnknown} onChange={e => { setOnlyUnknown(e.target.checked); setSelected([]) }}>只看类型待确认</Checkbox></div>

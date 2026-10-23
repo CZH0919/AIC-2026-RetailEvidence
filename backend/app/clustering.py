@@ -146,7 +146,7 @@ def process_clustering(job, progress):
                 "min_cluster_size": int(counts.min()),
                 "silhouette": silhouette,
                 "ari_median": ari_median,
-                "publishable": publishable,
+                "publishable": bool(publishable),
             }
             candidates.append(row)
             if best is None or (

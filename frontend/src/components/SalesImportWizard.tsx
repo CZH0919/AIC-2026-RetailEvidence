@@ -1,6 +1,6 @@
 import { UNKNOWN_QUANTITY_UNIT } from '../quantity'
 import { SalesTableHelp } from './SalesTableHelp'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Alert, Button, DatePicker, Drawer, Select, Spin, Steps, Table } from 'antd'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
@@ -41,6 +41,8 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
   const [current, setCurrent] = useState<SalesRun | null>(null)
   const [busy, setBusy] = useState(''), [error, setError] = useState(''), [retry, setRetry] = useState(0)
   const [pollRetry, setPollRetry] = useState(0)
+  const errorRef = useRef<HTMLDivElement>(null)
+  useEffect(() => { if (error) errorRef.current?.scrollIntoView({ block: 'start' }) }, [error])
   const work = async (label: string, action: () => Promise<void>) => {
     setBusy(label); setError('')
     try { await action() } catch (e) { setError((e as Error).message) } finally { setBusy('') }
@@ -132,7 +134,7 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
     {step === 2 && !running && <Button type="primary" onClick={() => { setStep(1); setCurrent(null); setError('') }}>调整后重试</Button>}
   </div></div>}>
     <div className="sales-upload"><Steps current={step} size="small" items={[{ title: '上传表格' }, { title: '确认内容' }, { title: '查看分析' }]} />
-      {error && <Alert className="sales-upload-alert" type="error" showIcon message={error} action={running ? <Button size="small" onClick={() => void work('正在读取分析进度', async () => { setCurrent(await salesApi.run(projectId, current!.id)); setPollRetry(v => v + 1) })}>重试</Button> : existing && <Button size="small" onClick={() => setRetry(v => v + 1)}>重试</Button>} />}
+      {error && <div ref={errorRef}><Alert className="sales-upload-alert" type="error" showIcon title={error} action={running ? <Button size="small" onClick={() => void work('正在读取分析进度', async () => { setCurrent(await salesApi.run(projectId, current!.id)); setPollRetry(v => v + 1) })}>重试</Button> : existing && <Button size="small" onClick={() => setRetry(v => v + 1)}>重试</Button>} /></div>}
       {busy && <div className="sales-upload-progress" role="status"><Spin size="small" /><span>{busy}，请稍候。</span></div>}
       <fieldset disabled={!!busy} className="sales-upload-fieldset">
         {step === 0 && <>
