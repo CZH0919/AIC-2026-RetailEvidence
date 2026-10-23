@@ -2,7 +2,7 @@
 
 执行日期：2026-10-23。基线为 `7b225be22ccdba811e9bdfd8c0610aca82083915`（0.7.0 / schema 6 / sales-v2.2.0），工作分支为 `feature/system-polish`。本轮修复版本 0.7.1，schema 和销售算法标识不变。
 
-**本文件当前记录候选工作树的真实测试。最终提交、GitHub main 及干净检出复验尚未在本文件确认，状态为 NOT_RUN。** 候选日志中出现的基线 HEAD 不能作为最终源码 SHA。完成发布核验后，应根据 `evidence/release.json` 的实际提交和日志更新，不能仅修改本段文字宣布通过。
+**完整干净复验已通过，实际代码提交为 `36ef5be6c3ddf39736bf46e1e9c755c339235d69`，与当时重新fetch的GitHub main一致。** 前面保留候选与失败历史，最后一节记录最终复验。后续只补录文档的发布提交仍需再次构建和关键冒烟；确切最终SHA与收据在任务 `evidence/release.json`，不把候选HEAD当作最终源码。
 
 ## 1. 环境、证据与版本边界
 
@@ -29,7 +29,7 @@
 | XLSX/月汇总补充导入 | PASS：4 组，0 pageerror | `candidate/browser_import_modes_attempt4/evidence/results.json` |
 | 窄屏抽屉稳定性补测 | PASS：1 组；390×844，x=0、width=390 | `candidate/browser_import_modes_attempt4/evidence/resize_retest.json` |
 | 冻结业务结果及商品 CSV 对账 | PASS：13 项 | `evidence/deterministic_comparison.json`；可重复脚本收据 `evidence/deterministic_comparison_replayed.json` |
-| 最终提交/远端 main 一致性与干净复验 | NOT_RUN：由后续发布核验更新 | 预定收据 `evidence/release.json`，当前不得视为已通过证据 |
+| 完整代码提交/远端 main 一致性与干净复验 | PASS：36ef5be；96+6后台、15Node、28浏览器、13对账 | `final_after_aria/evidence/release_verified.json`；最终文档补录发布见任务 `evidence/release.json` |
 
 后台日志有一项 Starlette TestClient/httpx 弃用警告；构建仍有约 1 MB 的既有 data 分块体积警告。本轮未升级依赖或通过关闭警告降低标准。最后候选构建 CSS 60.94 kB、主 index JS 129.60 kB、SalesWorkspace JS 78.69 kB，具体散列见构建日志。
 
@@ -139,17 +139,49 @@ node "$TASK/candidate/source/scripts/browser_import_modes.cjs"
 - 早期浏览器尝试有启动早于服务就绪、缺少数据只读链接、选择器/工作表 Escape 时序和超时；分别保留原日志。补充 attempt1/3 失败、attempt2/4 成功，最终四组依据 attempt4；原过渡帧截图保留，以 `monthly_mobile_stable.png` 核对稳定布局。
 - 候选曾发现重连键盘穿透，已修复并通过专项复测；不以最初候选的正常主流程替代该项证明。
 - NOT_APPLICABLE：历史纯UI任务“后端/路由源码相对旧基线完全不变”的断言不适用于本轮明确业务边界修复。原测试文件保留，其他业务/安全/帮助断言继续执行。
-- NOT_RUN：最终 Git 提交干净检出后的完整/关键复验、GitHub origin/main SHA 再核对；由发布收据更新。
+- PASS：代码提交36ef5be已从GitHub重新fetch核对，并干净检出完成完整复验。文档补录提交的再次构建/冒烟另存最终发布收据。
 - NOT_RUN：真实商户试用、独立非开发者操作、长时间负载与压力测试、所有浏览器/读屏软件组合、原生浏览器菜单200%缩放。本轮属于开发阶段可用性自查。
 - NOT_RUN：公网 HTTPS/鉴权部署、邮箱找回/验证、多角色团队协作、共享正式环境切换。现有账户隔离不等同已完成互联网生产部署审查。
 - 本轮没有重跑全部公开数据大型算法实验，也没有穷举所有队列取消/重启/超时的浏览器组合；现有后台回归与已列出的真实UI路径通过，只代表其覆盖范围。
 
 后续只有在最终提交、构建来源、远端 SHA 与新收据一致时，才能报告最终仓库交付通过。发布默认保持原18108及共享正式服务，提供独立预览；替换现有演示须单独授权。schema 6不变，回退继续使用原0.7.0源码/构建及服务，不需回滚业务数据库。
 
-## 8. 干净检出复验发现的可访问性问题
+## 7. 干净检出复验发现的可访问性问题
 
 首次仓库提交 `8ef28d49f830f16766db18767ef673b8cd72a486` 干净检出后，后台96+6、前端15、构建、主流程12、专项12和13项对账通过；但补充导入第04组连续超时。原始 `final/evidence/release.json` 保持 `FAIL_OR_BLOCKED`，不得覆盖成通过。
 
 DOM观测确证：Ant Design加载图标宽度0、透明度0，仍保留在可访问树中；按钮实际名称为“loading 确认并创建版本”，精确名称定位0、包含文字定位1。没有把这个问题误归为金额校验失败，也没有放宽原浏览器断言。诊断文件为 `final/import_browser_diagnosis2/evidence/before_confirm_04_monthly_report_no_fabricated_daily_or_forecast.png.dom.json`。
 
-补充修复仅给导入确认按钮增加固定 `aria-label` 和与原busy状态绑定的 `aria-busy`。原loading、人工confirmed门槛、onClick及数据校验保持。18109修复后的原脚本4组全部PASS；04准备提交时精确名称定位1、aria-busy=false、enabled=true，随后POST201，月汇总数值/无日级结果/390px仍通过。证据：`import_label_fix_browser/evidence/results.json`、`confirm_accessibility_observer.json`、`script_sha256.txt`。最终新的干净检出复验另行记录，不借这次候选成功替代。
+补充修复仅给导入确认按钮增加固定 `aria-label` 和与原busy状态绑定的 `aria-busy`。原loading、人工confirmed门槛、onClick及数据校验保持。18109修复后确切提交内脚本（SHA-256 `6787591b0f0048ad5ea3a8311671126ead0868f89fb9e918965d5303d8b16dde`）4组全部PASS；04准备提交时精确名称定位1、aria-busy=false、enabled=true，随后POST201，月汇总数值/无日级结果/390px仍通过。证据：`import_label_fix_exact_browser/evidence/results.json`、`confirm_accessibility_observer.json`、`script_sha256.txt`。更早的 `import_label_fix_browser` 使用旧脚本副本，仅作辅助记录；此处确切脚本和下面的最终干净检出才作为验证依据。
+
+## 8. 最终完整代码复验与运行
+
+代码提交 `36ef5be6c3ddf39736bf46e1e9c755c339235d69`，0.7.1 / schema 6 / sales-v2.2.0。从实际远端提交检出到 `final_after_aria/source`，使用全新数据库、profile和输出目录，未修改提交源码。原服务18108不变。
+
+| 检查 | 最终状态 | 真实证据（相对TASK） |
+|---|---|---|
+| Ruff / TypeScript / 生产构建 | PASS | `final_after_aria/evidence/{ruff,build}.log` |
+| 后台全量 | PASS：96 tests + 6 subtests | `final_after_aria/evidence/pytest.log`、`pytest.xml` |
+| 前端合同及异步/帮助 | PASS：15 | `final_after_aria/evidence/frontend_tests.log` |
+| 主浏览器流程 | PASS：12组 | `final_after_aria/full_browser/evidence/clean/browser_results.json` |
+| 专项浏览器 | PASS：12组 | `final_after_aria/focused_browser/evidence/system-polish/results.json` |
+| XLSX/月汇总/错误修正 | PASS：4组；原精确名称断言未放宽 | `final_after_aria/import_browser/evidence/results.json` |
+| 冻结结果及导出CSV | PASS：13项 | `final_after_aria/evidence/deterministic_comparison.json` |
+| 源码和构建 | PASS：干净工作树，逐资产SHA归档 | `final_after_aria/evidence/release_verified.json` |
+
+最终主流程项目 `e9570c22-7c83-44fc-b292-3a2e61d2fb53`，数据版本、报告及请求见该目录收据；9月报告 `aa6c34c8-0eb5-4896-9843-9e9d6cc0da2c`。金额66,434.40 CNY、销量10,640、商品12，真实CPU推理成功；HTML/CSV/JSON/PDF为本轮真实产物。当前覆盖没有未解决失败；早期失败未删除。
+
+构建总量1,337,907 bytes，基线1,330,100 bytes，增加0.587%；无新依赖。首次启动测试脚本因Unix socket路径过长失败，原 `server_start.log` 和 `release.json` 保留。改用任务内较短的 `tmp/f2.sock` 后启动，真实浏览器全部重新执行，日志为 `resumed_*.log`；未改系统设置、应用源码或跳过测试。
+
+最终文档补录不改变业务代码。发布时还需核对该提交相对完整复验提交只有文档变化，重新构建并比较资产哈希，再以 `final_smoke.cjs` 检查真实月报、帮助键盘、CPU AI证据、CSV下载和390px。其最终SHA、结果及新预览信息保存于受控任务 `evidence/release.json`；此文件避免嵌入自身提交SHA造成循环。
+
+新版为独立预览：本机 `http://localhost:18117/projects` → 服务器回环18112；原 `http://127.0.0.1:18116/projects` → 18108保留。新版使用一致性备份时的账号/店铺副本，之后两边数据独立，不会持续同步。原账号可登录，或自行注册。
+
+本机隧道重连脚本：D盘任务 `Start-PolishedPreview.ps1`，只使用现有密钥和D盘known_hosts，所有日志在任务内。服务器预览启动/停止只针对本任务：
+
+```sh
+tmux -S "$TASK/tmp/user.sock" new-session -d -s re-polish-user "bash $TASK/preview/start_preview.sh"
+tmux -S "$TASK/tmp/user.sock" kill-session -t re-polish-user
+```
+
+启动前检查18112与会话未占用，不能重复启动；停止前确认没有正在运行的用户任务。回退只需继续使用原18108/18116服务，无需恢复或迁移业务数据库。新预览不会自动替换共享正式服务。
