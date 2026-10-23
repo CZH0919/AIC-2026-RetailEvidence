@@ -145,3 +145,11 @@ node "$TASK/candidate/source/scripts/browser_import_modes.cjs"
 - 本轮没有重跑全部公开数据大型算法实验，也没有穷举所有队列取消/重启/超时的浏览器组合；现有后台回归与已列出的真实UI路径通过，只代表其覆盖范围。
 
 后续只有在最终提交、构建来源、远端 SHA 与新收据一致时，才能报告最终仓库交付通过。发布默认保持原18108及共享正式服务，提供独立预览；替换现有演示须单独授权。schema 6不变，回退继续使用原0.7.0源码/构建及服务，不需回滚业务数据库。
+
+## 8. 干净检出复验发现的可访问性问题
+
+首次仓库提交 `8ef28d49f830f16766db18767ef673b8cd72a486` 干净检出后，后台96+6、前端15、构建、主流程12、专项12和13项对账通过；但补充导入第04组连续超时。原始 `final/evidence/release.json` 保持 `FAIL_OR_BLOCKED`，不得覆盖成通过。
+
+DOM观测确证：Ant Design加载图标宽度0、透明度0，仍保留在可访问树中；按钮实际名称为“loading 确认并创建版本”，精确名称定位0、包含文字定位1。没有把这个问题误归为金额校验失败，也没有放宽原浏览器断言。诊断文件为 `final/import_browser_diagnosis2/evidence/before_confirm_04_monthly_report_no_fabricated_daily_or_forecast.png.dom.json`。
+
+补充修复仅给导入确认按钮增加固定 `aria-label` 和与原busy状态绑定的 `aria-busy`。原loading、人工confirmed门槛、onClick及数据校验保持。18109修复后的原脚本4组全部PASS；04准备提交时精确名称定位1、aria-busy=false、enabled=true，随后POST201，月汇总数值/无日级结果/390px仍通过。证据：`import_label_fix_browser/evidence/results.json`、`confirm_accessibility_observer.json`、`script_sha256.txt`。最终新的干净检出复验另行记录，不借这次候选成功替代。
