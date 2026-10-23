@@ -1,0 +1,14 @@
+✔ Every high-risk audited concept has a unique, contextual help definition (0.887331ms)
+✔ Short triggers remain discoverable; each definition has a usable example and no raw HTML (1.424053ms)
+✔ Accounting, stock-date and AI unknown-data safeguards are explicitly explained (0.446737ms)
+✔ only the two known background explanations move to help (1.330553ms)
+✔ unknown or changed wording fails visibly rather than being silently hidden (0.182916ms)
+✔ empty notices, original order and repeat warnings are preserved (0.204908ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.388852

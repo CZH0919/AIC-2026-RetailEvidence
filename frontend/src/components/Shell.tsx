@@ -1,3 +1,4 @@
+import { AccountMenu, useAccount } from '../Auth'
 import { useCallback, useState } from 'react'
 import { App, Button, Drawer } from 'antd'
 import { BookOutlined, ClockCircleOutlined, FolderOutlined, MenuOutlined } from '@ant-design/icons'
@@ -9,17 +10,19 @@ import type { Project } from '../types'
 type Recent = Pick<Project, 'id' | 'name' | 'color'>
 export interface WorkspaceContext { refresh: number; createProject: () => void; remember: (project: Project) => void }
 export function useWorkspace() { return useOutletContext<WorkspaceContext>() }
-const recentKey = 'retailevidence.recent-projects.v1'
+const recentKey = (account: string) => `retailevidence.recent-projects.v2.${account}`
 
-function readRecent(): Recent[] {
+function readRecent(account: string): Recent[] {
   try {
-    const items: unknown = JSON.parse(localStorage.getItem(recentKey) ?? '[]')
+    const items: unknown = JSON.parse(localStorage.getItem(recentKey(account)) ?? '[]')
     return Array.isArray(items) ? items.filter((i): i is Recent => typeof i?.id === 'string' && typeof i?.name === 'string' && ['teal', 'blue', 'amber', 'plum'].includes(i?.color)).slice(0, 4) : []
   } catch { return [] }
 }
 
 export function Shell() {
-  const [recent, setRecent] = useState(readRecent)
+  const { user } = useAccount()
+  const accountId = user!.id
+  const [recent, setRecent] = useState(() => readRecent(accountId))
   const [creating, setCreating] = useState(false)
   const [guide, setGuide] = useState(false)
   const [mobileNav, setMobileNav] = useState(false)
@@ -30,10 +33,10 @@ export function Shell() {
   const remember = useCallback((project: Project) => {
     setRecent(previous => {
       const next = [{ id: project.id, name: project.name, color: project.color }, ...previous.filter(p => p.id !== project.id)].slice(0, 4)
-      try { localStorage.setItem(recentKey, JSON.stringify(next)) } catch { /* History is optional. */ }
+      try { localStorage.setItem(recentKey(accountId), JSON.stringify(next)) } catch { /* History is optional. */ }
       return next
     })
-  }, [])
+  }, [accountId])
   const navigation = <>
     <Link className="brand" to="/projects" onClick={() => setMobileNav(false)} aria-label="数证智析，返回项目库">
       <span className="brand-mark" aria-hidden="true"><i /><i /></span><span><strong>数证智析</strong><small>RetailEvidence Studio</small></span>
@@ -55,6 +58,7 @@ export function Shell() {
     <div className="workspace"><header className="topbar">
       <Button className="mobile-menu" type="text" icon={<MenuOutlined />} aria-label="打开导航" onClick={() => setMobileNav(true)} />
       <nav className="breadcrumb" aria-label="面包屑"><span>工作区</span><span aria-hidden="true">/</span><Link to="/projects">项目库</Link>{location.pathname !== '/projects' ? <><span aria-hidden="true">/</span><span>项目空间</span></> : null}</nav>
+      <AccountMenu />
     </header>
     <main id="main-content"><Outlet context={{ refresh, createProject: () => setCreating(true), remember } satisfies WorkspaceContext} /></main>
     <footer className="workspace-footer"><span />数据有边界，结论有依据。<span /></footer></div>

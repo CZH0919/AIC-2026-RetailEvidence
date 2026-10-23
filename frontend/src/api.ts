@@ -16,7 +16,8 @@ export async function request<T>(path: string, options: RequestInit = {}, timeou
     response = await fetch(`/api${path}`, {
       ...options,
       signal: options.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(timeout)]) : AbortSignal.timeout(timeout),
-      headers: { 'Content-Type': 'application/json', ...options.headers },
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'RetailEvidence', ...options.headers },
     })
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') throw error
@@ -24,6 +25,7 @@ export async function request<T>(path: string, options: RequestInit = {}, timeou
   }
   const body = await response.json().catch(() => null)
   if (!response.ok) {
+    if (response.status === 401 && !path.startsWith('/auth/')) window.dispatchEvent(new Event('account-session-expired'))
     throw new ApiError(body?.error?.message ?? '请求未能完成，请稍后重试。', body?.error?.code, body?.error?.fields)
   }
   if (body === null) throw new ApiError('暂时无法读取内容，请稍后重试。')

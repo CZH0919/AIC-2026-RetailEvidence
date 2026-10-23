@@ -94,3 +94,9 @@ export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_TH
 ### 说明按需展开
 
 月报通用说明收进现有帮助，分类金额、关注原因与行动依据按需展开；动态风险、人工确认与原始证据保留。用户已批准并推广全站，应用版本0.6.3不变。详见[本轮修订及验收](docs/UI_REDESIGN_COPY_REFINEMENT.md)。
+
+## 账号与独立数据空间（0.7.0）
+
+打开网站先登录，首次使用可自行注册。各账号只访问自己的项目、任务和导出文件，支持修改密码与退出。用户名3–32位、密码12–128位；目前没有邮箱找回。旧项目不会自动交给新注册用户。
+
+详见 [账号与迁移说明](docs/AUTHENTICATION.md) 和 [本轮验收](docs/AUTH_ACCEPTANCE.md)。原有演示库不得未经批准直接升级。首次启动空库会创建schema 6。

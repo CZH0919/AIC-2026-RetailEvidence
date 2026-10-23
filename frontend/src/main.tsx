@@ -8,6 +8,7 @@ import './help.css'
 import './analysis.css'
 import './retail.css'
 import './commercial-ui.css'
+import './auth.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode><ConfigProvider locale={zhCN} theme={{

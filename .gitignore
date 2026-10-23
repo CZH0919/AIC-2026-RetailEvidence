@@ -35,3 +35,7 @@ frontend/node_modules/.vite-temp/
 browser-profile*/
 
 .runtime/
+
+# Isolated dependency symlink and operator-only account backups.
+/frontend/node_modules
+account-backups/
