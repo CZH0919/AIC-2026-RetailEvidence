@@ -1,6 +1,6 @@
 # 质量、有效视图与任务合同
 
-适用于应用 0.3.0、数据库 schema 3、质量策略 `quality-v1`。质量准备为确定性处理，不调用模型，不执行聚类或关联挖掘。
+当前数据库 schema 6，质量策略为 `quality-v1`。质量准备为确定性处理，不调用模型，不执行聚类或关联挖掘。
 
 ## 版本与范围
 
@@ -27,7 +27,7 @@
 
 订单视图字段：`order_id,customer_id,event_time,currency,amount,amount_source,source_rows,effective_source_rows,selected_rows,partial_order`。金额保存为精确十进制字符串，下游金额累加使用 Decimal；禁止先转 binary float 再汇总。`source_rows` 为原始订单行数，`effective_source_rows` 为确认去重后的行数，`selected_rows` 为通过公共质量和范围的行数。
 
-`normalized.line_amount` 在“数量×单价”模式保存派生值，`source_line_amount` 留存原映射的行金额。`row_audit.source_row_id` 与 S02 `raw.parquet` / `canonical.parquet` 的同名字段关联，可回到原始行；订单/商品标识用于连接有效视图。
+`normalized.line_amount` 在“数量×单价”模式保存派生值，`source_line_amount` 留存原映射的行金额。`row_audit.source_row_id` 与 `raw.parquet` / `canonical.parquet` 的同名字段关联，可回到原始行；订单/商品标识用于连接有效视图。
 
 报告每个 `views.*` 均满足：`included_rows + excluded_rows = raw_rows`，`primary_reasons` 含 included 且总和为原始行数。问题标签允许重叠，不能相加当删除数。有效行、唯一订单、客户和购物篮属于不同粒度。
 
