@@ -1,3 +1,4 @@
+import { dateRangeError } from '../calendarDate'
 import { HelpHint } from './HelpHint'
 import { useEffect, useRef, useState } from 'react'
 import { Alert, App, Button, Checkbox, Collapse, Input, Progress, Select, Tag } from 'antd'
@@ -66,6 +67,8 @@ export default function QualityWorkspace({ projectId }: { projectId: string }) {
     return () => { active = false; clearTimeout(timer) }
   }, [projectId, version, selected, reload])
   const submit = async () => {
+    const dateIssue = dateRangeError(scope.date_start ?? '', scope.date_end ?? '')
+    if (dateIssue) { setSubmitError(dateIssue); return }
     setBusy(true); setSubmitError('')
     submitKey.current ??= crypto.randomUUID()
     try {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Alert, App, Button, Drawer, Input, Select, Spin, Steps } from 'antd'
 import { CloudUploadOutlined, DatabaseOutlined, FileTextOutlined } from '@ant-design/icons'
 import { ApiError } from '../api'
@@ -16,10 +16,13 @@ export function ImportEditor({ projectId, initial, onClose, onSaved }: { project
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
   const { message } = App.useApp()
+  const working = useRef(false)
   useEffect(() => { let active = true; dataApi.catalog().then(r => { if (active) setCatalog(r.items) }).catch(() => {}); return () => { active = false } }, [])
   const run = async (label: string, task: () => Promise<void>) => {
+    if (working.current) return
+    working.current = true
     setBusy(label); setError('')
-    try { await task() } catch (e) { const text = e instanceof ApiError ? e.message : '操作未完成，请重试。'; setError(text); void message.error(text) } finally { setBusy('') }
+    try { await task() } catch (e) { const text = e instanceof ApiError ? e.message : '操作未完成，请重试。'; setError(text); void message.error(text) } finally { working.current = false; setBusy('') }
   }
   const received = (d: Draft) => { setDraft(d); setOptions({ ...parseDefaults, sheets: d.inspection.sheets.slice(0, 1), shape: d.source_dataset === 'groceries' ? 'basket_long' : 'transactions' }); setStep(1) }
   const upload = (file: File) => {
@@ -32,7 +35,7 @@ export function ImportEditor({ projectId, initial, onClose, onSaved }: { project
     footer={<div className="import-footer"><span>{busy || '每次导入都会生成独立数据版本'}</span><div>
       <Button disabled={!!busy} onClick={onClose}>暂时关闭</Button>
       {step === 2 && <Button disabled={!!busy} onClick={() => setStep(1)}>调整读取方式</Button>}
-      {step === 1 && <Button type="primary" loading={!!busy} onClick={() => draft && void run('正在解析并生成预览', async () => { const next = await dataApi.preview(projectId, draft.id, options); setDraft(next); setMapping(initialMapping(next)); setStep(2) })}>生成预览</Button>}
+      {step === 1 && <Button type="primary" loading={!!busy} onClick={() => draft && void run('正在解析并生成预览', async () => { if (draft.suffix === '.xlsx' && !options.sheets.length) throw new ApiError('请至少选择一个工作表。'); const next = await dataApi.preview(projectId, draft.id, options); setDraft(next); setMapping(initialMapping(next)); setStep(2) })}>生成预览</Button>}
       {step === 2 && <><Button disabled={!!busy} onClick={() => draft && mapping && void run('正在保存草稿', async () => { setDraft(await dataApi.saveDraft(projectId, draft, mapping)); void message.success('字段草稿已保存，可稍后继续') })}>保存草稿</Button>
         <Button type="primary" aria-label="确认并创建版本" aria-busy={!!busy} loading={!!busy} disabled={!mapping?.confirmed} onClick={() => draft && mapping && void run('正在保存数据版本', async () => onSaved(await dataApi.confirm(projectId, draft, mapping)))}>确认并创建版本</Button></>}
     </div></div>}>
