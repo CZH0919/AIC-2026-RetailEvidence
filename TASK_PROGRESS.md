@@ -4,4 +4,12 @@
 
 本次不修改正式服务器代码、数据库、服务。前端构建、日期/报告/信号检查与独立账号冒烟通过；原样后端套件 134 次执行，84 通过、50 因旧测试鉴权准备缺失而 ERROR，未掩盖或删除。完整说明见 docs/FORMAL_MAIN_SYNC_20261025.md。
 
-截至本提交：候选已整理，尚待正常推送 main 与 fresh fetch 核对。实际发布结果由 D 盘本轮 evidence/final-publication.json 和根 TASK_PROGRESS.md 记录。以前的工作记录保留在旧提交/分支，正文说明提供索引。
+该次同步已完成：main 已推送并 fresh fetch 核实为 bfc72fe9f1a88f6c1e6005e98452c07b6024666d，随后按该提交隔离构建复核。最终收据在 D 盘 formal_main_sync_20261025_01/evidence/final-publication.json；旧记录保留在历史提交和原分支。
+
+## 2026-10-25 README 整理
+- 基线：origin/main bfc72fe9f1a88f6c1e6005e98452c07b6024666d，已fetch确认，工作树无原有修改。
+- 按当前源码更新项目定位、五个页面入口、账号隔离、导入流程、记录分类、销售/客户/共购分析、库存、AI、导出、技术结构、启动配置和维护边界。
+- 校正旧“无认证”及schema 5描述；确认schema 6、sales-v3.1.1、association-v2、sales-explain-v4。包0.5.0仅如实解释，不修改代码版本。
+- 明确run_ai.sh依赖团队环境、全新机器安装待验证、后端旧测试84通过/50ERROR，以及当前无正式LICENSE，不冒称全绿或已开源许可。
+- 校验：19个相对文件链接存在、4段Bash示例语法通过、Markdown代码围栏配对；未运行安装、部署或重启命令。历史正式源码清单保持原样，README明确该清单是同步时快照。
+- 本轮只改README及本进度说明；运行代码、算法、锁文件、数据库、正式服务器均不动。最终push结果记录在D盘readme_refresh_20261025_01。
