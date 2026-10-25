@@ -1,9 +1,8 @@
+import { calendarDates, coverageError } from '../calendarDate'
 import { UNKNOWN_QUANTITY_UNIT } from '../quantity'
 import { SalesTableHelp } from './SalesTableHelp'
 import { useEffect, useRef, useState } from 'react'
-import { Alert, Button, DatePicker, Drawer, Select, Spin, Steps, Table } from 'antd'
-import dayjs from 'dayjs'
-import 'dayjs/locale/zh-cn'
+import { Alert, Button, Drawer, Input, Select, Spin, Steps, Table } from 'antd'
 import { CloudUploadOutlined, FileTextOutlined } from '@ant-design/icons'
 import { dataApi, initialMapping, parseDefaults } from '../data'
 import type { Draft, Mapping, ParseOptions, Version, VersionDetail } from '../data'
@@ -42,17 +41,34 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
   const [busy, setBusy] = useState(''), [error, setError] = useState(''), [retry, setRetry] = useState(0)
   const [pollRetry, setPollRetry] = useState(0)
   const errorRef = useRef<HTMLDivElement>(null)
+  const working = useRef(false)
+  function resetCoverage() { setComplete(false); setCoverageStart(''); setCoverageEnd(''); setMissing(''); setClosed('') }
+  function changeMonth(value: string) {
+    setMonth(value)
+    setMapping(old => old?.record_kind === 'monthly_summary' ? {...old, summary_month: value} : old)
+  }
+  function changeMapping(next: Mapping) {
+    if (next.record_kind === 'monthly_summary') {
+      if (mapping?.record_kind === 'monthly_summary') setMonth(next.summary_month ?? '')
+      else next = {...next, summary_month: month}
+    }
+    setMapping(next); setSourceInfo([])
+  }
   useEffect(() => { if (error) errorRef.current?.scrollIntoView({ block: 'start' }) }, [error])
   const work = async (label: string, action: () => Promise<void>) => {
+    if (working.current) return
+    working.current = true
     setBusy(label); setError('')
-    try { await action() } catch (e) { setError((e as Error).message) } finally { setBusy('') }
+    try { await action() } catch (e) { setError((e as Error).message) } finally { working.current = false; setBusy('') }
   }
   useEffect(() => {
-    if (!existing || !sourceIds.length) return
+    if (!existing) return
+    setSourceInfo([]); resetCoverage(); setMonth(''); setError('')
+    if (!sourceIds.length) { setBusy(''); return }
     let active = true
     setSourceInfo([]); setBusy('正在读取表格信息'); setError('')
     Promise.all(sourceIds.map(id => salesApi.source(projectId, id))).then(info => {
-      if (active) { setSourceInfo(info); setMonth(info.at(-1)?.suggested_month ?? ''); setComplete(false) }
+      if (active) { setSourceInfo(info); setMonth(info.some(s => s.months.includes(info.at(-1)?.suggested_month ?? '')) ? info.at(-1)!.suggested_month! : info.flatMap(s => s.months).sort().at(-1) ?? ''); resetCoverage() }
     }).catch(e => { if (active) setError(e.message) }).finally(() => { if (active) setBusy('') })
     return () => { active = false }
   }, [existing, projectId, sourceIds, retry])
@@ -74,15 +90,17 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
     if (current?.result?.products.length) onDone(current)
   }, [current, onDone])
   async function read(fileDraft: Draft, parse: ParseOptions) {
+    if (fileDraft.suffix === '.xlsx' && !parse.sheets.length) throw new Error('请至少选择一个工作表，再重新读取。')
     const next = await dataApi.preview(projectId, fileDraft.id, parse)
     const fields = salesMapping(next)
     setDraft(next); setMapping(fields); setSaved(null); setSavedMapping('')
-    setMonth(previewMonth(next, fields)); setSourceInfo([]); setComplete(false)
+    setMonth(previewMonth(next, fields)); setSourceInfo([]); resetCoverage()
   }
   function upload(file: File) {
     if (!/\.(csv|xlsx)$/i.test(file.name)) { setError('请选择 CSV 或 XLSX 销售表。'); return }
     if (file.size > 100 * 1024 * 1024) { setError('文件超过 100 MB，请分成较小的表格。'); return }
     void work('正在读取销售表', async () => {
+      setDraft(null); setMapping(null); setSaved(null); setSavedMapping(''); setSourceInfo([]); setMonth(''); resetCoverage()
       const received = await dataApi.upload(projectId, file)
       const parse = { ...parseDefaults, sheets: received.inspection.sheets.slice(0, 1) }
       setDraft(received); setMapping(null); setOptions(parse); setSaved(null)
@@ -96,10 +114,14 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
     if (fields.amount_mode === 'line_amount' && !fields.columns.line_amount) throw new Error('请选择销售额所在列，或选择只分析销量。')
     if (fields.amount_mode === 'quantity_unit_price' && !fields.columns.unit_price) throw new Error('请选择单价所在列，或选择只分析销量。')
     if (fields.amount_mode !== 'none' && !fields.columns.currency && !fields.currency_constant) throw new Error('请选择销售额币种。')
+    if (fields.columns.event_time && (!fields.time_format || !fields.timezone)) throw new Error('请在更多字段设置中确认日期格式和时区。')
     if (fields.status_rule === 'unspecified') throw new Error('请选择表格包含正常销售，还是包含取消、退货记录。')
   }
   async function analyze() {
-    if (!month) { setError('请选择要分析的月份。'); return }
+    const issue = coverageError({month, complete, start: coverageStart, end: coverageEnd, missing, closed})
+    if (issue) { setError(issue); return }
+    if (existing && (!sourceIds.length || sourceInfo.length !== sourceIds.length || sourceInfo.some(s => !sourceIds.includes(s.version_id)))) { setError('请先选择销售表，等待读取完成。'); return }
+    if (!existing && changedReading) { setError('读取设置已改变，请返回上一步重新读取。'); return }
     await work('正在准备分析', async () => {
       let info = sourceInfo
       if (!existing) {
@@ -115,9 +137,8 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
         setSourceInfo(info)
       }
       if (!info.length) throw new Error('请先选择销售表。')
-      if (!info.some(s => s.months.includes(month))) throw new Error('所选月份不在这份表格里，请选择下方已识别的月份。')
-      if (complete && (!coverageStart || !coverageEnd || coverageEnd < coverageStart)) throw new Error('请填写并核对完整记录的起止日期。')
-      const params: SalesParameters = { sources: info.map(s => ({ version_id: s.version_id, mapping_revision: s.mapping_revision })), month, complete_coverage: complete, coverage_start: complete ? coverageStart : null, coverage_end: complete ? coverageEnd : null, merge_mode: merge, duplicates, closed_dates: complete ? closed.split(',').map(s => s.trim()).filter(Boolean) : [], missing_dates: complete ? missing.split(',').map(s => s.trim()).filter(Boolean) : [], check_only: false }
+      if (!info.some(s => s.months.includes(month))) throw new Error(`所选 ${month} 不在当前字段和时区识别出的月份中。已识别：${[...new Set(info.flatMap(s => s.months))].sort().join('、') || '无有效日期'}。请核对日期列、日期格式和时区，或改选已识别月份；月汇总请核对所属月份。`)
+      const params: SalesParameters = { sources: info.map(s => ({ version_id: s.version_id, mapping_revision: s.mapping_revision })), month, complete_coverage: complete, coverage_start: complete ? coverageStart : null, coverage_end: complete ? coverageEnd : null, merge_mode: merge, duplicates, closed_dates: complete ? calendarDates(closed) : [], missing_dates: complete ? calendarDates(missing) : [], check_only: false }
       setCurrent(await salesApi.create(projectId, params)); setStep(2)
     })
   }
@@ -130,7 +151,7 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
     <Button disabled={!!busy} onClick={close}>暂时关闭</Button>
     {step === 1 && !existing && !saved && <Button disabled={!!busy} onClick={() => setStep(0)}>上一步</Button>}
     {step === 0 && <Button type="primary" disabled={!draft?.preview || changedReading || !!busy} onClick={() => setStep(1)}>下一步</Button>}
-    {step === 1 && <Button type="primary" loading={!!busy} disabled={existing && !sourceInfo.length} onClick={() => void analyze()}>开始分析</Button>}
+    {step === 1 && <Button type="primary" loading={!!busy} disabled={existing && (!sourceIds.length || sourceInfo.length !== sourceIds.length)} onClick={() => void analyze()}>开始分析</Button>}
     {step === 2 && !running && <Button type="primary" onClick={() => { setStep(1); setCurrent(null); setError('') }}>调整后重试</Button>}
   </div></div>}>
     <div className="sales-upload"><Steps current={step} size="small" items={[{ title: '上传表格' }, { title: '确认内容' }, { title: '查看分析' }]} />
@@ -148,9 +169,9 @@ export function SalesImportWizard({ projectId, versions, initialSources = [], ex
           </div>{changedReading && <p>读取设置已改变，请重新读取后继续。</p>}<Button disabled={!!busy} onClick={() => void work('正在重新读取销售表', () => read(draft, options))}>重新读取</Button></details>}
         </>}
         {step === 1 && <><div className="sales-upload-intro"><h3>确认这份表格的内容</h3><p>{existing ? '选择销售表和月份，并核对下方记录范围与可用分析。' : '核对字段和月份，再确认记录范围；下方会说明可用的分析。'}</p></div>
-          {existing ? <label className="sales-upload-field"><span>使用销售表</span><Select aria-label="分析使用的销售表" mode="multiple" value={sourceIds} options={versions.map(v => ({ value: v.id, label: v.filename }))} onChange={setSourceIds} /></label> : draft?.preview && mapping && <SalesImportFields preview={draft.preview} value={mapping} onChange={next => { setMapping(next); setSourceInfo([]) }} />}
-          <div className="sales-upload-month"><label className="sales-upload-field"><span>分析月份</span><DatePicker picker="month" aria-label="上传流程分析月份" placeholder="选择月份" format="YYYY-MM" value={month ? dayjs(`${month}-01`) : null} onChange={date => setMonth(date?.format('YYYY-MM') ?? '')} /></label>
-            {!!months.length && <label className="sales-upload-field"><span>表格里已识别的月份</span><Select aria-label="已识别月份" value={months.includes(month) ? month : undefined} placeholder="选择月份" options={months.map(value => ({ value, label: value }))} onChange={setMonth} /></label>}
+          {existing ? <label className="sales-upload-field"><span>使用销售表</span><Select aria-label="分析使用的销售表" mode="multiple" value={sourceIds} options={versions.map(v => ({ value: v.id, label: v.filename }))} onChange={setSourceIds} /></label> : draft?.preview && mapping && <SalesImportFields preview={draft.preview} value={mapping} onChange={changeMapping} />}
+          <div className="sales-upload-month"><label className="sales-upload-field"><span>分析月份</span><Input type="month" aria-label="上传流程分析月份" value={month} onChange={event => changeMonth(event.currentTarget.value)} /></label>
+            {!!months.length && <label className="sales-upload-field"><span>表格里已识别的月份</span><Select aria-label="已识别月份" value={months.includes(month) ? month : undefined} placeholder="选择月份" options={months.map(value => ({ value, label: value }))} onChange={changeMonth} /></label>}
           </div>
           {!existing && mapping?.columns.event_time && !sourceInfo.length && <p className="sales-upload-muted">月份根据预览日期填写，可修改。日期格式和时区可在“更多字段设置”中调整。</p>}
           <CoverageConfirmation month={month} kinds={existing ? sourceInfo.map(s => s.mapping.record_kind ?? 'transactions') : mapping ? [mapping.record_kind ?? 'transactions'] : []}
